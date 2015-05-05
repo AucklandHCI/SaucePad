@@ -1,4 +1,4 @@
-package com.aucklanduni.part4project;
+package com.aucklanduni.android;
 
 import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
