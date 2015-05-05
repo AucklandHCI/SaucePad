@@ -1,4 +1,4 @@
-package com.aucklanduni.part4project;
+package com.aucklanduni.p4p;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
