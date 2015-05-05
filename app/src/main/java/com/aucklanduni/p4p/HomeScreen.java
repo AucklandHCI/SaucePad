@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.internal.widget.ActionBarOverlayLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,7 +18,7 @@ import android.view.ViewGroup;
 
 
 public class HomeScreen extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, EditorFragment.OnFragmentInteractionListener {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, EditorFragment.OnFragmentInteractionListener, Keypad.OnFragmentInteractionListener {
 
     String TAG = "testing";
 
@@ -40,6 +41,8 @@ public class HomeScreen extends ActionBarActivity
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
+        ActionBarOverlayLayout x = null;
+
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
@@ -57,6 +60,12 @@ public class HomeScreen extends ActionBarActivity
                         .replace(R.id.container,PlaceholderFragment.newInstance(position + 1))
                         .commit();
                 break;
+            case 2:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, Keypad.newInstance(this))
+                        .commit();
+                break;
+
             default:
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, TestFragment.newInstance(position + 1, this))

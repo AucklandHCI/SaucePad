@@ -1,0 +1,32 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="com.aucklanduni.p4p.Keypad">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_weight="0.7"
+            android:layout_height="0dp"
+            android:id="@+id/et_edit"
+            android:layout_gravity="top|center_horizontal" />
+
+        <GridView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"
+            android:id="@+id/gv_KeyPad"
+            android:numColumns="auto_fit"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:columnWidth="100dp"
+            android:stretchMode="spacingWidthUniform">
+
+        </GridView>
+
+    </LinearLayout>
+
+</FrameLayout>
