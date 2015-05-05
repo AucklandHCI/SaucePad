@@ -54,13 +54,14 @@ public class HomeScreen extends ActionBarActivity
             case 1:
                 Log.d(TAG, "hi");
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                        .replace(R.id.container,PlaceholderFragment.newInstance(position + 1))
                         .commit();
                 break;
             default:
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, TestFragment.newInstance(position + 1, this))
                         .commit();
+
                 break;
         }
     }
