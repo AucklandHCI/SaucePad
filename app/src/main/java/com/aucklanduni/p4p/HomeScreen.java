@@ -1,6 +1,7 @@
 package com.aucklanduni.p4p;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,7 +17,7 @@ import android.view.ViewGroup;
 
 
 public class HomeScreen extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, EditorFragment.OnFragmentInteractionListener {
 
     String TAG = "testing";
 
@@ -52,7 +53,6 @@ public class HomeScreen extends ActionBarActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         switch (position) {
             case 1:
-                Log.d(TAG, "hi");
                 fragmentManager.beginTransaction()
                         .replace(R.id.container,PlaceholderFragment.newInstance(position + 1))
                         .commit();
@@ -114,6 +114,11 @@ public class HomeScreen extends ActionBarActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
     /**

@@ -2,8 +2,12 @@ package com.aucklanduni.p4p;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,9 +114,11 @@ import android.widget.Toast;
 //
 //}
 
-public class TestFragment extends Fragment {
+public class TestFragment extends Fragment implements EditorFragment.OnFragmentInteractionListener{
     private Button ext;
     private static Context ctx;
+
+    private String TAG = "testing";
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -138,14 +144,18 @@ public class TestFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_test, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_test, container, false);
         ext = (Button) rootView.findViewById(R.id.ext);
         ext.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(ctx, "hi", Toast.LENGTH_SHORT).show();
-
+//                Intent intent = new Intent(ctx, Editor.class);
+//                startActivity(intent);
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, EditorFragment.newInstance("Taz","Sufi"))
+                        .commit();
             }
         });
         return rootView;
@@ -156,5 +166,11 @@ public class TestFragment extends Fragment {
         super.onAttach(activity);
         ((HomeScreen) activity).onSectionAttached(
                 getArguments().getInt(ARG_SECTION_NUMBER));
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        Log.d(TAG,"I'm in onFrag");
+        Toast.makeText(ctx,"Success",Toast.LENGTH_LONG).show();
     }
 }
