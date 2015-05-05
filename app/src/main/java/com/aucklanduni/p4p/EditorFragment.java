@@ -129,21 +129,20 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
             toAdd = "class ";
             previous.push(toAdd);
             typeClassName();
-//            editTxt.setFocusableInTouchMode(true);
-//            editTxt.setFocusable(true);
+
         }
         else if(v.getId() == R.id.btn_bckspc ){
             if(!previous.empty()) {
-
-
-                int len = ((String) previous.pop()).length();
-                String editor = editTxt.getText().toString();
-
-                editTxt.setText(editor.substring(0, editor.length() - len));
+//                int len = ((String) previous.pop()).length();
+//                String editor = editTxt.getText().toString();
+//                editTxt.setText(editor.substring(0, editor.length() - len));
+                editTxt.getText().clear();
+                clsButton.setEnabled(true);
             }
             return;
         }
-        editTxt.setText(editTxt.getText() + toAdd);
+//        editTxt.setText(editTxt.getText() + toAdd);
+        printToScreen(editTxt.getText().toString());
     }
 
     private void typeClassName(){
@@ -161,7 +160,9 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                m_Text = input.getText().toString();
+                m_Text = input.getText().toString() + " ";
+                clsButton.setEnabled(false);
+                previous.push(m_Text);
                 printToScreen(m_Text);
             }
         });
@@ -169,6 +170,7 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                editTxt.getText().clear();
             }
         });
 
@@ -176,7 +178,7 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
     }
 
     private void printToScreen(String text){
-        editTxt.setText(toAdd + text + " ");
+        editTxt.setText(toAdd + text);
     }
 
     /**
