@@ -56,7 +56,7 @@ public class HomeScreen extends ActionBarActivity
 //                fragmentManager.beginTransaction()
 //                        .replace(R.id.container,OtherTestFragment.newInstance(position + 1,this))
 //                        .commit();
-//                break; 
+//                break;
             case 1:
                 Log.d(TAG, "hi");
                 fragmentManager.beginTransaction()
