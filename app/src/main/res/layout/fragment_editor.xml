@@ -1,0 +1,30 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="com.aucklanduni.p4p.EditorFragment">
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="485dp"
+        android:id="@+id/et_editor"
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:layout_gravity="top" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BackSpace"
+        android:id="@+id/btn_bckspc"
+        android:layout_gravity="right|bottom" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Class"
+        android:id="@+id/btn_Class"
+        android:layout_gravity="left|bottom" />
+
+</FrameLayout>
