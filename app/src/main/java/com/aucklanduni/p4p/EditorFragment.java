@@ -1,10 +1,14 @@
 package com.aucklanduni.p4p;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
+import android.support.v7.internal.widget.ActionBarOverlayLayout;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,8 +41,11 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
     private Button clsButton;
     private Button bckSpcButton;
     private EditText editTxt;
+    private String m_Text = "";
+    private String toAdd = "";
 
 
+    ActionBarOverlayLayout x = null;
 
 
     private String TAG = "testing";
@@ -117,10 +124,13 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         Log.d(TAG, "name: " + v.getId());
-        String toAdd = "";
+
         if(v.getId() == R.id.btn_Class){
             toAdd = "class ";
             previous.push(toAdd);
+            typeClassName();
+//            editTxt.setFocusableInTouchMode(true);
+//            editTxt.setFocusable(true);
         }
         else if(v.getId() == R.id.btn_bckspc ){
             if(!previous.empty()) {
@@ -134,6 +144,39 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
             return;
         }
         editTxt.setText(editTxt.getText() + toAdd);
+    }
+
+    private void typeClassName(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+        builder.setTitle("Title");
+
+        // Set up the input
+        final EditText input = new EditText(this.getActivity());
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                m_Text = input.getText().toString();
+                printToScreen(m_Text);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void printToScreen(String text){
+        editTxt.setText(toAdd + text + " ");
     }
 
     /**
