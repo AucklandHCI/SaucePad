@@ -13,6 +13,10 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,14 +39,16 @@ public class Keypad extends Fragment implements AdapterView.OnItemClickListener 
 
     private GridView keyPad;
     private EditText editor;
+    private ArrayAdapter<String> adapter;
+    private int count = 0;
     private static Context ctx;
 
-    static final String[] letters = new String[] {
-            "A", "B", "C", "D", "E",
-            "F", "G", "H", "I", "J",
-            "K", "L", "M", "N", "O",
-            "P", "Q", "R", "S", "T",
-            "U", "V", "W", "X", "Y", "Z"};
+
+    static final List<String> letters = new ArrayList<String>();
+    static final List<String> numbers = new ArrayList<String>();
+
+
+//    static final List<String>
 
     private OnFragmentInteractionListener mListener;
 
@@ -56,6 +62,28 @@ public class Keypad extends Fragment implements AdapterView.OnItemClickListener 
     public static Keypad newInstance(Context context) {
         Keypad fragment = new Keypad();
         ctx = context;
+        String [] l = new String[]{
+                "A", "B", "C", "D", "E",
+                "F", "G", "H", "I", "J",
+                "K", "L", "M", "N", "O",
+                "P", "Q", "R", "S", "T",
+                "U", "V", "W", "X", "Y", "Z"};
+
+        String [] n = new String[]{
+                "0", "1", "2", "3", "4",
+                "5", "6", "7", "8", "9",};
+
+        for(String s : l){
+            letters.add(s);
+        }
+
+        for(String s : n){
+            numbers.add(s);
+        }
+
+
+//        lettersayList<String>(Arrays.asList(l));
+
         return fragment;
     }
 
@@ -70,6 +98,8 @@ public class Keypad extends Fragment implements AdapterView.OnItemClickListener 
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
     }
 
     @Override
@@ -81,12 +111,17 @@ public class Keypad extends Fragment implements AdapterView.OnItemClickListener 
         keyPad = (GridView) view.findViewById(R.id.gv_KeyPad);
         editor = (EditText) view.findViewById(R.id.et_edit);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(ctx, android.R.layout.simple_list_item_1, letters);
+        setAdapter(letters);
 
-        keyPad.setAdapter(adapter);
         keyPad.setOnItemClickListener(this);
 
         return view;
+    }
+
+    private void setAdapter(List<String> items){
+        adapter = new ArrayAdapter<String>(ctx, android.R.layout.simple_list_item_1, items);
+        keyPad.invalidateViews();
+        keyPad.setAdapter(adapter);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -115,7 +150,20 @@ public class Keypad extends Fragment implements AdapterView.OnItemClickListener 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        editor.setText(editor.getText() + " " + letters[position]);
+        editor.setText(editor.getText() + " " + parent.getAdapter().getItem(position));
+
+        if (count > 8){
+            count = 0;
+        }else{
+            count++;
+        }
+
+        if((count % 2) == 0){
+            setAdapter(letters);
+        }else{
+            setAdapter(numbers);
+        }
+
     }
 
     /**
