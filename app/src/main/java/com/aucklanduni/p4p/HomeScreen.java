@@ -51,6 +51,12 @@ public class HomeScreen extends ActionBarActivity
         Log.d(TAG, "pos: " + position);
         FragmentManager fragmentManager = getSupportFragmentManager();
         switch (position) {
+            case 0:
+                Log.d(TAG, "hi");
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container,OtherTestFragment.newInstance(position + 1,this))
+                        .commit();
+                break;
             case 1:
                 Log.d(TAG, "hi");
                 fragmentManager.beginTransaction()
