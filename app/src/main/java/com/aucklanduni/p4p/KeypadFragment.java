@@ -1,10 +1,13 @@
 package com.aucklanduni.p4p;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
+
+import com.aucklanduni.p4p.scalang.Keypad;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +41,13 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     private String mParam2;
 
 
-    private GridView keyPad;
+    private GridView gv_keyPad;
     private EditText editor;
     private ArrayAdapter<String> adapter;
     private int count = 0;
     private static Context ctx;
+    private Keypad keypad;
+    private String enteredText;
 
 
     static final List<String> letters = new ArrayList<String>();
@@ -62,23 +69,27 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         KeypadFragment fragment = new KeypadFragment();
         ctx = context;
         String [] l = new String[]{
-                "A", "B", "C", "D", "E",
-                "F", "G", "H", "I", "J",
-                "K", "L", "M", "N", "O",
-                "P", "Q", "R", "S", "T",
-                "U", "V", "W", "X", "Y", "Z"};
+                "def"
+        };
 
-        String [] n = new String[]{
-                "0", "1", "2", "3", "4",
-                "5", "6", "7", "8", "9",};
+//                {
+//                "A", "B", "C", "D", "E",
+//                "F", "G", "H", "I", "J",
+//                "K", "L", "M", "N", "O",
+//                "P", "Q", "R", "S", "T",
+//                "U", "V", "W", "X", "Y", "Z"};
+
+//        String [] n = new String[]{
+//                "0", "1", "2", "3", "4",
+//                "5", "6", "7", "8", "9",};
 
         for(String s : l){
             letters.add(s);
         }
-
-        for(String s : n){
-            numbers.add(s);
-        }
+//
+//        for(String s : n){
+//            numbers.add(s);
+//        }
 
 
 //        lettersayList<String>(Arrays.asList(l));
@@ -107,21 +118,58 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_keypad, container, false);
 
-        keyPad = (GridView) view.findViewById(R.id.gv_KeyPad);
+        gv_keyPad = (GridView) view.findViewById(R.id.gv_KeyPad);
         editor = (EditText) view.findViewById(R.id.et_edit);
 
         setAdapter(letters);
+        keypad = new Keypad();
 
-        keyPad.setOnItemClickListener(this);
+        gv_keyPad.setOnItemClickListener(this);
 
         return view;
     }
 
     private void setAdapter(List<String> items){
+        gv_keyPad.invalidateViews();
+        if (items == null){
+            getStringLiteralInput();
+            return;
+        }
         adapter = new ArrayAdapter<String>(ctx, android.R.layout.simple_list_item_1, items);
-        keyPad.invalidateViews();
-        keyPad.setAdapter(adapter);
+        gv_keyPad.setAdapter(adapter);
     }
+
+    private void getStringLiteralInput(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+        builder.setTitle("Title");
+
+        // Set up the input
+        final EditText input = new EditText(this.getActivity());
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.requestFocus();
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                enteredText = input.getText().toString() + " ";
+                setAdapter(keypad.getNextItems());
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -149,19 +197,28 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        editor.setText(editor.getText() + " " + parent.getAdapter().getItem(position));
+        String input = (String) parent.getAdapter().getItem(position);
+        editor.setText(editor.getText() + " " + input );
 
-        if (count > 8){
-            count = 0;
-        }else{
-            count++;
+        if (keypad.getType() == null) {
+            keypad.setType(input);
         }
 
-        if((count % 2) == 0){
-            setAdapter(letters);
-        }else{
-            setAdapter(numbers);
-        }
+        setAdapter(keypad.getNextItems());
+
+
+//
+//        if (count > 8){
+//            count = 0;
+//        }else{
+//            count++;
+//        }
+//
+//        if((count % 2) == 0){
+//            setAdapter(letters);
+//        }else{
+//            setAdapter(numbers);
+//        }
 
     }
 
