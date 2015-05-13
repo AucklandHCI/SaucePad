@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 
 
 public class HomeScreen extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, EditorFragment.OnFragmentInteractionListener, Keypad.OnFragmentInteractionListener {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, EditorFragment.OnFragmentInteractionListener, KeypadFragment.OnFragmentInteractionListener {
 
     String TAG = "testing";
 
@@ -62,7 +62,7 @@ public class HomeScreen extends ActionBarActivity
                 break;
             case 2:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, Keypad.newInstance(this))
+                        .replace(R.id.container, KeypadFragment.newInstance(this))
                         .commit();
                 break;
 

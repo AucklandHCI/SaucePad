@@ -14,19 +14,18 @@ import android.widget.EditText;
 import android.widget.GridView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link Keypad.OnFragmentInteractionListener} interface
+ * {@link KeypadFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link Keypad#newInstance} factory method to
+ * Use the {@link KeypadFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Keypad extends Fragment implements AdapterView.OnItemClickListener {
+public class KeypadFragment extends Fragment implements AdapterView.OnItemClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -56,11 +55,11 @@ public class Keypad extends Fragment implements AdapterView.OnItemClickListener 
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment Keypad.
+     * @return A new instance of fragment KeypadFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static Keypad newInstance(Context context) {
-        Keypad fragment = new Keypad();
+    public static KeypadFragment newInstance(Context context) {
+        KeypadFragment fragment = new KeypadFragment();
         ctx = context;
         String [] l = new String[]{
                 "A", "B", "C", "D", "E",
@@ -87,7 +86,7 @@ public class Keypad extends Fragment implements AdapterView.OnItemClickListener 
         return fragment;
     }
 
-    public Keypad() {
+    public KeypadFragment() {
         // Required empty public constructor
     }
 
