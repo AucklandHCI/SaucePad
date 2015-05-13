@@ -122,11 +122,15 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         editor = (EditText) view.findViewById(R.id.et_edit);
 
         setAdapter(letters);
-        keypad = new Keypad();
+        keypad = new Keypad(this);
 
         gv_keyPad.setOnItemClickListener(this);
 
         return view;
+    }
+
+    public void printText(String text){
+        editor.setText(editor.getText() + " " + text);
     }
 
     private void setAdapter(List<String> items){
@@ -134,6 +138,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         if (items == null){
             getStringLiteralInput();
             return;
+        }else if (items.size() == 0) {
+            items = keypad.getNextItems();
         }
         adapter = new ArrayAdapter<String>(ctx, android.R.layout.simple_list_item_1, items);
         gv_keyPad.setAdapter(adapter);
@@ -156,6 +162,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 enteredText = input.getText().toString() + " ";
+                printText(enteredText);
                 setAdapter(keypad.getNextItems());
 
             }

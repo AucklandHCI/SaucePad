@@ -1,6 +1,9 @@
 package com.aucklanduni.p4p.scalang;
 
+import android.content.Context;
 import android.util.Log;
+
+import com.aucklanduni.p4p.KeypadFragment;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -13,20 +16,21 @@ import java.util.Map;
  */
 public class Keypad {
 
-    KeypadItem type = null;
-    Map<String, KeypadItem> items = new HashMap<String,KeypadItem>();
-    int count = 0;
+    private KeypadItem type = null;
+    private Map<String, KeypadItem> items = new HashMap<String,KeypadItem>();
+    private int count = 0;
+    private KeypadFragment kpFrag;
 
     private String TAG = "testing";
 
-    public Keypad(){
-
+    public Keypad(KeypadFragment keypadFragment){
+        this.kpFrag = keypadFragment;
         items.put("sClass", new sClass());
         items.put("sMethod", new sMethod());
 
     }
 
-    public List<String> getNextItems()throws RuntimeException{
+    public List<String> getNextItems() throws RuntimeException{
         if (type == null){
             throw new RuntimeException("Key type was null");
         }
@@ -42,20 +46,28 @@ public class Keypad {
             }
             int numFields = fields.length;
 
-            if (count >= numFields){
+            if (count < numFields) {
                 Log.d(TAG, " numFields = " + numFields + " count = " + count);
-                throw new RuntimeException("count too large.");
-            }
+//                throw new RuntimeException("count too large.");
 
-            Field f = fields[count];
-            if (f.getType() == String.class){
-                String val = (String) f.get(type);
-                Log.d(TAG, "val = " + val);
-                if (val == null) {
-                    count++;
-                    return null;
+
+                Field f = fields[count];
+                if (f.getType() == String.class) {
+                    String fName = f.getName();
+                    String val = (String) f.get(type);
+                    if (fName.contains("mand")) {
+                        count++;
+                        kpFrag.printText(val);
+                        return new ArrayList<>();
+                    }
+
+                    Log.d(TAG, "val = " + val);
+                    if (val == null) {
+                        count++;
+                        return null;
+                    }
+                    keyPad.add(val);
                 }
-                keyPad.add(val);
             }
 
             count++;

@@ -33,3 +33,5 @@ public class sMethod extends KeypadItem implements sMember {
 //        this.parameters.add(parameter);
 //    }
 }
+
+// def name( a : Int )
