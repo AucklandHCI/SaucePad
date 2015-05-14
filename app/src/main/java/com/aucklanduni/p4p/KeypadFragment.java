@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     private String mParam1;
     private String mParam2;
 
+    private String TAG = "testing";
 
     private GridView gv_keyPad;
     private EditText editor;
@@ -135,11 +137,17 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
     private void setAdapter(List<String> items){
         gv_keyPad.invalidateViews();
+        Log.d(TAG,"items = " + items);
         if (items == null){
             getStringLiteralInput();
             return;
         }else if (items.size() == 0) {
             items = keypad.getNextItems();
+            if(items == null|| items.isEmpty()) {
+                setAdapter(items);
+                items = keypad.getNextItems();
+            }
+
         }
         adapter = new ArrayAdapter<String>(ctx, android.R.layout.simple_list_item_1, items);
         gv_keyPad.setAdapter(adapter);

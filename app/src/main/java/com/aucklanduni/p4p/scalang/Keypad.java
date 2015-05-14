@@ -6,6 +6,7 @@ import android.util.Log;
 import com.aucklanduni.p4p.KeypadFragment;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,8 @@ public class Keypad {
         this.kpFrag = keypadFragment;
         items.put("sClass", new sClass());
         items.put("sMethod", new sMethod());
+        items.put("sParameter", new sParameter());
+
 
     }
 
@@ -51,10 +54,11 @@ public class Keypad {
 //                throw new RuntimeException("count too large.");
 
 
-                Field f = fields[count];
-                if (f.getType() == String.class) {
-                    String fName = f.getName();
-                    String val = (String) f.get(type);
+                Field field = fields[count];
+                Class fType = field.getType();
+                if (fType == String.class) {
+                    String fName = field.getName();
+                    String val = (String) field.get(type);
                     if (fName.contains("mand")) {
                         count++;
                         kpFrag.printText(val);
@@ -67,10 +71,28 @@ public class Keypad {
                         return null;
                     }
                     keyPad.add(val);
-                }
-            }
 
-            count++;
+                } else if (fType == List.class) {
+                    List val = (List) field.get(type);
+                    Log.d(TAG, "paraVal = " + val);
+                    ParameterizedType listType = (ParameterizedType) field.getGenericType();
+                    Class listTypeClass = (Class) listType.getActualTypeArguments()[0];
+                    String listTypeName = listTypeClass.getSimpleName();
+                    count++;
+//                    int tempCount = count;
+//                    KeypadItem tempType = type;
+                    setType(listTypeName);
+
+                    List x = getNextItems();
+                    Log.d(TAG,"x = " + x);
+//                    count = tempCount;
+//                    type = tempType;
+                    return x;
+                }
+
+
+                count++;
+            }
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -95,6 +117,7 @@ public class Keypad {
         }
 
         this.type = items.get(type);
+        count = 0;
 //        this.type = type;
     }
 }
