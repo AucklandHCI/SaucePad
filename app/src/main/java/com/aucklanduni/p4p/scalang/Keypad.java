@@ -1,6 +1,5 @@
 package com.aucklanduni.p4p.scalang;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
@@ -17,9 +16,12 @@ import java.util.Map;
  */
 public class Keypad {
 
-    private KeypadItem type = null;
-    private Map<String, KeypadItem> items = new HashMap<String,KeypadItem>();
+    private ScalaClass type = null;
+    private ScalaClass prevType = null;
+    //    private boolean isList = false;
+    private Map<String, ScalaClass> items = new HashMap<String,ScalaClass>();
     private int count = 0;
+    private int listCount = 0;
     private KeypadFragment kpFrag;
 
     private String TAG = "testing";
@@ -30,23 +32,23 @@ public class Keypad {
         items.put("sMethod", new sMethod());
         items.put("sParameter", new sParameter());
 
-
     }
 
-    public List<String> getNextItems() throws RuntimeException{
+    public List<KeypadItem> getNextItems() throws RuntimeException{
         if (type == null){
             throw new RuntimeException("Key type was null");
         }
-        List<String> keyPad = new ArrayList<String>();
+        List<KeypadItem> keyPad = new ArrayList<>();
         String className = type.getName();
+        count = type.getCount();
         Log.d(TAG, "class Name = " + className + ", count = "+ count);
         try {
             Class cls = Class.forName("com.aucklanduni.p4p.scalang." +className);
             Field[] fields = cls.getFields();
 
-            for (Field fi : fields){
-                Log.d(TAG, fi.getName());
-            }
+//            for (Field fi : fields){
+//                Log.d(TAG, fi.getName());
+//            }
             int numFields = fields.length;
 
             if (count < numFields) {
@@ -54,45 +56,52 @@ public class Keypad {
 //                throw new RuntimeException("count too large.");
 
 
-                Field field = fields[count];
-                Class fType = field.getType();
+                Field f = fields[count];
+                Class fType = f.getType();
+                Log.d(TAG, "field type: "+ fType);
                 if (fType == String.class) {
-                    String fName = field.getName();
-                    String val = (String) field.get(type);
+                    String fName = f.getName();
+                    String val = (String) f.get(type);
                     if (fName.contains("mand")) {
-                        count++;
+                        type.incrementCount();
                         kpFrag.printText(val);
                         return new ArrayList<>();
                     }
 
                     Log.d(TAG, "val = " + val);
                     if (val == null) {
-                        count++;
+                        type.incrementCount();
                         return null;
                     }
-                    keyPad.add(val);
+                    keyPad.add(new KeypadItem(val));
 
-                } else if (fType == List.class) {
-                    List val = (List) field.get(type);
-                    Log.d(TAG, "paraVal = " + val);
-                    ParameterizedType listType = (ParameterizedType) field.getGenericType();
-                    Class listTypeClass = (Class) listType.getActualTypeArguments()[0];
-                    String listTypeName = listTypeClass.getSimpleName();
-                    count++;
-//                    int tempCount = count;
-//                    KeypadItem tempType = type;
-                    setType(listTypeName);
+                }else if(fType == List.class){
 
-                    List x = getNextItems();
-                    Log.d(TAG,"x = " + x);
-//                    count = tempCount;
-//                    type = tempType;
-                    return x;
+                    ParameterizedType listType = (ParameterizedType) f.getGenericType();
+                    Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0];
+
+                    if (listClass == KeypadItem.class) {
+
+                        prevType = type;
+//                        type.incrementCount();
+                        type = null;
+                        return (List)f.get(prevType);
+                    }
+//                    keyPad.add(new KeypadItem(newParam,true));
+//                    keyPad.add(new KeypadItem(done,true));
+//                    return keyPad;
+
+
                 }
-
-
-                count++;
+                type.incrementCount();
+            }else{
+                if (prevType != null){
+                    type.resetCount();
+                    type = prevType;
+                    prevType = null;
+                }
             }
+
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -103,21 +112,38 @@ public class Keypad {
     }
 
 
-    public KeypadItem getType(){
+    public ScalaClass getType(){
         return type;
     }
 
-    public void setType(String type) {
-        if (type.equals("def")){
-            type = "sMethod";
+    public void setType(String input) {
+
+        switch (input){
+            case "def":
+                input = "sMethod";
+                break;
+            case "New Param":
+                input = "sParameter";
+                if (listCount > 0) {
+                    kpFrag.printText(",");
+                }
+                listCount++;
+                break;
+            case "Done":
+                type = prevType;
+                prevType = null;
+                listCount = 0;
+                type.incrementCount();
+                type.incrementCount();
+                return;
+
         }
 
-        if (!items.containsKey(type)){
+        if (!items.containsKey(input)){
             return;
         }
 
-        this.type = items.get(type);
-        count = 0;
+        this.type = items.get(input);
 //        this.type = type;
     }
 }
