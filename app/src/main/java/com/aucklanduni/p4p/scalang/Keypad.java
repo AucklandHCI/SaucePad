@@ -24,9 +24,6 @@ public class Keypad {
     private int listCount = 0;
     private KeypadFragment kpFrag;
 
-    private final String newParam = "New Param";
-    private final String done = "Done";
-
     private String TAG = "testing";
 
     public Keypad(KeypadFragment keypadFragment){
@@ -79,17 +76,20 @@ public class Keypad {
                     keyPad.add(new KeypadItem(val));
 
                 }else if(fType == List.class){
-                    ParameterizedType fListType = (ParameterizedType) f.getGenericType();
-                    Class<?> fListClass = (Class<?>) fListType.getActualTypeArguments()[0];
-                    prevType = type;
-//                    setType(fListClass.getSimpleName());
-                    Log.d(TAG, "typeName: "+type.getName());
-//                    return getNextItems();
-//                    keyPad = new ArrayList<String>();
-                    type = null;
-                    keyPad.add(new KeypadItem(newParam,true));
-                    keyPad.add(new KeypadItem(done,true));
-                    return keyPad;
+
+                    ParameterizedType listType = (ParameterizedType) f.getGenericType();
+                    Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0];
+
+                    if (listClass == KeypadItem.class) {
+
+                        prevType = type;
+//                        type.incrementCount();
+                        type = null;
+                        return (List)f.get(prevType);
+                    }
+//                    keyPad.add(new KeypadItem(newParam,true));
+//                    keyPad.add(new KeypadItem(done,true));
+//                    return keyPad;
 
 
                 }
@@ -117,21 +117,23 @@ public class Keypad {
     }
 
     public void setType(String input) {
+
         switch (input){
             case "def":
                 input = "sMethod";
                 break;
-            case newParam:
+            case "New Param":
                 input = "sParameter";
                 if (listCount > 0) {
                     kpFrag.printText(",");
                 }
                 listCount++;
                 break;
-            case done:
+            case "Done":
                 type = prevType;
                 prevType = null;
                 listCount = 0;
+                type.incrementCount();
                 type.incrementCount();
                 return;
 

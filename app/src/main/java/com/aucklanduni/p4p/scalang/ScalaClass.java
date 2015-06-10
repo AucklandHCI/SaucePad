@@ -5,7 +5,9 @@ package com.aucklanduni.p4p.scalang;
  */
 public abstract class ScalaClass {
 
-    int count = 0;
+    protected String newLineAndTab = "\n\t";
+
+    private int count = 0;
 
     public String getName(){
         return getClass().getSimpleName();
