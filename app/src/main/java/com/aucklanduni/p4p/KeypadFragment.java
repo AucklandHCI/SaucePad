@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 
 import com.aucklanduni.p4p.scalang.Keypad;
+import com.aucklanduni.p4p.scalang.KeypadItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,17 +42,19 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     private String mParam1;
     private String mParam2;
 
+    private String TAG = "testing";
+
 
     private GridView gv_keyPad;
     private EditText editor;
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<KeypadItem> adapter;
     private int count = 0;
     private static Context ctx;
     private Keypad keypad;
     private String enteredText;
 
 
-    static final List<String> letters = new ArrayList<String>();
+    static final List<KeypadItem> letters = new ArrayList<KeypadItem>();
     static final List<String> numbers = new ArrayList<String>();
 
 
@@ -68,8 +72,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     public static KeypadFragment newInstance(Context context) {
         KeypadFragment fragment = new KeypadFragment();
         ctx = context;
-        String [] l = new String[]{
-                "def"
+        KeypadItem [] l = new KeypadItem[]{
+                new KeypadItem("def")
         };
 
 //                {
@@ -83,7 +87,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 //                "0", "1", "2", "3", "4",
 //                "5", "6", "7", "8", "9",};
 
-        for(String s : l){
+        for(KeypadItem s : l){
             letters.add(s);
         }
 //
@@ -121,7 +125,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         gv_keyPad = (GridView) view.findViewById(R.id.gv_KeyPad);
         editor = (EditText) view.findViewById(R.id.et_edit);
 
-        setAdapter(letters);
+        setItemAdapter(letters);
         keypad = new Keypad(this);
 
         gv_keyPad.setOnItemClickListener(this);
@@ -133,16 +137,30 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         editor.setText(editor.getText() + " " + text);
     }
 
-    private void setAdapter(List<String> items){
-        gv_keyPad.invalidateViews();
+    private void setItemAdapter(List<KeypadItem> items){
+
+
+        if(items != null){
+            for (KeypadItem s : items){
+                Log.d(TAG, "item: " + s);
+            }
+        }
         if (items == null){
             getStringLiteralInput();
             return;
         }else if (items.size() == 0) {
             items = keypad.getNextItems();
+            if(items == null){
+                getStringLiteralInput();
+                return;
+            }
+//            setItemAdapter(keypad.getNextItems());
         }
-        adapter = new ArrayAdapter<String>(ctx, android.R.layout.simple_list_item_1, items);
+        adapter = new ArrayAdapter<KeypadItem>(ctx, android.R.layout.simple_list_item_1, items);
         gv_keyPad.setAdapter(adapter);
+        gv_keyPad.invalidateViews();
+
+
     }
 
     private void getStringLiteralInput(){
@@ -163,7 +181,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             public void onClick(DialogInterface dialog, int which) {
                 enteredText = input.getText().toString() + " ";
                 printText(enteredText);
-                setAdapter(keypad.getNextItems());
+                setItemAdapter(keypad.getNextItems());
 
             }
         });
@@ -204,14 +222,16 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String input = (String) parent.getAdapter().getItem(position);
-        editor.setText(editor.getText() + " " + input );
-
-        if (keypad.getType() == null) {
-            keypad.setType(input);
+        KeypadItem input = (KeypadItem) parent.getAdapter().getItem(position);
+        if (!input.isDummy()){
+            editor.setText(editor.getText() + " " + input.getValue() );
         }
 
-        setAdapter(keypad.getNextItems());
+        if (keypad.getType() == null) {
+            keypad.setType(input.getValue());
+        }
+
+        setItemAdapter(keypad.getNextItems());
 
 
 //

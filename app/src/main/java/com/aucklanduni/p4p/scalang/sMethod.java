@@ -6,12 +6,13 @@ import java.util.List;
 /**
  * Created by Taz on 13/05/15.
  */
-public class sMethod extends KeypadItem implements sMember {
+public class sMethod extends ScalaClass implements sMember {
 
     public String a_methodName = null;
     public String b_mand_left_bracket = "("; //"mand_" for mandatory item
-//    private List<sParameter> parameters = new ArrayList<sParameter>();
-    public String c_right_bracket = ")";
+    public List<sParameter> c_parameters = new ArrayList<sParameter>();
+    public String d_right_bracket = ")";
+
 
     public String getMethodName() {
         return a_methodName;
