@@ -145,11 +145,11 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 Log.d(TAG, "item: " + s);
             }
         }
-        if (items == null){
+        if (items == null){ // get input form user
             getStringLiteralInput();
             return;
-        }else if (items.size() == 0) {
-            items = keypad.getNextItems();
+        }else if (items.size() == 0) { // application has printed a mandatory character.
+            items = keypad.getNextItems(); //get next item
             if(items == null){
                 getStringLiteralInput();
                 return;
@@ -223,12 +223,12 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         KeypadItem input = (KeypadItem) parent.getAdapter().getItem(position);
-        if (!input.isDummy()){
+        if (!input.isDummy()){ // if not dummy print it
             editor.setText(editor.getText() + " " + input.getValue() );
         }
 
         if (keypad.getType() == null) {
-            keypad.setType(input.getValue());
+            keypad.setType(input.getValue()); //set it to whatever is clicked from keypad
         }
 
         setItemAdapter(keypad.getNextItems());

@@ -6,7 +6,7 @@ package com.aucklanduni.p4p.scalang;
 public class KeypadItem {
 
     private String value;
-    private boolean isDummy;
+    private boolean isDummy; //application uses to see if it needs to print to screen or not. If True Don't print
 
     public KeypadItem(String value){
         this(value,false);

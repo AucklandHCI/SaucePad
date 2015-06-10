@@ -13,7 +13,7 @@ public class sMethod extends ScalaClass implements sMember {
     public List<KeypadItem> c_parameter_options = new ArrayList<>();
     public List<sParameter> c_parameters = new ArrayList<sParameter>();
     public String d_right_bracket = ")";
-    public String e_mand_left_brace = "{"+newLineAndTab;
+    public String e_mand_left_brace = "{" + newLineAndTab;
 
     private final static String newParam = "New Param";
     private final static String done = "Done";

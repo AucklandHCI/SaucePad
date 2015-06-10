@@ -38,13 +38,14 @@ public class Keypad {
         if (type == null){
             throw new RuntimeException("Key type was null");
         }
-        List<KeypadItem> keyPad = new ArrayList<>();
-        String className = type.getName();
-        count = type.getCount();
+        List<KeypadItem> keyPad = new ArrayList<>(); // whats displayed on the keyboard
+        String className = type.getName(); //Scala Class
+        count = type.getCount(); // index
         Log.d(TAG, "class Name = " + className + ", count = "+ count);
         try {
-            Class cls = Class.forName("com.aucklanduni.p4p.scalang." +className);
-            Field[] fields = cls.getFields();
+
+            Class cls = Class.forName("com.aucklanduni.p4p.scalang." + className); // class object
+            Field[] fields = cls.getFields(); //array of fields
 
 //            for (Field fi : fields){
 //                Log.d(TAG, fi.getName());
@@ -59,26 +60,26 @@ public class Keypad {
                 Field f = fields[count];
                 Class fType = f.getType();
                 Log.d(TAG, "field type: "+ fType);
-                if (fType == String.class) {
+                if (fType == String.class) { // if string
                     String fName = f.getName();
                     String val = (String) f.get(type);
-                    if (fName.contains("mand")) {
+                    if (fName.contains("mand")) { // if mandatory
                         type.incrementCount();
                         kpFrag.printText(val);
-                        return new ArrayList<>();
+                        return new ArrayList<>(); //return empty list for method sake
                     }
 
                     Log.d(TAG, "val = " + val);
                     if (val == null) {
-                        type.incrementCount();
-                        return null;
+                        type.incrementCount(); // increment count to look at next field
+                        return null; // null acts as marker to get input from user.
                     }
-                    keyPad.add(new KeypadItem(val));
+                    keyPad.add(new KeypadItem(val)); // add it to the keypad to display.
 
                 }else if(fType == List.class){
 
                     ParameterizedType listType = (ParameterizedType) f.getGenericType();
-                    Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0];
+                    Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0]; // Getting type of list
 
                     if (listClass == KeypadItem.class) {
 
