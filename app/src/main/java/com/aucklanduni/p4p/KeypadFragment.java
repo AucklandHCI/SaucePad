@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -140,11 +141,11 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     private void setItemAdapter(List<KeypadItem> items){
 
 
-        if(items != null){
-            for (KeypadItem s : items){
-                Log.d(TAG, "item: " + s);
-            }
-        }
+//        if(items != null){
+//            for (KeypadItem s : items){
+//                Log.d(TAG, "item: " + s);
+//            }
+//        }
         if (items == null){ // get input form user
             getStringLiteralInput();
             return;
@@ -181,6 +182,11 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             public void onClick(DialogInterface dialog, int which) {
                 enteredText = input.getText().toString() + " ";
                 printText(enteredText);
+                keypad.setField(enteredText);
+                InputMethodManager imm = (InputMethodManager) ctx.getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                //txtName is a reference of an EditText Field
+                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
                 setItemAdapter(keypad.getNextItems());
 
             }
@@ -193,6 +199,10 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         });
 
         builder.show();
+
+        InputMethodManager inputMethodManager = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
+        // only will trigger it if no physical keyboard is open
+        inputMethodManager.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
     }
 
 
@@ -225,6 +235,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         KeypadItem input = (KeypadItem) parent.getAdapter().getItem(position);
         if (!input.isDummy()){ // if not dummy print it
             editor.setText(editor.getText() + " " + input.getValue() );
+            keypad.setField(input.getValue());
         }
 
         if (keypad.getType() == null) {

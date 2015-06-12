@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class sMethod extends ScalaClass implements sMember {
 
-    public String a_methodName = null;
+    public String a_method_name = null;
     public String b_mand_left_bracket = "("; //"mand_" for mandatory item
     public List<KeypadItem> c_parameter_options = new ArrayList<>();
     public List<sParameter> c_parameters = new ArrayList<sParameter>();
@@ -25,11 +25,11 @@ public class sMethod extends ScalaClass implements sMember {
     }
 
     public String getMethodName() {
-        return a_methodName;
+        return a_method_name;
     }
 
     public void setMethodName(String methodName) {
-        this.a_methodName = methodName;
+        this.a_method_name = methodName;
     }
 
     public String getMand_left_bracket() {
