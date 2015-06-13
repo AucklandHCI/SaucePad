@@ -90,6 +90,7 @@ public class Keypad {
                     if (fName.contains("mand")) { // if mandatory
                         type.incrementCount();
                         kpFrag.printText(val);
+                        kpFrag.addToStack(val);
                         return new ArrayList<>(); //return empty list for method sake
                     }
 
@@ -160,6 +161,10 @@ public class Keypad {
         return keyPad;
     }
 
+//    public List<KeypadItem> getPrevItems() throws RuntimeException{
+//        return null;
+//    }
+
 
     public ScalaClass getType(){
         return type;
@@ -185,6 +190,7 @@ public class Keypad {
                 input = "sParameter";
                 if (listCount > 0) {
                     kpFrag.printText(",");
+                    kpFrag.addToStack(",");
                 }
                 listCount++;
 

@@ -23,6 +23,8 @@ import com.aucklanduni.p4p.scalang.KeypadItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Stack;
 
 
 /**
@@ -53,6 +55,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     private static Context ctx;
     private Keypad keypad;
     private String enteredText;
+    private Stack<Object> stk_bckSpc = new Stack<>(); //Stack holding all the items that are printed onto the screen
+    private Stack<List<KeypadItem>> stk_prevKeyPadItems = new Stack<>(); //Keeps track of all the lists that are displayed on the keypad.
 
 
     static final List<KeypadItem> letters = new ArrayList<KeypadItem>();
@@ -75,6 +79,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         ctx = context;
         KeypadItem [] l = new KeypadItem[]{
                 new KeypadItem("def")
+
         };
 
 //                {
@@ -138,6 +143,10 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         editor.setText(editor.getText() + " " + text);
     }
 
+    public void addToStack(String text){
+        stk_bckSpc.push(text);
+    }
+
     private void setItemAdapter(List<KeypadItem> items){
 
 
@@ -146,6 +155,12 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 //                Log.d(TAG, "item: " + s);
 //            }
 //        }
+        if(items != null){
+            if(items.size() != 0){
+                stk_prevKeyPadItems.push(items);
+            }
+        }
+
         if (items == null){ // get input form user
             getStringLiteralInput();
             return;
@@ -157,7 +172,14 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
 //            setItemAdapter(keypad.getNextItems());
         }
+
+        if(items.size() == 1 && items.get(0).toString() == "def"){
+            addToStack("def");
+        }
+
         adapter = new ArrayAdapter<KeypadItem>(ctx, android.R.layout.simple_list_item_1, items);
+        KeypadItem bckSpace = new KeypadItem("Back", true);
+        adapter.add(bckSpace);
         gv_keyPad.setAdapter(adapter);
         gv_keyPad.invalidateViews();
 
@@ -182,6 +204,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             public void onClick(DialogInterface dialog, int which) {
                 enteredText = input.getText().toString() + " ";
                 printText(enteredText);
+                addToStack(enteredText);
                 keypad.setField(enteredText);
                 InputMethodManager imm = (InputMethodManager) ctx.getSystemService(
                         Context.INPUT_METHOD_SERVICE);
@@ -233,9 +256,32 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         KeypadItem input = (KeypadItem) parent.getAdapter().getItem(position);
+
         if (!input.isDummy()){ // if not dummy print it
             editor.setText(editor.getText() + " " + input.getValue() );
             keypad.setField(input.getValue());
+        }
+
+        if(input.getValue() == "Back"){
+            Object poped = stk_bckSpc.pop(); //gets the poped "object"
+            String popedStr = poped.toString();
+            if(popedStr == "("){
+                for(int i = 0 ; i <= 1 ; i++){
+                    popedStr = stk_bckSpc.pop().toString() + " " + popedStr;
+                }
+            }
+//            if(popedStr.contains("mand")){
+//                popedStr = popedStr.replace("mand" , "");
+//                popedStr = stk_bckSpc.pop().toString() + " " + popedStr ;
+//            }
+            Log.d(TAG, "BACKSPACE ITEM: " + poped.toString());
+            String editStr = editor.getText().toString();
+            String x = editStr.replace(popedStr,""); // Removes unwanted string
+            editor.getText().clear();
+            printText(x);
+//            keypad.getPrevItems();
+            setItemAdapter(stk_prevKeyPadItems.pop());
+            return;
         }
 
         if (keypad.getType() == null) {
@@ -274,5 +320,6 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
+
 
 }
