@@ -6,6 +6,7 @@ package com.aucklanduni.p4p.scalang;
 public abstract class ScalaClass {
 
     protected String newLineAndTab = "\n\t";
+    protected String newLine = "\n";
 
     private int count = 0;
 

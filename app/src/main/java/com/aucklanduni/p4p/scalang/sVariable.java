@@ -17,6 +17,7 @@ public class sVariable extends ScalaClass implements sMember {
     public String c_mand_colon = ":";
     public Type d_var_Type;
     public List<KeypadItem> e_init_options = new ArrayList<>();
+    public String f_mand_newLine = newLine;
 
     public sVariable(){
         a_var_val_options.add(new KeypadItem("var"));

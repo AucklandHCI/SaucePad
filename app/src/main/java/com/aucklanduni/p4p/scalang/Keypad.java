@@ -187,9 +187,9 @@ public class Keypad {
 
                 currentScope.define(currentSymbol);
 
-//                Log.d(TAG, "== Printing all symbols for "+ currentScope.getScopeName());
-//                currentScope.printAll();
-//                Log.d(TAG, "==========================");
+                Log.d(TAG, "== Printing all symbols for "+ currentScope.getClass());
+                currentScope.printAll();
+                Log.d(TAG, "==========================");
             }
 
 
@@ -252,7 +252,7 @@ public class Keypad {
                     throw new RuntimeException("Can only add parameters to Method objects");
                 }//else{
 //                    currentScope.define(vs);
-                currentSymbol = new VariableSymbol("", null,0,0,0,false, (ClassSymbol)currentScope.getEnclosingScope());
+                currentSymbol = new VariableSymbol("", null, (ClassSymbol)currentScope.getEnclosingScope());
                 //}
                 break;
 
@@ -302,6 +302,27 @@ public class Keypad {
 
         try{
 
+            if (typeStack.peek().getClass() == sVariable.class) {
+
+                boolean needsNew = true;
+                if(currentSymbol instanceof VariableSymbol) {
+                    if (currentSymbol.getType() == null){
+                        needsNew = false;
+                    }
+
+                }
+                if(needsNew) {
+                    if (currentScope instanceof MethodSymbol) {
+                        currentSymbol = new VariableSymbol("", null, (ClassSymbol) currentScope.getEnclosingScope());
+                    } else if (currentScope instanceof ClassSymbol) {
+                        currentSymbol = new VariableSymbol("", null, (ClassSymbol) currentScope);
+                    } else {
+                        throw new RuntimeException("Variables/Fields must be in methods/classes respectively");
+                    }
+                }
+
+            }
+
             Class fieldType = field.getType();
 
             if (fieldType == String.class) {
@@ -321,6 +342,7 @@ public class Keypad {
                 Symbol s = currentScope.resolve(input);
                 if (s instanceof Type){
                     field.set(typeStack.peek(), (Type) s);
+                    currentSymbol.setType((Type)s);
                 }else{
                     throw new RuntimeException("Incorrect 'Type' provided");
                 }

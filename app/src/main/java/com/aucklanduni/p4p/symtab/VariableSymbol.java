@@ -4,40 +4,39 @@ package com.aucklanduni.p4p.symtab;
 
 public class VariableSymbol extends Symbol {
 
-	private int line, col;
-	private int modifiers;
-	private boolean initialised;
+//	private int line, col;
+//	private int modifiers;
+//	private boolean initialised;
 	private ClassSymbol clazz;
 
-	public VariableSymbol(String name, Type type, int line, int column,
-			int modifiers, boolean initialised, ClassSymbol clazz) {
+	public VariableSymbol(String name, Type type, ClassSymbol clazz) {
 		super(name, type);
-		this.line = line;
-		this.col = column;
-		this.modifiers = modifiers;
-		this.initialised = initialised;
+//		this.line = line;
+//		this.col = column;
+//		this.modifiers = modifiers;
+//		this.initialised = initialised;
 		this.clazz = clazz;
 	}
 
-	public int getLine() {
-		return line;
-	}
-
-	public int getCol() {
-		return col;
-	}
-
-	public ClassSymbol getClassSymbol() {
-		return clazz;
-	}
-	
-	public void initialiseField(){
-		this.initialised = true;
-	}
-	
-	public boolean isInitialised(){
-		return initialised;
-	}
+//	public int getLine() {
+//		return line;
+//	}
+//
+//	public int getCol() {
+//		return col;
+//	}
+//
+//	public ClassSymbol getClassSymbol() {
+//		return clazz;
+//	}
+//
+//	public void initialiseField(){
+//		this.initialised = true;
+//	}
+//
+//	public boolean isInitialised(){
+//		return initialised;
+//	}
 
 //	public boolean isStatic() {
 //		return ModifierSet.isStatic(modifiers);
