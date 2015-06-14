@@ -15,17 +15,23 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EmptyStackException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 /**
  * Created by Taz on 13/05/15.
  */
 public class Keypad {
 
-    private ScalaClass type = null;
-    private ScalaClass prevType = null;
+//    private ScalaClass type = null;
+//    private ScalaClass prevType = null;
+
+    private Stack<ScalaClass> typeStack = new Stack<>();
+
     //    private boolean isList = false;
     private Map<String, ScalaClass> items = new HashMap<String,ScalaClass>();
     private int count = 0;
@@ -46,6 +52,8 @@ public class Keypad {
         items.put("sClass", new sClass());
         items.put("sMethod", new sMethod());
         items.put("sParameter", new sParameter());
+        items.put("sVariable", new sVariable());
+
         ClassSymbol cs = new ClassSymbol("testClassSym",currentScope);
         currentScope = cs;
         currentSymbol = cs;
@@ -53,6 +61,7 @@ public class Keypad {
     }
 
     public List<KeypadItem> getNextItems() throws RuntimeException{
+        ScalaClass type = typeStack.peek();
         if (type == null){
             throw new RuntimeException("Key type was null");
         }
@@ -60,13 +69,15 @@ public class Keypad {
         String className = type.getName(); //Scala Class
         count = type.getCount(); // index for which field we're at
 
-        //Log.d(TAG, "class Name = " + className + ", count = " + count);
+        Log.d(TAG, "class Name = " + className + ", count = " + count);
         try {
 
             Class cls = Class.forName("com.aucklanduni.p4p.scalang." + className); // class object
 
             if (count == 0) {
                 type = (ScalaClass) cls.newInstance();
+                typeStack.pop();
+                typeStack.push(type);
             }
 
             Field[] fields = cls.getFields(); //array of fields
@@ -88,7 +99,9 @@ public class Keypad {
                     String fName = field.getName();
                     String val = (String) field.get(type);
                     if (fName.contains("mand")) { // if mandatory
+                        type = typeStack.peek();
                         type.incrementCount();
+
                         kpFrag.printText(val);
                         kpFrag.addToStack(val);
                         return new ArrayList<>(); //return empty list for method sake
@@ -116,13 +129,31 @@ public class Keypad {
                     ParameterizedType listType = (ParameterizedType) field.getGenericType();
                     Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0]; // Getting type of list
 
+//                    Log.d(TAG, "=== listclass: "+ listClass.getSimpleName());
+
                     if (listClass == KeypadItem.class) {
 
-                        prevType = type;
-//                        type.incrementCount();
-                        type = null;
+//                        prevType = type;
+////                        type.incrementCount();
+//                        type = null;
+                        typeStack.push(null);
                         isList = true;
-                        return (List<KeypadItem>)field.get(prevType);
+                        return (List<KeypadItem>) field.get(type);
+
+                    }else if (ScalaClass.class.isAssignableFrom(listClass)){
+//                        prevType = type;
+
+                        type = items.get(listClass.getSimpleName());
+                        typeStack.push(type);
+                        isList = true;
+                        Log.d(TAG,"type = "+type.getName());
+
+                        return new ArrayList<>();
+//                        prevType = type;
+//                        type = null;
+//                        isList = true;
+
+
                     }
 //                    keyPad.add(new KeypadItem(newParam,true));
 //                    keyPad.add(new KeypadItem(done,true));
@@ -135,19 +166,30 @@ public class Keypad {
 //                type.incrementCount();
             }else{
                 type.resetCount();
-                if (prevType != null){
 
-                    type = prevType;
-                    prevType = null;
-                    isList = false;
-
+                Iterator<ScalaClass> it = typeStack.iterator();
+                while (it.hasNext()){
+                    Log.d(TAG, "==Stack== item: " + it.next());
                 }
+
+
+                typeStack.pop();
+                field = null;
+//                if (typeStack.size() >= 2){
+////                if (prevType != null){
+//
+////                    type =
+//                    typeStack.pop(); //prevType;
+////                    prevType = null;
+//                    isList = false;
+//
+//                }
 
                 currentScope.define(currentSymbol);
 
-                Log.d(TAG, "== Printing all symbols for "+ currentScope.getScopeName());
-                currentScope.printAll();
-                Log.d(TAG, "==========================");
+//                Log.d(TAG, "== Printing all symbols for "+ currentScope.getScopeName());
+//                currentScope.printAll();
+//                Log.d(TAG, "==========================");
             }
 
 
@@ -167,7 +209,15 @@ public class Keypad {
 
 
     public ScalaClass getType(){
-        return type;
+        try {
+            ScalaClass sC = typeStack.peek();
+            if (sC == null){
+                typeStack.pop();
+            }
+            return  sC;
+        }catch (EmptyStackException e){
+            return null;
+        }
     }
 
     public void setType(String input) {
@@ -207,11 +257,14 @@ public class Keypad {
                 break;
 
             case "Done":
-                type = prevType;
-                prevType = null;
+//                type = prevType;
+//                prevType = null;
+
+
+//                typeStack.pop();
                 listCount = 0;
-                type.incrementCount();
-                type.incrementCount();
+                typeStack.peek().incrementCount();
+                typeStack.peek().incrementCount();
                 return;
 
             case "class":
@@ -228,7 +281,9 @@ public class Keypad {
             return;
         }
 
-        this.type = items.get(input);
+//        this.type = items.get(input);
+        typeStack.push(items.get(input));//type);
+
 //        this.type = type;
     }
 
@@ -239,12 +294,18 @@ public class Keypad {
             return;
         }
 
+        if(typeStack.peek() == null){
+            typeStack.pop();
+            typeStack.peek().incrementCount();
+            return;
+        }
+
         try{
 
             Class fieldType = field.getType();
 
             if (fieldType == String.class) {
-                field.set(type, input);
+                field.set(typeStack.peek(), input);
 
                 /*
                 if the name of the field contains "name" then
@@ -259,15 +320,16 @@ public class Keypad {
             }else if (fieldType == Type.class){
                 Symbol s = currentScope.resolve(input);
                 if (s instanceof Type){
-                    field.set(type, (Type) s);
+                    field.set(typeStack.peek(), (Type) s);
                 }else{
                     throw new RuntimeException("Incorrect 'Type' provided");
                 }
             }else if (fieldType == List.class){
-
+                //TODO need to find a way to add to the correct list
             }
 
-            type.incrementCount();
+            Log.d(TAG, "[setField] stack peek = "+ typeStack.peek());
+            typeStack.peek().incrementCount();
 
         }catch (IllegalAccessException e){
             e.printStackTrace();

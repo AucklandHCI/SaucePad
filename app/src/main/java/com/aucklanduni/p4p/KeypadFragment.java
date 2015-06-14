@@ -149,12 +149,6 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
     private void setItemAdapter(List<KeypadItem> items){
 
-
-//        if(items != null){
-//            for (KeypadItem s : items){
-//                Log.d(TAG, "item: " + s);
-//            }
-//        }
         if(items != null){
             if(items.size() != 0){
                 stk_prevKeyPadItems.push(items);
@@ -170,7 +164,16 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 getStringLiteralInput();
                 return;
             }
+
+            while(items.size() == 0){
+                items = keypad.getNextItems();
+            }
 //            setItemAdapter(keypad.getNextItems());
+        }
+        if(items != null){
+            for (KeypadItem s : items){
+                Log.d(TAG, "item: " + s);
+            }
         }
 
         if(items.size() == 1 && items.get(0).toString() == "def"){
@@ -178,8 +181,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         }
 
         adapter = new ArrayAdapter<KeypadItem>(ctx, android.R.layout.simple_list_item_1, items);
-        KeypadItem bckSpace = new KeypadItem("Back", true);
-        adapter.add(bckSpace);
+//        KeypadItem bckSpace = new KeypadItem("Back", true);
+//        adapter.add(bckSpace);
         gv_keyPad.setAdapter(adapter);
         gv_keyPad.invalidateViews();
 

@@ -15,6 +15,14 @@ public class sMethod extends ScalaClass implements sMember {
     public String d_right_bracket = ")";
     public String e_mand_left_brace = "{" + newLineAndTab;
 
+    public String z_right_brace = "}";
+
+    //=== temporary, only for testing ===
+
+    public List<sVariable> f_variables = new ArrayList<>();
+
+    //=== temporary, only for testing ===
+
     private final static String newParam = "New Param";
     private final static String done = "Done";
 
