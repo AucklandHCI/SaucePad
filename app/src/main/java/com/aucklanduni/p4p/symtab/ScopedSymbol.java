@@ -66,10 +66,6 @@ public class ScopedSymbol extends Symbol implements Scope {
 			Log.d("testing", "was null");
 		}
 
-//		for( String s : types){
-			Log.d("testing", "In scoped: " + symbols.entrySet().size());
-//		}
-
 		return types;
 	}
 

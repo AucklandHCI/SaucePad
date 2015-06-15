@@ -8,28 +8,25 @@ import java.util.List;
  */
 public class sMethod extends ScalaClass implements sMember {
 
+    public String a_mand_def = "def";
     public String a_method_name = null;
     public String b_mand_left_bracket = "("; //"mand_" for mandatory item
     public List<KeypadItem> c_parameter_options = new ArrayList<>();
     public List<sParameter> c_parameters = new ArrayList<sParameter>();
     public String d_right_bracket = ")";
-    public String e_mand_left_brace = "{" + newLineAndTab;
+    public String e_mand_left_brace = "{" + indent();
 
-    public String z_right_brace = "}";
-
-    //=== temporary, only for testing ===
-
-    public List<sVariable> f_variables = new ArrayList<>();
+    public String z_right_brace = "}" + unIndent() ;
 
     //=== temporary, only for testing ===
 
-    private final static String newParam = "New Param";
-    private final static String done = "Done";
+//    public List<sVariable> f_variables = new ArrayList<>();
 
+    //=== temporary, only for testing ===
 
     public sMethod(){
-        c_parameter_options.add(new KeypadItem(newParam, true));
-        c_parameter_options.add(new KeypadItem(done,true));
+        c_parameter_options.add(new KeypadItem("New Param", true));
+        c_parameter_options.add(new KeypadItem("Done",true));
     }
 
     public String getMethodName() {
@@ -44,12 +41,9 @@ public class sMethod extends ScalaClass implements sMember {
         return b_mand_left_bracket;
     }
 
-    public final static String getNewParam() {
-        return newParam;
-    }
-
-    public final static String getDone() {
-        return done;
+    @Override
+    public String toPrintAfterDone() {
+        return d_right_bracket;
     }
 
     //    public List<sParameter> getParameters() {

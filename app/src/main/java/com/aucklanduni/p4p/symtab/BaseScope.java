@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class BaseScope implements Scope {
 
-	protected HashMap<String, Symbol> symbols = new HashMap<String, Symbol>();
+	protected static HashMap<String, Symbol> symbols = new HashMap<String, Symbol>();
 	protected Scope enclosingScope;
 
 	public BaseScope(Scope s) {
@@ -70,7 +70,11 @@ public class BaseScope implements Scope {
 	@Override
 	public void printAll() {
 		for (Map.Entry<String, Symbol> entry : symbols.entrySet()){
-			Log.d("testing", "key: " + entry.getKey() + ", value: " + entry.getValue());
+			Symbol value = entry.getValue();
+			if(value instanceof BuiltInTypeSymbol){
+				continue;
+			}
+			Log.d("testing", "key: " + entry.getKey() + ", value: " + value);
 		}
 	}
 }

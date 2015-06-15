@@ -11,4 +11,8 @@ public class sParameter extends ScalaClass{//} extends sVariable{
     public String b_mand_colon = ":"; //"mand_" for mandatory item
     public Type c_paramType = null;
 
+    @Override
+    public String toPrintAfterDone() {
+        return "";
+    }
 }

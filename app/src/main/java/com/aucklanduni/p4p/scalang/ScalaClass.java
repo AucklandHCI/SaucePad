@@ -5,8 +5,10 @@ package com.aucklanduni.p4p.scalang;
  */
 public abstract class ScalaClass {
 
-    protected String newLineAndTab = "\n\t";
-    protected String newLine = "\n";
+
+    protected int numbTabs = 0;
+    protected static String newLine;
+
 
     private int count = 0;
 
@@ -29,4 +31,45 @@ public abstract class ScalaClass {
     public void resetCount(){
         count = 0;
     }
+
+    public String getItemAfterDone(){
+        incrementCount();
+        return toPrintAfterDone();
+    }
+
+    abstract protected String toPrintAfterDone();
+
+
+    protected String indent(){
+        newLine = "\n" + setTabs(1);
+        return newLine;
+    }
+
+    protected String unIndent(){
+        newLine = "\n" + setTabs(-1);
+        return newLine;
+    }
+
+    private String setTabs(int direction){
+
+        numbTabs += direction;
+
+        if (numbTabs < 0){
+            numbTabs = 0;
+        }
+
+        StringBuilder tabs = new StringBuilder("");
+        for(int i = 0; i < numbTabs; i++){
+            tabs.append(" ");
+            tabs.append(" ");
+            tabs.append(" ");
+        }
+
+        return tabs.toString();
+    }
+
+//    abstract int indentationLevel();
+
+
+
 }

@@ -58,8 +58,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     private Stack<Object> stk_bckSpc = new Stack<>(); //Stack holding all the items that are printed onto the screen
     private Stack<List<KeypadItem>> stk_prevKeyPadItems = new Stack<>(); //Keeps track of all the lists that are displayed on the keypad.
 
-
-    static final List<KeypadItem> letters = new ArrayList<KeypadItem>();
+    static final List<KeypadItem> initalList = new ArrayList<KeypadItem>();
     static final List<String> numbers = new ArrayList<String>();
 
 
@@ -77,10 +76,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     public static KeypadFragment newInstance(Context context) {
         KeypadFragment fragment = new KeypadFragment();
         ctx = context;
-        KeypadItem [] l = new KeypadItem[]{
-                new KeypadItem("def")
-
-        };
+        initalList.add(new KeypadItem("New Class", true));
 
 //                {
 //                "A", "B", "C", "D", "E",
@@ -93,9 +89,6 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 //                "0", "1", "2", "3", "4",
 //                "5", "6", "7", "8", "9",};
 
-        for(KeypadItem s : l){
-            letters.add(s);
-        }
 //
 //        for(String s : n){
 //            numbers.add(s);
@@ -131,7 +124,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         gv_keyPad = (GridView) view.findViewById(R.id.gv_KeyPad);
         editor = (EditText) view.findViewById(R.id.et_edit);
 
-        setItemAdapter(letters);
+        setItemAdapter(initalList);
         keypad = new Keypad(this);
 
         gv_keyPad.setOnItemClickListener(this);
@@ -170,11 +163,11 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
 //            setItemAdapter(keypad.getNextItems());
         }
-        if(items != null){
-            for (KeypadItem s : items){
-                Log.d(TAG, "item: " + s);
-            }
-        }
+//        if(items != null){
+//            for (KeypadItem s : items){
+//                Log.d(TAG, "item: " + s);
+//            }
+//        }
 
         if(items.size() == 1 && items.get(0).toString() == "def"){
             addToStack("def");
@@ -196,7 +189,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
         // Set up the input
         final EditText input = new EditText(this.getActivity());
-        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        // Specify the type of input expected;
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.requestFocus();
         builder.setView(input);
@@ -307,6 +300,10 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 //            setAdapter(numbers);
 //        }
 
+    }
+
+    public List<KeypadItem> getInitialList(){
+        return initalList;
     }
 
     /**

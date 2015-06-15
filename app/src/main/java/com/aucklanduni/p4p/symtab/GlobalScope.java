@@ -11,9 +11,8 @@ import java.util.Set;
 
 public class GlobalScope extends BaseScope {
 
-	private static HashMap<String, Symbol> symbols = new HashMap<String, Symbol>();
 	private static Set<Type> numericTypes = new HashSet<Type>();
-	
+
 	public GlobalScope() {
 		super(null);
 		

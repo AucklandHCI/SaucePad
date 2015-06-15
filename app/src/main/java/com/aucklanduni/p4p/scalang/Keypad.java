@@ -6,6 +6,7 @@ import com.aucklanduni.p4p.KeypadFragment;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
 import com.aucklanduni.p4p.symtab.GlobalScope;
 import com.aucklanduni.p4p.symtab.MethodSymbol;
+import com.aucklanduni.p4p.symtab.NullSymbol;
 import com.aucklanduni.p4p.symtab.Scope;
 import com.aucklanduni.p4p.symtab.Symbol;
 import com.aucklanduni.p4p.symtab.Type;
@@ -31,6 +32,7 @@ public class Keypad {
 //    private ScalaClass prevType = null;
 
     private Stack<ScalaClass> typeStack = new Stack<>();
+    private Stack<Symbol> symbolStack = new Stack<>();
 
     //    private boolean isList = false;
     private Map<String, ScalaClass> items = new HashMap<String,ScalaClass>();
@@ -41,8 +43,7 @@ public class Keypad {
     private Field field;
 
     private Scope globalScope = new GlobalScope();
-    private Scope currentScope = new GlobalScope();
-    private Symbol currentSymbol;
+    private Scope currentScope = globalScope;
 
 
     private String TAG = "testing";
@@ -53,15 +54,25 @@ public class Keypad {
         items.put("sMethod", new sMethod());
         items.put("sParameter", new sParameter());
         items.put("sVariable", new sVariable());
+        items.put("sField", new sField());
 
-        ClassSymbol cs = new ClassSymbol("testClassSym",currentScope);
-        currentScope = cs;
-        currentSymbol = cs;
+        symbolStack.push(new NullSymbol());
+
+//        ClassSymbol cs = new ClassSymbol("testClassSym",currentScope);
+//        currentScope = cs;
+//        currentSymbol = globalScope;
 
     }
 
     public List<KeypadItem> getNextItems() throws RuntimeException{
-        ScalaClass type = typeStack.peek();
+
+        ScalaClass type;
+        try {
+            type = typeStack.peek();
+        }catch (EmptyStackException e){
+            return kpFrag.getInitialList();
+        }
+
         if (type == null){
             throw new RuntimeException("Key type was null");
         }
@@ -69,7 +80,7 @@ public class Keypad {
         String className = type.getName(); //Scala Class
         count = type.getCount(); // index for which field we're at
 
-        Log.d(TAG, "class Name = " + className + ", count = " + count);
+//        Log.d(TAG, "class Name = " + className + ", count = " + count);
         try {
 
             Class cls = Class.forName("com.aucklanduni.p4p.scalang." + className); // class object
@@ -87,14 +98,14 @@ public class Keypad {
 //            }
             int numFields = fields.length;
 
-            Log.d(TAG, " numFields = " + numFields + " count = " + count);
+//            Log.d(TAG, " numFields = " + numFields + " count = " + count);
             if (count < numFields) {
 //                throw new RuntimeException("count too large.");
 
 
                 field = fields[count];
                 Class fType = field.getType();
-                Log.d(TAG, "field type: "+ fType.getSimpleName());
+//                Log.d(TAG, "field type: "+ fType.getSimpleName());
                 if (fType == String.class) { // if string
                     String fName = field.getName();
                     String val = (String) field.get(type);
@@ -146,7 +157,7 @@ public class Keypad {
                         type = items.get(listClass.getSimpleName());
                         typeStack.push(type);
                         isList = true;
-                        Log.d(TAG,"type = "+type.getName());
+//                        Log.d(TAG,"type = "+type.getName());
 
                         return new ArrayList<>();
 //                        prevType = type;
@@ -167,12 +178,6 @@ public class Keypad {
             }else{
                 type.resetCount();
 
-                Iterator<ScalaClass> it = typeStack.iterator();
-                while (it.hasNext()){
-                    Log.d(TAG, "==Stack== item: " + it.next());
-                }
-
-
                 typeStack.pop();
                 field = null;
 //                if (typeStack.size() >= 2){
@@ -185,9 +190,18 @@ public class Keypad {
 //
 //                }
 
-                currentScope.define(currentSymbol);
 
-                Log.d(TAG, "== Printing all symbols for "+ currentScope.getClass());
+                if(type instanceof sMethod && currentScope instanceof MethodSymbol){
+                    currentScope = currentScope.getEnclosingScope();
+                }
+
+                if(type instanceof sClass && currentScope instanceof ClassSymbol){
+                    currentScope = currentScope.getEnclosingScope();
+                }
+
+                currentScope.define(symbolStack.pop());
+
+                Log.d(TAG, "== Printing all symbols for "+ currentScope.getScopeName());
                 currentScope.printAll();
                 Log.d(TAG, "==========================");
             }
@@ -199,6 +213,8 @@ public class Keypad {
             e.printStackTrace();
         } catch (InstantiationException e) {
             e.printStackTrace();
+//        } catch (EmptyStackException e){
+//            return kpFrag.getInitialList();
         }
         return keyPad;
     }
@@ -223,18 +239,18 @@ public class Keypad {
     public void setType(String input) {
 
         switch (input){
-            case "def":
-                input = "sMethod";
-
-                if (!(currentScope instanceof ClassSymbol)){
-                    throw new RuntimeException("Method must be in a class");
-                }
-
-                MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope);
-                currentSymbol = ms;
-//                currentScope.define(ms);
-                currentScope = ms;
-                break;
+//            case "def":
+//                input = "sMethod";
+//
+//                if (!(currentScope instanceof ClassSymbol)){
+//                    throw new RuntimeException("Method must be in a class");
+//                }
+//
+//                MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope);
+//                currentSymbol = ms;
+////                currentScope.define(ms);
+//                currentScope = ms;
+//                break;
 
             case "New Param":
                 input = "sParameter";
@@ -252,8 +268,30 @@ public class Keypad {
                     throw new RuntimeException("Can only add parameters to Method objects");
                 }//else{
 //                    currentScope.define(vs);
-                currentSymbol = new VariableSymbol("", null, (ClassSymbol)currentScope.getEnclosingScope());
+                symbolStack.push(new VariableSymbol("", null, (ClassSymbol) currentScope.getEnclosingScope()));
                 //}
+                break;
+
+            case "New Field":
+                input = "sField";
+                if (currentScope instanceof ClassSymbol) {
+                    symbolStack.push(new VariableSymbol("newField", null, (ClassSymbol) currentScope));
+                } else {
+                    throw new RuntimeException("Fields must be in classes");
+                }
+                break;
+
+            case "New Method":
+                input = "sMethod";
+
+                if (!(currentScope instanceof ClassSymbol)){
+                    throw new RuntimeException("Method must be in a class");
+                }
+
+                MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope);
+                symbolStack.push(ms);
+//                currentScope.define(ms);
+                currentScope = ms;
                 break;
 
             case "Done":
@@ -263,14 +301,15 @@ public class Keypad {
 
 //                typeStack.pop();
                 listCount = 0;
+                kpFrag.printText(typeStack.peek().getItemAfterDone());
                 typeStack.peek().incrementCount();
                 typeStack.peek().incrementCount();
                 return;
 
-            case "class":
+            case "New Class":
                 input = "sClass";
                 ClassSymbol cs = new ClassSymbol("NewClassScope",globalScope);
-                currentSymbol = cs;
+                symbolStack.push(cs);
 //                currentScope.define(cs);
                 currentScope = cs;
                 break;
@@ -305,6 +344,7 @@ public class Keypad {
             if (typeStack.peek().getClass() == sVariable.class) {
 
                 boolean needsNew = true;
+                Symbol currentSymbol = symbolStack.peek();
                 if(currentSymbol instanceof VariableSymbol) {
                     if (currentSymbol.getType() == null){
                         needsNew = false;
@@ -313,11 +353,9 @@ public class Keypad {
                 }
                 if(needsNew) {
                     if (currentScope instanceof MethodSymbol) {
-                        currentSymbol = new VariableSymbol("", null, (ClassSymbol) currentScope.getEnclosingScope());
-                    } else if (currentScope instanceof ClassSymbol) {
-                        currentSymbol = new VariableSymbol("", null, (ClassSymbol) currentScope);
-                    } else {
-                        throw new RuntimeException("Variables/Fields must be in methods/classes respectively");
+                        symbolStack.push(new VariableSymbol("", null, (ClassSymbol) currentScope.getEnclosingScope()));
+                    } else{
+                        throw new RuntimeException("Variables must be in Methods!");
                     }
                 }
 
@@ -334,7 +372,17 @@ public class Keypad {
                 by the user.
                  */
                 if (field.getName().contains("name")){
-                    currentSymbol.setName(input);
+                    symbolStack.peek().setName(input);
+
+                    ScalaClass type = typeStack.peek();
+
+                    if(type instanceof sMethod && currentScope instanceof MethodSymbol){
+                        ((MethodSymbol) currentScope).setName(input);
+                    }
+                    if(type instanceof sClass && currentScope instanceof ClassSymbol){
+                        ((ClassSymbol) currentScope).setName(input);
+                    }
+
                 }
 
 
@@ -342,7 +390,7 @@ public class Keypad {
                 Symbol s = currentScope.resolve(input);
                 if (s instanceof Type){
                     field.set(typeStack.peek(), (Type) s);
-                    currentSymbol.setType((Type)s);
+                    symbolStack.peek().setType((Type) s);
                 }else{
                     throw new RuntimeException("Incorrect 'Type' provided");
                 }
@@ -350,7 +398,7 @@ public class Keypad {
                 //TODO need to find a way to add to the correct list
             }
 
-            Log.d(TAG, "[setField] stack peek = "+ typeStack.peek());
+//            Log.d(TAG, "[setField] stack peek = "+ typeStack.peek());
             typeStack.peek().incrementCount();
 
         }catch (IllegalAccessException e){
