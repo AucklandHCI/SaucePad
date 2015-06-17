@@ -1,5 +1,7 @@
 package com.aucklanduni.p4p.scalang;
 
+import com.aucklanduni.p4p.scalang.Statement.sStatement;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +17,16 @@ public class sMethod extends ScalaClass implements sMember {
     public List<sParameter> c_parameters = new ArrayList<sParameter>();
     public String d_right_bracket = ")";
     public String e_mand_left_brace = "{" + indent();
+//    public List<KeypadItem> f_statement_options = new ArrayList<>();
+//    public List<sStatement> f_statements = new ArrayList<>();
 
     public String z_right_brace = "}" + unIndent() ;
+
+    //===== Private Fields =====
+
+    private boolean doneParams = false;
+
+    //==========================
 
     //=== temporary, only for testing ===
 
@@ -27,6 +37,13 @@ public class sMethod extends ScalaClass implements sMember {
     public sMethod(){
         c_parameter_options.add(new KeypadItem("New Param", true));
         c_parameter_options.add(new KeypadItem("Done",true));
+
+//        f_statement_options.add(new KeypadItem("Variables", true));
+//        f_statement_options.add(new KeypadItem("Control", true));
+//        f_statement_options.add(new KeypadItem("Exception", true));
+//        f_statement_options.add(new KeypadItem("Return", true));
+//        f_statement_options.add(new KeypadItem("Method", true));
+//        f_statement_options.add(new KeypadItem("Done", true));
     }
 
     public String getMethodName() {
@@ -43,7 +60,11 @@ public class sMethod extends ScalaClass implements sMember {
 
     @Override
     public String toPrintAfterDone() {
-        return d_right_bracket;
+        if(!doneParams){
+            doneParams = true;
+            return d_right_bracket;
+        }
+        return z_right_brace;
     }
 
     //    public List<sParameter> getParameters() {

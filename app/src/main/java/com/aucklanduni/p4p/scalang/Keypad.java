@@ -51,10 +51,16 @@ public class Keypad {
     public Keypad(KeypadFragment keypadFragment){
         this.kpFrag = keypadFragment;
         items.put("sClass", new sClass());
+        items.put("New Class", new sClass());
         items.put("sMethod", new sMethod());
+        items.put("New Method", new sMethod());
         items.put("sParameter", new sParameter());
+        items.put("New Param", new sParameter());
         items.put("sVariable", new sVariable());
         items.put("sField", new sField());
+        items.put("New Field", new sField());
+//        items.put("Control", null);
+
 
         symbolStack.push(new NullSymbol());
 
@@ -179,6 +185,11 @@ public class Keypad {
                 type.resetCount();
 
                 typeStack.pop();
+
+                if (isList){
+                    addToList(typeStack.peek(), type);
+                }
+
                 field = null;
 //                if (typeStack.size() >= 2){
 ////                if (prevType != null){
@@ -239,21 +250,7 @@ public class Keypad {
     public void setType(String input) {
 
         switch (input){
-//            case "def":
-//                input = "sMethod";
-//
-//                if (!(currentScope instanceof ClassSymbol)){
-//                    throw new RuntimeException("Method must be in a class");
-//                }
-//
-//                MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope);
-//                currentSymbol = ms;
-////                currentScope.define(ms);
-//                currentScope = ms;
-//                break;
-
             case "New Param":
-                input = "sParameter";
                 if (listCount > 0) {
                     kpFrag.printText(",");
                     kpFrag.addToStack(",");
@@ -273,7 +270,6 @@ public class Keypad {
                 break;
 
             case "New Field":
-                input = "sField";
                 if (currentScope instanceof ClassSymbol) {
                     symbolStack.push(new VariableSymbol("newField", null, (ClassSymbol) currentScope));
                 } else {
@@ -282,7 +278,6 @@ public class Keypad {
                 break;
 
             case "New Method":
-                input = "sMethod";
 
                 if (!(currentScope instanceof ClassSymbol)){
                     throw new RuntimeException("Method must be in a class");
@@ -307,7 +302,6 @@ public class Keypad {
                 return;
 
             case "New Class":
-                input = "sClass";
                 ClassSymbol cs = new ClassSymbol("NewClassScope",globalScope);
                 symbolStack.push(cs);
 //                currentScope.define(cs);
@@ -396,6 +390,9 @@ public class Keypad {
                 }
             }else if (fieldType == List.class){
                 //TODO need to find a way to add to the correct list
+
+
+
             }
 
 //            Log.d(TAG, "[setField] stack peek = "+ typeStack.peek());
@@ -406,4 +403,32 @@ public class Keypad {
         }
     }
 
+    private void addToList(ScalaClass addTo, ScalaClass obj){
+        Class cls = addTo.getClass();
+        Field currentField = cls.getFields()[addTo.getCount() + 1];
+        if (currentField.getType() != List.class){
+            throw new RuntimeException("Field not of type List");
+        }
+
+        ParameterizedType listType = (ParameterizedType) currentField.getGenericType();
+        Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0];
+
+        if (!ScalaClass.class.isAssignableFrom(listClass)){
+            throw new RuntimeException("List not of type ScalaClass");
+        }
+
+        try {
+            List listField = (List) currentField.get(addTo);
+            Log.d(TAG, "[addToList] before: list size = " + listField.size());
+            listField.add(obj);
+            currentField.set(addTo, listField);
+            listField = (List) currentField.get(addTo);
+            Log.d(TAG, "[addToList] after: list size = " + listField.size());
+
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+
+    }
 }
