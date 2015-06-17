@@ -1,5 +1,6 @@
 package com.aucklanduni.p4p.scalang;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,9 @@ public class sMethod extends ScalaClass implements sMember {
         return done;
     }
 
+    public String getClassName (){
+        return this.getClassName();
+    }
     //    public List<sParameter> getParameters() {
 //        return parameters;
 //    }
@@ -51,6 +55,11 @@ public class sMethod extends ScalaClass implements sMember {
 //    public void addParameters(sParameter parameter) {
 //        this.parameters.add(parameter);
 //    }
+
+    public Object getFieldValue(){
+        Object x = null;
+        return x;
+    }
 }
 
 // def name( a : Int )

@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class Keypad {
 
-    private ScalaClass type = null;
+    private ScalaClass type = null; //The type the scala class is a part of i.e if def pressed then type will be sMethod
     private ScalaClass prevType = null;
     //    private boolean isList = false;
     private Map<String, ScalaClass> items = new HashMap<String,ScalaClass>();
@@ -90,7 +90,7 @@ public class Keypad {
                     if (fName.contains("mand")) { // if mandatory
                         type.incrementCount();
                         kpFrag.printText(val);
-                        kpFrag.addToStack(val);
+                        kpFrag.addToStack("mand_" + val); //adds the mandatory variable to the stack.
                         return new ArrayList<>(); //return empty list for method sake
                     }
 
@@ -160,10 +160,6 @@ public class Keypad {
         }
         return keyPad;
     }
-
-//    public List<KeypadItem> getPrevItems() throws RuntimeException{
-//        return null;
-//    }
 
 
     public ScalaClass getType(){
@@ -272,6 +268,57 @@ public class Keypad {
         }catch (IllegalAccessException e){
             e.printStackTrace();
         }
+    }
+
+    public void removeField(){
+        if (field == null) {
+           return;
+        }
+
+        try{
+
+            Class cls = field.getDeclaringClass();
+
+            Object defaultCls = cls.newInstance(); //creates a fresh instance of the class
+
+            Field[] fields = cls.getFields(); //gets the class' fields
+
+            //TODO ***SORT OUT WHEN MERGED*** use typeStack to do the following conditions.
+
+            /*
+            if (typeStack.peek() == null){
+                typeStack.pop();
+                if(typeStack.peek() == null){
+                    return;
+                }
+
+                //TODO after merging, change all "type" -> "typeStack.peek()"
+
+            }
+             */
+            if (type == null){
+
+                if(prevType != null) {
+                    type = prevType;
+                }else{
+                    return;
+                }
+            }
+
+            type.decrementCount();
+            Field f = fields[type.getCount()];
+
+            while (f.getName().contains("mand")){  // if field is mandatory, get the next field that is not mandatory
+                type.decrementCount();
+                f = fields[type.getCount()];
+            }
+
+            f.set(type,f.get(defaultCls)); //sets the value back to the default value of class
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 }

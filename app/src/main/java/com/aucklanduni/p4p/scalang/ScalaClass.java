@@ -17,6 +17,10 @@ public abstract class ScalaClass {
         count++;
     }
 
+    public void decrementCount(){
+        count--;
+    }
+
     public int getCount() {
         return count;
     }

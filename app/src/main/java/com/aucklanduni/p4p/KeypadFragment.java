@@ -17,11 +17,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Switch;
 
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.KeypadItem;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
@@ -79,7 +81,6 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         ctx = context;
         KeypadItem [] l = new KeypadItem[]{
                 new KeypadItem("def")
-
         };
 
 //                {
@@ -131,7 +132,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         gv_keyPad = (GridView) view.findViewById(R.id.gv_KeyPad);
         editor = (EditText) view.findViewById(R.id.et_edit);
 
+
         setItemAdapter(letters);
+
         keypad = new Keypad(this);
 
         gv_keyPad.setOnItemClickListener(this);
@@ -155,13 +158,14 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 //                Log.d(TAG, "item: " + s);
 //            }
 //        }
-        if(items != null){
-            if(items.size() != 0){
-                stk_prevKeyPadItems.push(items);
-            }
-        }
 
-        if (items == null){ // get input form user
+//        if(items != null){
+//            if(items.size() != 0){
+//                stk_prevKeyPadItems.push(items);
+//            }
+//        }
+
+        if (items == null){ // get input from user
             getStringLiteralInput();
             return;
         }else if (items.size() == 0) { // application has printed a mandatory character.
@@ -177,9 +181,11 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             addToStack("def");
         }
 
-        adapter = new ArrayAdapter<KeypadItem>(ctx, android.R.layout.simple_list_item_1, items);
         KeypadItem bckSpace = new KeypadItem("Back", true);
-        adapter.add(bckSpace);
+        items.add(0,bckSpace);
+
+        adapter = new ArrayAdapter<KeypadItem>(ctx, android.R.layout.simple_list_item_1, items);
+
         gv_keyPad.setAdapter(adapter);
         gv_keyPad.invalidateViews();
 
@@ -202,21 +208,22 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                enteredText = input.getText().toString() + " ";
+                enteredText = input.getText().toString();
                 printText(enteredText);
                 addToStack(enteredText);
-                keypad.setField(enteredText);
+
+                keypad.setField(enteredText);//sets the field in sMethodClass
                 InputMethodManager imm = (InputMethodManager) ctx.getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 //txtName is a reference of an EditText Field
                 imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
                 setItemAdapter(keypad.getNextItems());
-
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 dialog.cancel();
             }
         });
@@ -255,6 +262,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
         KeypadItem input = (KeypadItem) parent.getAdapter().getItem(position);
 
         if (!input.isDummy()){ // if not dummy print it
@@ -263,25 +271,45 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         }
 
         if(input.getValue() == "Back"){
-            Object poped = stk_bckSpc.pop(); //gets the poped "object"
-            String popedStr = poped.toString();
-            if(popedStr == "("){
-                for(int i = 0 ; i <= 1 ; i++){
-                    popedStr = stk_bckSpc.pop().toString() + " " + popedStr;
-                }
+
+            if(stk_bckSpc.isEmpty()){ // if the stack is empty then do nothing. ** NEEEDS RETHINK THIS **
+                return;
             }
-//            if(popedStr.contains("mand")){
-//                popedStr = popedStr.replace("mand" , "");
-//                popedStr = stk_bckSpc.pop().toString() + " " + popedStr ;
+
+            String stk_Item = stk_bckSpc.pop().toString(); //gets the popped "object"
+
+            if(stk_Item.contains("mand_")){ //if the item is a mandatory item
+                stk_Item = stk_Item.replace("mand_", ""); //removes the mand_ part
+                stk_Item = stk_bckSpc.pop().toString() + " " + stk_Item; // pop the next item also   stk_Item = "hi ("
+                Log.d(TAG,"FINAL STRING TO REMOVE: " + stk_Item);
+            }
+
+
+            String editorText = editor.getText().toString(); //get the text from the editor
+            int lastIndex = editorText.length() - stk_Item.length();
+            String tempStr = editorText.substring(0,lastIndex);
+
+//            String tempStr = editorText.replace(stk_Item,""); // Removes unwanted string
+//            editor.getText().clear(); //clear all the text from editor
+//            printText(tempStr); //print new string with removed part.
+
+//            int decr_count = keypad.getType().getCount();
+//
+//            if(decr_count != 0) {
+//                decr_count = decr_count - 1;
+//                keypad.getType().setCount(decr_count);
 //            }
-            Log.d(TAG, "BACKSPACE ITEM: " + poped.toString());
-            String editStr = editor.getText().toString();
-            String x = editStr.replace(popedStr,""); // Removes unwanted string
-            editor.getText().clear();
-            printText(x);
-//            keypad.getPrevItems();
-            setItemAdapter(stk_prevKeyPadItems.pop());
+
+            if(stk_bckSpc.peek().toString() == "def"){ //if only def is left in stack
+                keypad.removeField();
+                setItemAdapter(keypad.getNextItems());
+            }
+
+//            keypad.setType(stk_bckSpc.peek().toString());
+
             return;
+//            setItemAdapter(stk_prevKeyPadItems.pop());
+//            keypad.prevItems();
         }
 
         if (keypad.getType() == null) {
