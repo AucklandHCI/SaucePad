@@ -2,6 +2,7 @@ package com.aucklanduni.p4p.symtab;
 
 import android.util.Log;
 
+import java.io.ObjectStreamException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,12 +41,12 @@ public class BaseScope implements Scope {
 	}
 
 	@Override
-	public List<String> getAllTypeNames() {
+	public List<String> getByInstanceOf(Class type) {
 		List<String > types = new ArrayList<>();
 
 		for (Map.Entry<String, Symbol> entry : symbols.entrySet()){
 //			Log.d("testing", "[Base] key: " + entry.getKey() + ", value: " + entry.getValue().name);
-			if(entry.getValue() instanceof Type){
+			if(type.isAssignableFrom(entry.getValue().getClass())){
 				String typeName = entry.getKey();
 				if(!types.contains(typeName)) {
 					types.add(typeName);
@@ -54,7 +55,7 @@ public class BaseScope implements Scope {
 		}
 
 		if (enclosingScope != null){
-			types.addAll(enclosingScope.getAllTypeNames());
+			types.addAll(enclosingScope.getByInstanceOf(type));
 		}
 		return types;
 	}
@@ -66,6 +67,7 @@ public class BaseScope implements Scope {
 	public Symbol resolveCurrentScope(String name) {
 		return resolve(name);
 	}
+
 
 	@Override
 	public void printAll() {

@@ -136,23 +136,23 @@ public class GlobalScope extends BaseScope {
 		return false;
 	}
 
-	@Override
-	public List<String> getAllTypeNames() {
-		List<String > types = new ArrayList<>();
-
-		for (Map.Entry<String, Symbol> entry : symbols.entrySet()){
-//			Log.d("testing", "[Global] key: " + entry.getKey() + ", value: " + entry.getValue().name);
-			if(entry.getValue() instanceof Type){
-				String typeName = entry.getKey();
-				if(!types.contains(typeName)) {
-					types.add(typeName);
-				}
-			}
-		}
-
-		if (enclosingScope != null){
-			types.addAll(enclosingScope.getAllTypeNames());
-		}
-		return types;
-	}
+//	@Override
+//	public List<String> getAllTypeNames() {
+//		List<String > types = new ArrayList<>();
+//
+//		for (Map.Entry<String, Symbol> entry : symbols.entrySet()){
+////			Log.d("testing", "[Global] key: " + entry.getKey() + ", value: " + entry.getValue().name);
+//			if(entry.getValue() instanceof Type){
+//				String typeName = entry.getKey();
+//				if(!types.contains(typeName)) {
+//					types.add(typeName);
+//				}
+//			}
+//		}
+//
+//		if (enclosingScope != null){
+//			types.addAll(enclosingScope.getAllTypeNames());
+//		}
+//		return types;
+//	}
 }

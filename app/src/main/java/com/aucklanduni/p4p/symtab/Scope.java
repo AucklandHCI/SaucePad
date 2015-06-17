@@ -9,7 +9,8 @@ public interface Scope {
 	public Symbol resolve(String name);
 	public Symbol resolveCurrentScope(String name);
 	public Symbol resolveMember(String name);
-	public List<String> getAllTypeNames();
+	public List<String> getByInstanceOf(Class type);
+
 	public void printAll();
 
 

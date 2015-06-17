@@ -281,7 +281,11 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         }
 
         if (keypad.getType() == null) {
-            keypad.setType(input.getValue()); //set it to whatever is clicked from keypad
+            List<KeypadItem> list = keypad.setType(input.getValue()); //set it to whatever is clicked from keypad
+            if (list != null){
+                setItemAdapter(list);
+                return;
+            }
         }
 
         setItemAdapter(keypad.getNextItems());

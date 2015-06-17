@@ -47,21 +47,21 @@ public class ScopedSymbol extends Symbol implements Scope {
 	}
 
 	@Override
-	public List<String> getAllTypeNames() {
+	public List<String> getByInstanceOf(Class type) {
 		List<String > types = new ArrayList<>();
 
 		for (Map.Entry<String, Symbol> entry : symbols.entrySet()){
-//			Log.d("testing", "[Scoped] key: " + entry.getKey() + ", value: " + entry.getValue().name);
-			if(entry.getValue() instanceof Type){
+			Log.d("testing", "[Scoped] key: " + entry.getKey() + ", value: " + entry.getValue().name);
+			if(type.isAssignableFrom(entry.getValue().getClass())){
 				String typeName = entry.getKey();
-//				if(!types.contains(typeName)) {
+				if(!types.contains(typeName)) {
 					types.add(typeName);
-//				}
+				}
 			}
 		}
 
 		if (enclosingScope != null){
-			types.addAll(enclosingScope.getAllTypeNames());
+			types.addAll(enclosingScope.getByInstanceOf(type));
 		}else{
 			Log.d("testing", "was null");
 		}
