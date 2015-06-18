@@ -79,17 +79,17 @@ public class Keypad {
 
     }
 
-    public List<KeypadItem> getNextItems() throws RuntimeException{
+    public List<KeypadItem> getNextItems() throws RuntimeException {
 
         ScalaClass type;
         try {
             type = typeStack.peek();
-            if (type == null){
+            if (type == null) {
                 //throw new RuntimeException("Key type was null");
                 typeStack.pop();
                 type = typeStack.peek();
             }
-        }catch (EmptyStackException e){
+        } catch (EmptyStackException e) {
             return kpFrag.getInitialList();
         }
 
@@ -124,138 +124,214 @@ public class Keypad {
 
 
                 field = fields[count];
-                Class fType = field.getType();
-                Log.d(TAG, "field type: "+ fType.getSimpleName() +
-                        ", field name: " + field.getName());
-
-                if (fType == String.class) { // if string
-                    String fName = field.getName();
-                    String val = (String) field.get(type);
-                    if (fName.contains("mand")) { // if mandatory
-                        type = typeStack.peek();
-                        type.incrementCount();
-
-                        kpFrag.printText(val);
-                        kpFrag.addToStack(val);
-                        return new ArrayList<>(); //return empty list for method sake
-                    }
-
-                    //Log.d(TAG, "val = " + val);
-                    if (val == null) {
-//                        type.incrementCount(); // increment count to look at next field
-                        return null; // null acts as marker to get input from user.
-                    }
-                    keyPad.add(new KeypadItem(val)); // add it to the keypad to display.
-
-                }else if(fType == Type.class){
-
-                    // get all the types that are in scope and display them
-                    // alphabetically.
-                    Log.d(TAG, "curScope = " + currentScope.getScopeName());
-                    List<String> typeNames = currentScope.getByInstanceOf(Type.class);
-                    Collections.sort(typeNames);
-                    for (String name : typeNames){
-                        keyPad.add(new KeypadItem(name));
-                    }
-
-                }else if(fType == List.class){
-
-                    ParameterizedType listType = (ParameterizedType) field.getGenericType();
-                    Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0]; // Getting type of list
-
-                    Log.d(TAG, "=== listclass: "+ listClass.getSimpleName());
-
-                    if (listClass == KeypadItem.class) {
-
-//                        prevType = type;
-////                        type.incrementCount();
-//                        type = null;
 
 
-                        try{
-                            if (fields[count + 1].getType() == List.class) {
-                                isList = true;
-                            }else{
-                                isList = false;
-                            }
+                keyPad =  typeStack.peek().doInteraction(field, typeStack.peek());
+                if (keyPad == null){
+                    return keyPad;
+                }
 
-                        }catch (ArrayIndexOutOfBoundsException e){
-                            isList = false;
-                        }
-                        typeStack.push(null);
-                        return (List<KeypadItem>) field.get(type);
-
-                    }else if (ScalaClass.class.isAssignableFrom(listClass)){
-//                        prevType = type;
-
-                        type = items.get(listClass.getSimpleName());
-                        typeStack.push(type);
-                        isList = true;
-//                        Log.d(TAG,"type = "+type.getName());
-
+                if (keyPad.size() > 1){ // only null marker to symbolise printing
+                    if (keyPad.get(0) == null){
+                        String toPrint = keyPad.get(1).getValue();
+                        typeStack.peek().incrementCount();
+                        kpFrag.printText(toPrint);
                         return new ArrayList<>();
-//                        prevType = type;
-//                        type = null;
-//                        isList = true;
-
-
                     }
-//                    keyPad.add(new KeypadItem(newParam,true));
-//                    keyPad.add(new KeypadItem(done,true));
-//                    return keyPad;
-
-
-
                 }
-
-//                type.incrementCount();
-            }else{
-                type.resetCount();
-
-                typeStack.pop();
-
-                if (isList){
-                    addToList(typeStack.peek(), type);
-                    isList = false;
-                }
-
-                field = null;
-//                if (typeStack.size() >= 2){
-////                if (prevType != null){
-//
-////                    type =
-//                    typeStack.pop(); //prevType;
-////                    prevType = null;
-//                    isList = false;
-//
-//                }
-
-
-                if(type instanceof sMethod && currentScope instanceof MethodSymbol){
-                    currentScope = currentScope.getEnclosingScope();
-                }
-
-                if(type instanceof sClass && currentScope instanceof ClassSymbol){
-                    currentScope = currentScope.getEnclosingScope();
-                }
-
-                currentScope.define(symbolStack.pop());
-
-                Log.d(TAG, "== Printing all symbols for "+ currentScope.getScopeName());
-                currentScope.printAll();
-                Log.d(TAG, "==========================");
             }
 
-
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
         } catch (InstantiationException e) {
             e.printStackTrace();
-//        } catch (EmptyStackException e){
-//            return kpFrag.getInitialList();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
+
         return keyPad;
     }
+
+//    public List<KeypadItem> getNextItems() throws RuntimeException{
+//
+//        ScalaClass type;
+//        try {
+//            type = typeStack.peek();
+//            if (type == null){
+//                //throw new RuntimeException("Key type was null");
+//                typeStack.pop();
+//                type = typeStack.peek();
+//            }
+//        }catch (EmptyStackException e){
+//            return kpFrag.getInitialList();
+//        }
+//
+//
+//        List<KeypadItem> keyPad = new ArrayList<>(); // whats displayed on the keyboard
+//        String className = type.getName(); //Scala Class
+//        count = type.getCount(); // index for which field we're at
+//
+//
+//        try {
+//
+//            Class cls = type.getClass(); // class object
+//
+//            if (count == 0) {
+//                type = (ScalaClass) cls.newInstance();
+//                typeStack.pop();
+//                typeStack.push(type);
+//            }
+//
+//            Field[] fields = cls.getFields(); //array of fields
+//
+////            for (Field fi : fields){
+////                Log.d(TAG, fi.getName());
+////            }
+//            int numFields = fields.length;
+//
+//            Log.d(TAG, "class Name = " + className);
+//
+//            Log.d(TAG, " numFields = " + numFields + " count = " + count);
+//            if (count < numFields) {
+////                throw new RuntimeException("count too large.");
+//
+//
+//                field = fields[count];
+//
+//
+//                return typeStack.peek().doInteraction(field, typeStack.peek());
+//
+//
+//                Class fType = field.getType();
+//                Log.d(TAG, "field type: "+ fType.getSimpleName() +
+//                        ", field name: " + field.getName());
+//
+//                if (fType == String.class) { // if string
+//                    String fName = field.getName();
+//                    String val = (String) field.get(type);
+//                    if (fName.contains("mand")) { // if mandatory
+//                        type = typeStack.peek();
+//                        type.incrementCount();
+//
+//                        kpFrag.printText(val);
+//                        kpFrag.addToStack(val);
+//                        return new ArrayList<>(); //return empty list for method sake
+//                    }
+//
+//                    //Log.d(TAG, "val = " + val);
+//                    if (val == null) {
+////                        type.incrementCount(); // increment count to look at next field
+//                        return null; // null acts as marker to get input from user.
+//                    }
+//                    keyPad.add(new KeypadItem(val)); // add it to the keypad to display.
+//
+//                }else if(fType == Type.class){
+//
+//                    // get all the types that are in scope and display them
+//                    // alphabetically.
+//                    Log.d(TAG, "curScope = " + currentScope.getScopeName());
+//                    List<String> typeNames = currentScope.getByInstanceOf(Type.class);
+//                    Collections.sort(typeNames);
+//                    for (String name : typeNames){
+//                        keyPad.add(new KeypadItem(name));
+//                    }
+//
+//                }else if(fType == List.class){
+//
+//                    ParameterizedType listType = (ParameterizedType) field.getGenericType();
+//                    Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0]; // Getting type of list
+//
+//                    Log.d(TAG, "=== listclass: "+ listClass.getSimpleName());
+//
+//                    if (listClass == KeypadItem.class) {
+//
+////                        prevType = type;
+//////                        type.incrementCount();
+////                        type = null;
+//
+//
+//                        try{
+//                            if (fields[count + 1].getType() == List.class) {
+//                                isList = true;
+//                            }else{
+//                                isList = false;
+//                            }
+//
+//                        }catch (ArrayIndexOutOfBoundsException e){
+//                            isList = false;
+//                        }
+//                        typeStack.push(null);
+//                        return (List<KeypadItem>) field.get(type);
+//
+//                    }else if (ScalaClass.class.isAssignableFrom(listClass)){
+////                        prevType = type;
+//
+//                        type = items.get(listClass.getSimpleName());
+//                        typeStack.push(type);
+//                        isList = true;
+////                        Log.d(TAG,"type = "+type.getName());
+//
+//                        return new ArrayList<>();
+////                        prevType = type;
+////                        type = null;
+////                        isList = true;
+//
+//
+//                    }
+////                    keyPad.add(new KeypadItem(newParam,true));
+////                    keyPad.add(new KeypadItem(done,true));
+////                    return keyPad;
+//
+//
+//
+//                }
+//
+////                type.incrementCount();
+//            }else{
+//                type.resetCount();
+//
+//                typeStack.pop();
+//
+//                if (isList){
+//                    addToList(typeStack.peek(), type);
+//                    isList = false;
+//                }
+//
+//                field = null;
+////                if (typeStack.size() >= 2){
+//////                if (prevType != null){
+////
+//////                    type =
+////                    typeStack.pop(); //prevType;
+//////                    prevType = null;
+////                    isList = false;
+////
+////                }
+//
+//
+//                if(type instanceof sMethod && currentScope instanceof MethodSymbol){
+//                    currentScope = currentScope.getEnclosingScope();
+//                }
+//
+//                if(type instanceof sClass && currentScope instanceof ClassSymbol){
+//                    currentScope = currentScope.getEnclosingScope();
+//                }
+//
+//                currentScope.define(symbolStack.pop());
+//
+//                Log.d(TAG, "== Printing all symbols for "+ currentScope.getScopeName());
+//                currentScope.printAll();
+//                Log.d(TAG, "==========================");
+//            }
+//
+//
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+////        } catch (EmptyStackException e){
+////            return kpFrag.getInitialList();
+//        }
+//        return keyPad;
+//    }
 
 //    public List<KeypadItem> getPrevItems() throws RuntimeException{
 //        return null;
@@ -458,7 +534,6 @@ public class Keypad {
                         field = temp;
                     }
                 }
-
             }
 
 //            Log.d(TAG, "[setField] stack peek = "+ typeStack.peek());

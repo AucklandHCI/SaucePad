@@ -1,5 +1,11 @@
 package com.aucklanduni.p4p.scalang;
 
+import com.aucklanduni.p4p.symtab.Type;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Taz on 13/05/15.
  */
@@ -8,6 +14,8 @@ public abstract class ScalaClass {
 
     protected int numbTabs = 0;
     protected static String newLine;
+    protected Field field;
+    protected ScalaClass sCls;
 
 
     private int count = 0;
@@ -75,5 +83,36 @@ public abstract class ScalaClass {
 //    abstract int indentationLevel();
 
 
+
+    public List<KeypadItem> doInteraction(Field field, ScalaClass obj){
+        this.field = field;
+        this.sCls = obj;
+        try {
+            Class fieldType = field.getType();
+
+            if (fieldType == String.class) {
+                return doStringInteraction((String)field.get(obj));
+            }
+
+
+        }catch (IllegalAccessException e){
+
+        }
+
+        return null;
+    }
+
+    protected List<KeypadItem> doStringInteraction(String str){
+
+        List<KeypadItem> items = new ArrayList<>();
+
+        if (str == null) { //symbolises the need for user input
+            return null;
+        }else if( field.getName().contains("mand")){
+            items.add(null);
+            items.add(new KeypadItem(str));
+        }
+        return items;
+    }
 
 }

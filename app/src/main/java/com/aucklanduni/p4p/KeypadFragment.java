@@ -253,7 +253,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         KeypadItem input = (KeypadItem) parent.getAdapter().getItem(position);
 
-        if (!input.isDummy()){ // if not dummy print it
+        if (!input.dontPrint()){ // if not dummy print it
             editor.setText(editor.getText() + " " + input.getValue() );
             keypad.setField(input.getValue());
         }
