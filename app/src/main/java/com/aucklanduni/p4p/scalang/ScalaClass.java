@@ -1,9 +1,11 @@
 package com.aucklanduni.p4p.scalang;
 
+import com.aucklanduni.p4p.symtab.Scope;
 import com.aucklanduni.p4p.symtab.Type;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,6 +18,7 @@ public abstract class ScalaClass {
     protected static String newLine;
     protected Field field;
     protected ScalaClass sCls;
+    protected Scope currentScope;
 
 
     private int count = 0;
@@ -84,22 +87,36 @@ public abstract class ScalaClass {
 
 
 
-    public List<KeypadItem> doInteraction(Field field, ScalaClass obj){
+    public List<KeypadItem> doInteraction(Field field, ScalaClass obj, Scope currentScope){
         this.field = field;
         this.sCls = obj;
+        this.currentScope = currentScope;
+
+        List<KeypadItem> items = null;
+
         try {
             Class fieldType = field.getType();
 
             if (fieldType == String.class) {
-                return doStringInteraction((String)field.get(obj));
+                items = doStringInteraction((String)field.get(obj));
+            }else if (fieldType == Type.class){
+                items =  doTypeInteraction((Type)field.get(obj));
+            }else if (fieldType == List.class){
+
+                items = doListInteraction((List)field.get(obj));
+
             }
+
+            this.field = null;
+            this.sCls = null;
+            this.currentScope = null;
 
 
         }catch (IllegalAccessException e){
 
         }
 
-        return null;
+        return items;
     }
 
     protected List<KeypadItem> doStringInteraction(String str){
@@ -110,9 +127,38 @@ public abstract class ScalaClass {
             return null;
         }else if( field.getName().contains("mand")){
             items.add(null);
-            items.add(new KeypadItem(str));
         }
+
+        items.add(new KeypadItem(str));
+
         return items;
     }
+
+    protected List<KeypadItem> doTypeInteraction(Type type){
+        List<KeypadItem> items = new ArrayList<>();
+
+        List<String> typeNames = currentScope.getByInstanceOf(Type.class);
+        Collections.sort(typeNames);
+
+        for (String name : typeNames){
+            items.add(new KeypadItem(name));
+        }
+
+        return items;
+    }
+
+    protected List<KeypadItem> doListInteraction(List<? extends ScalaClass> list){
+        List<KeypadItem> items = new ArrayList<>();
+
+
+
+        return items;
+    }
+
+//    protected List<KeypadItem> doInteraction(){
+//        List<KeypadItem> items = new ArrayList<>();
+//
+//        return items;
+//    }
 
 }

@@ -126,12 +126,12 @@ public class Keypad {
                 field = fields[count];
 
 
-                keyPad =  typeStack.peek().doInteraction(field, typeStack.peek());
+                keyPad =  typeStack.peek().doInteraction(field, typeStack.peek(),currentScope);
                 if (keyPad == null){
                     return keyPad;
                 }
 
-                if (keyPad.size() > 1){ // only null marker to symbolise printing
+                if (keyPad.size() == 2){ // null marker to symbolise printing
                     if (keyPad.get(0) == null){
                         String toPrint = keyPad.get(1).getValue();
                         typeStack.peek().incrementCount();
