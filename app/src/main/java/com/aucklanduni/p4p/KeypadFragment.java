@@ -158,8 +158,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 return;
             }
 
-            while(items.size() == 0){
+            while(items.size() == 0 ){
                 items = keypad.getNextItems();
+
             }
 //            setItemAdapter(keypad.getNextItems());
         }

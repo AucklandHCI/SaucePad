@@ -126,7 +126,7 @@ public class Keypad {
                 field = fields[count];
 
 
-                keyPad =  typeStack.peek().doInteraction(field, typeStack.peek(),currentScope);
+                keyPad =  typeStack.peek().doInteraction(field, typeStack.peek(),this);
                 if (keyPad == null){
                     return keyPad;
                 }
@@ -139,6 +139,33 @@ public class Keypad {
                         return new ArrayList<>();
                     }
                 }
+            }else{
+                type.resetCount();
+
+
+                typeStack.pop();
+
+//                if (isList){
+//                    addToList(typeStack.peek(), type);
+//                    isList = false;
+//                }
+
+                field = null;
+
+
+                if(type instanceof sMethod && currentScope instanceof MethodSymbol){
+                    currentScope = currentScope.getEnclosingScope();
+                }
+
+                if(type instanceof sClass && currentScope instanceof ClassSymbol){
+                    currentScope = currentScope.getEnclosingScope();
+                }
+
+                currentScope.define(symbolStack.pop());
+
+                Log.d(TAG, "== Printing all symbols for "+ currentScope.getScopeName());
+                currentScope.printAll();
+                Log.d(TAG, "==========================");
             }
 
         } catch (InstantiationException e) {
@@ -374,13 +401,13 @@ public class Keypad {
                 //}
                 break;
 
-            case "New Field":
-                if (currentScope instanceof ClassSymbol) {
-                    symbolStack.push(new VariableSymbol("newField", null, (ClassSymbol) currentScope));
-                } else {
-                    throw new RuntimeException("Fields must be in classes");
-                }
-                break;
+//            case "New Field":
+//                if (currentScope instanceof ClassSymbol) {
+//                    symbolStack.push(new VariableSymbol("newField", null, (ClassSymbol) currentScope));
+//                } else {
+//                    throw new RuntimeException("Fields must be in classes");
+//                }
+//                break;
 
             case "New Method":
 
@@ -402,7 +429,7 @@ public class Keypad {
 //                typeStack.pop();
                 listCount = 0;
                 kpFrag.printText(typeStack.peek().getItemAfterDone());
-                typeStack.peek().incrementCount();
+//                typeStack.peek().incrementCount();
                 typeStack.peek().incrementCount();
                 return null;
 
@@ -569,5 +596,21 @@ public class Keypad {
         }
 
 
+    }
+
+    public Scope getCurrentScope(){
+        return currentScope;
+    }
+
+    public void pushOnTypeStack(ScalaClass obj){
+        typeStack.push(obj);
+    }
+
+    public void pushOnSymbolStack(Symbol symbol){
+        symbolStack.push(symbol);
+    }
+
+    public Stack<ScalaClass> getTypeStack (){
+        return typeStack;
     }
 }
