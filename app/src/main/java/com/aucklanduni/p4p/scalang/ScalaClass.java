@@ -271,6 +271,8 @@ public abstract class ScalaClass {
         return items;
     }
 
+    public void backSpace(){}
+
 //    protected List<KeypadItem> doInteraction(){
 //        List<KeypadItem> items = new ArrayList<>();
 //
