@@ -20,6 +20,8 @@ import android.widget.GridView;
 
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.KeypadItem;
+import com.aucklanduni.p4p.scalang.ScalaClass;
+import com.aucklanduni.p4p.symtab.NullSymbol;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,10 +160,16 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 return;
             }
 
-            while(items.size() == 0 ){
-                items = keypad.getNextItems();
+            try {
+                while (items.size() == 0) {
+                    items = keypad.getNextItems();
 
+                }
+            }catch(NullPointerException e){
+                setItemAdapter(null);
+                return;
             }
+
 //            setItemAdapter(keypad.getNextItems());
         }
 //        if(items != null){
@@ -214,6 +222,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                setItemAdapter(keypad.getNextItems());
                 dialog.cancel();
             }
         });
@@ -257,6 +266,17 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         if (!input.dontPrint()){ // if not dummy print it
             editor.setText(editor.getText() + " " + input.getValue() );
             keypad.setField(input.getValue());
+        }
+
+        String value = input.getValue();
+        Stack<ScalaClass> stack = keypad.getTypeStack();
+        if (value.contains("Another")){
+            stack.peek().incrementCount();
+        }else if (value.contains("Done")){
+            stack.peek().incrementCount();
+            printText(stack.peek().getItemAfterDone());
+            ScalaClass prev = stack.get(stack.size() - 2);
+            prev.incrementCount();
         }
 
         if(input.getValue() == "Back"){

@@ -10,10 +10,10 @@ import java.util.List;
  */
 public class sMethod extends ScalaClass implements sMember {
 
-    public String a_mand_def = "def";
+    public String a_mand_def = indent() + "def";
     public String a_method_name = null;
     public String b_mand_left_bracket = "("; //"mand_" for mandatory item
-    public List<KeypadItem> c_parameter_options = new ArrayList<>();
+//    public List<KeypadItem> c_parameter_options = new ArrayList<>();
     public List<sParameter> c_parameters = new ArrayList<sParameter>();
     public String d_right_bracket = ")";
     public String e_mand_left_brace = "{" + indent();
@@ -35,8 +35,8 @@ public class sMethod extends ScalaClass implements sMember {
     //=== temporary, only for testing ===
 
     public sMethod(){
-        c_parameter_options.add(new KeypadItem("New Param", true));
-        c_parameter_options.add(new KeypadItem("Done",true));
+//        c_parameter_options.add(new KeypadItem("New Param", true));
+//        c_parameter_options.add(new KeypadItem("Done",true));
 
         f_statement_options.add(new KeypadItem("Variables", true));
         f_statement_options.add(new KeypadItem("Control", true));

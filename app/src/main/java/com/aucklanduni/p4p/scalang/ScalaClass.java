@@ -14,6 +14,7 @@ import java.security.Key;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Created by Taz on 13/05/15.
@@ -94,8 +95,6 @@ public abstract class ScalaClass {
     }
 
 //    abstract int indentationLevel();
-
-
 
     public List<KeypadItem> doInteraction(Field field, ScalaClass obj, Keypad keypad){
         this.field = field;
@@ -244,14 +243,27 @@ public abstract class ScalaClass {
 
 
         boolean dontPrint;
+        String enumValue;
         for(Object o : values) {
             dontPrint = false;
+
+            enumValue = o.toString();
+
+
+            enumValue = enumValue.replace("_", " ");
+
             //TODO increment previous and current
-            if (o.toString().contains("Done")){
+            if (enumValue.contains("Another")){
                 dontPrint = true;
-                sCls.incrementCount();
+//                sCls.incrementCount();
+            }else if (enumValue.contains("Done")){
+                dontPrint = true;
+//                sCls.incrementCount();
+//                Stack<ScalaClass> stack = keypad.getTypeStack();
+//                ScalaClass prev = stack.get(stack.size() - 2);
+//                prev.incrementCount();
             }
-            items.add(new KeypadItem(o.toString(), dontPrint));
+            items.add(new KeypadItem(enumValue, dontPrint));
         }
 
 

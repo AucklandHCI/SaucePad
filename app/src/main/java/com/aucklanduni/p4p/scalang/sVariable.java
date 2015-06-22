@@ -12,7 +12,7 @@ public class sVariable extends ScalaClass implements sMember {
 
     public enum en_sVarType {var, val}
     //TODO change "equals" -> "="
-    public enum en_sDone { equals, new_field, Done_with_fields }
+    public enum en_sDone { equals, Another_field, Done_with_fields }
 
     // val or val VariableName : DataType [=  Initial Value]
 //    public List<KeypadItem> a_var_val_options = new ArrayList<>();
