@@ -21,9 +21,9 @@ import android.widget.GridView;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.KeypadItem;
 import com.aucklanduni.p4p.scalang.ScalaClass;
-import com.aucklanduni.p4p.scalang.statement.control.sControl;
-import com.aucklanduni.p4p.scalang.statement.control.sIf;
-import com.aucklanduni.p4p.scalang.statement.sStatement;
+import com.aucklanduni.p4p.scalang.Statement.Control.sControl;
+import com.aucklanduni.p4p.scalang.Statement.Control.sIf;
+import com.aucklanduni.p4p.scalang.Statement.sStatement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -191,8 +191,10 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         }
 
         adapter = new ArrayAdapter<KeypadItem>(ctx, android.R.layout.simple_list_item_1, items);
-//        KeypadItem bckSpace = new KeypadItem("Back", true);
-//        adapter.add(bckSpace);
+
+        KeypadItem bckSpace = new KeypadItem("Back", true);
+        items.add(0,bckSpace); //Add the backspace key to the first element in the array
+
         gv_keyPad.setAdapter(adapter);
         gv_keyPad.invalidateViews();
 
@@ -295,25 +297,30 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         }
 
         if(input.getValue() == "Back"){
-            Object poped = stk_bckSpc.pop(); //gets the poped "object"
-            String popedStr = poped.toString();
-            if(popedStr == "("){
-                for(int i = 0 ; i <= 1 ; i++){
-                    popedStr = stk_bckSpc.pop().toString() + " " + popedStr;
-                }
-            }
-//            if(popedStr.contains("mand")){
-//                popedStr = popedStr.replace("mand" , "");
-//                popedStr = stk_bckSpc.pop().toString() + " " + popedStr ;
+
+
+            /**
+             * All comments below this point was the old implementation of the backspace. 
+              */
+//            Object poped = stk_bckSpc.pop(); //gets the poped "object"
+//            String popedStr = poped.toString();
+//            if(popedStr == "("){
+//                for(int i = 0 ; i <= 1 ; i++){
+//                    popedStr = stk_bckSpc.pop().toString() + " " + popedStr;
+//                }
 //            }
-            Log.d(TAG, "BACKSPACE ITEM: " + poped.toString());
-            String editStr = editor.getText().toString();
-            String x = editStr.replace(popedStr,""); // Removes unwanted string
-            editor.getText().clear();
-            printText(x);
-//            keypad.getPrevItems();
-            setItemAdapter(stk_prevKeyPadItems.pop());
-            return;
+////            if(popedStr.contains("mand")){
+////                popedStr = popedStr.replace("mand" , "");
+////                popedStr = stk_bckSpc.pop().toString() + " " + popedStr ;
+////            }
+//            Log.d(TAG, "BACKSPACE ITEM: " + poped.toString());
+//            String editStr = editor.getText().toString();
+//            String x = editStr.replace(popedStr,""); // Removes unwanted string
+//            editor.getText().clear();
+//            printText(x);
+////            keypad.getPrevItems();
+//            setItemAdapter(stk_prevKeyPadItems.pop());
+//            return;
         }
 
         if (keypad.getType() == null) {

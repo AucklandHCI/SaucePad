@@ -3,8 +3,8 @@ package com.aucklanduni.p4p.scalang;
 import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
-import com.aucklanduni.p4p.scalang.statement.control.sControl;
-import com.aucklanduni.p4p.scalang.statement.control.sIf;
+import com.aucklanduni.p4p.scalang.Statement.Control.sControl;
+import com.aucklanduni.p4p.scalang.Statement.Control.sIf;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
 import com.aucklanduni.p4p.symtab.GlobalScope;
 import com.aucklanduni.p4p.symtab.LocalScope;
@@ -93,6 +93,7 @@ public class Keypad {
 
 
         List<KeypadItem> keyPad = new ArrayList<>(); // whats displayed on the keyboard
+
         String className = type.getName(); //Scala Class
         count = type.getCount(); // index for which field we're at
 
