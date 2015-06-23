@@ -1,14 +1,26 @@
-package com.aucklanduni.p4p.scalang.Statement;
+package com.aucklanduni.p4p.scalang.statement;
 
-import com.aucklanduni.p4p.scalang.KeypadItem;
 import com.aucklanduni.p4p.scalang.ScalaClass;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Taz on 17/06/15.
  */
-public abstract class sStatement extends ScalaClass {
+public class sStatement extends ScalaClass {
+
+    @Override
+    protected String toPrintAfterDone() {
+        return "";
+    }
+
+    public enum en_sStatement {
+        Variables,
+        Control,
+        Exception,
+        Return,
+        Method,
+        Done
+    }
+
+    public Enum aa_type = en_sStatement.Variables;
 
 }

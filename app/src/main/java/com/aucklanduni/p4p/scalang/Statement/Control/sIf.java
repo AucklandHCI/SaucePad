@@ -1,4 +1,4 @@
-package com.aucklanduni.p4p.scalang.Statement.Control;
+package com.aucklanduni.p4p.scalang.statement.control;
 
 import com.aucklanduni.p4p.scalang.KeypadItem;
 

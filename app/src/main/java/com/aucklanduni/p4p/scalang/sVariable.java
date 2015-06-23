@@ -22,6 +22,7 @@ public class sVariable extends ScalaClass implements sMember {
     public String c_mand_colon = ":";
     public Type d_var_Type;
     public Enum e_options = en_sDone.equals;
+    public String z_mand_newLine = indent();
 //    public List<KeypadItem> e_init_options = new ArrayList<>();
 
     private boolean isField = false;

@@ -21,11 +21,13 @@ import android.widget.GridView;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.KeypadItem;
 import com.aucklanduni.p4p.scalang.ScalaClass;
-import com.aucklanduni.p4p.symtab.NullSymbol;
+import com.aucklanduni.p4p.scalang.statement.control.sControl;
+import com.aucklanduni.p4p.scalang.statement.control.sIf;
+import com.aucklanduni.p4p.scalang.statement.sStatement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.Stack;
 
 
@@ -48,6 +50,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     private String mParam2;
 
     private String TAG = "testing";
+
+    private static HashMap<String, sStatement> statClasses = new HashMap<>();
 
 
     private GridView gv_keyPad;
@@ -79,6 +83,10 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         KeypadFragment fragment = new KeypadFragment();
         ctx = context;
         initalList.add(new KeypadItem("New Class", true));
+
+        statClasses.put("Control", new sControl());
+        statClasses.put("If", new sIf());
+
 
 //                {
 //                "A", "B", "C", "D", "E",
@@ -259,16 +267,19 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         mListener = null;
     }
 
+
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         KeypadItem input = (KeypadItem) parent.getAdapter().getItem(position);
+        String value = input.getValue();
 
         if (!input.dontPrint()){ // if not dummy print it
-            editor.setText(editor.getText() + " " + input.getValue() );
-            keypad.setField(input.getValue());
+            editor.setText(editor.getText() + " " + value);
+            keypad.setField(value);
         }
 
-        String value = input.getValue();
+
         Stack<ScalaClass> stack = keypad.getTypeStack();
         if (value.contains("Another")){
             stack.peek().incrementCount();
@@ -277,6 +288,10 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             printText(stack.peek().getItemAfterDone());
             ScalaClass prev = stack.get(stack.size() - 2);
             prev.incrementCount();
+        }
+
+        if (statClasses.containsKey(value)){
+            stack.push(statClasses.get(value));
         }
 
         if(input.getValue() == "Back"){

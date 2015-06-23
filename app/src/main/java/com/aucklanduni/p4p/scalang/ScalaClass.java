@@ -240,8 +240,6 @@ public abstract class ScalaClass {
 
         Object[] values = en.getDeclaringClass().getEnumConstants();
 
-
-
         boolean dontPrint;
         String enumValue;
         for(Object o : values) {
@@ -252,21 +250,11 @@ public abstract class ScalaClass {
 
             enumValue = enumValue.replace("_", " ");
 
-            //TODO increment previous and current
-            if (enumValue.contains("Another")){
+            if (enumValue.contains("Another") || enumValue.contains("Done")){
                 dontPrint = true;
-//                sCls.incrementCount();
-            }else if (enumValue.contains("Done")){
-                dontPrint = true;
-//                sCls.incrementCount();
-//                Stack<ScalaClass> stack = keypad.getTypeStack();
-//                ScalaClass prev = stack.get(stack.size() - 2);
-//                prev.incrementCount();
             }
             items.add(new KeypadItem(enumValue, dontPrint));
         }
-
-
 
         return items;
     }

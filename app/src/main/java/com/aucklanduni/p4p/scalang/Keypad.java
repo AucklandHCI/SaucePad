@@ -1,12 +1,10 @@
 package com.aucklanduni.p4p.scalang;
 
-import android.database.sqlite.SQLiteCantOpenDatabaseException;
-import android.nfc.Tag;
 import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
-import com.aucklanduni.p4p.scalang.Statement.Control.sControl;
-import com.aucklanduni.p4p.scalang.Statement.Control.sIf;
+import com.aucklanduni.p4p.scalang.statement.control.sControl;
+import com.aucklanduni.p4p.scalang.statement.control.sIf;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
 import com.aucklanduni.p4p.symtab.GlobalScope;
 import com.aucklanduni.p4p.symtab.LocalScope;
