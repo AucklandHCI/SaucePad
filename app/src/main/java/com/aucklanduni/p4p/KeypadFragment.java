@@ -283,6 +283,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
 
         Stack<ScalaClass> stack = keypad.getTypeStack();
+
         if (value.contains("Another")){
             stack.peek().incrementCount();
         }else if (value.contains("Done")){
@@ -297,10 +298,17 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         }
 
         if(input.getValue() == "Back"){
+//            String textOnScreen = editor.getText().toString();
+//            Log.d(TAG,"TEXT ON SCREEN: " + textOnScreen);
+            int stkSize = stack.size() - 1; //gets the scopes in the stack
+            ScalaClass currentLoc = stack.elementAt(stkSize - 1);
+            int count = currentLoc.getCount();
 
+        //on every button click store the scope in a variable I.E know wheter we are in a scala method, var etc etc
+        // Follow that strcture to back space generically.
 
             /**
-             * All comments below this point was the old implementation of the backspace. 
+             * All comments below this point was the old implementation of the backspace.
               */
 //            Object poped = stk_bckSpc.pop(); //gets the poped "object"
 //            String popedStr = poped.toString();
