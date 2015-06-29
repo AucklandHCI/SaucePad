@@ -2,6 +2,7 @@ package com.aucklanduni.p4p.scalang;
 
 import com.aucklanduni.p4p.scalang.expression.sIdentifier;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,12 @@ public class sClass extends ScalaClass {
 //        d_member_options.add(new KeypadItem("New Field", true));
 //        d_member_options.add(new KeypadItem("New Method", true));
 //        d_member_options.add(new KeypadItem("Done", true));
+    }
+
+    public String getFieldWithValue(int count){
+        Field[] f = this.getClass().getFields();
+
+        return "x";
     }
 
     @Override

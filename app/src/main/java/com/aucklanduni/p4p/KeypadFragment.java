@@ -25,6 +25,7 @@ import com.aucklanduni.p4p.scalang.Statement.Control.sControl;
 import com.aucklanduni.p4p.scalang.Statement.Control.sIf;
 import com.aucklanduni.p4p.scalang.Statement.sStatement;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -302,7 +303,13 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 //            Log.d(TAG,"TEXT ON SCREEN: " + textOnScreen);
             int stkSize = stack.size() - 1; //gets the scopes in the stack
             ScalaClass currentLoc = stack.elementAt(stkSize - 1);
+            Field[] f = currentLoc.getClass().getFields();
             int count = currentLoc.getCount();
+
+
+
+
+
 
         //on every button click store the scope in a variable I.E know wheter we are in a scala method, var etc etc
         // Follow that strcture to back space generically.
