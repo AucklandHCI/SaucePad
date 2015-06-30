@@ -2,17 +2,25 @@ package com.aucklanduni.p4p.scalang;
 
 import com.aucklanduni.p4p.symtab.Type;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Taz on 13/05/15.
  */
-public class sVariable extends ScalaClass implements sMember {
+public class sVariable extends ScalaElement implements sMember {
 
     public enum en_sVarType {var, val}
     //TODO change "equals" -> "="
-    public enum en_sDone { equals, Another_field, Done_with_fields }
+    public enum en_sDone {
+        equals, dp_Another_field, dp_Done_with_fields;
+
+        @Override
+        public String toString() {
+            if (this == equals){
+                return "==";
+            }
+            return super.toString();
+
+        }
+    }
 
     // val or val VariableName : DataType [=  Initial Value]
 //    public List<KeypadItem> a_var_val_options = new ArrayList<>();

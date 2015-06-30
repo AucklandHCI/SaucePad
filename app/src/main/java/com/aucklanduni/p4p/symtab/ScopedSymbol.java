@@ -76,7 +76,7 @@ public class ScopedSymbol extends Symbol implements Scope {
 	@Override
 	public void printAll() {
 		for (Map.Entry<String, Symbol> entry : symbols.entrySet()){
-			Log.d("testing", "key: " + entry.getKey() + ", value: " + entry.getValue());
+			Log.d("testing", "key: " + entry.getKey() + ", type: " + symbols.get(entry.getKey()).getClass());
 		}
 	}
 }

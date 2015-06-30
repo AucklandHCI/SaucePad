@@ -8,12 +8,12 @@ import com.aucklanduni.p4p.scalang.Statement.sStatement;
 public class sControl extends sStatement {
 
     public enum en_sControl_types {
-        If, For, While, Do, Select
+        dp_If, dp_For, dp_While, dp_Do, dp_Select
     }
 
 //    public List<KeypadItem> a_control_statements = new ArrayList<>();
 
-    public Enum a_control_type = en_sControl_types.If;
+    public Enum a_control_type = en_sControl_types.dp_If;
 
     public sControl(){
 //        a_control_statements.add(new KeypadItem("If", true));

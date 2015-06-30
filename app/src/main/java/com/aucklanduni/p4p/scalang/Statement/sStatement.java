@@ -1,11 +1,11 @@
 package com.aucklanduni.p4p.scalang.Statement;
 
-import com.aucklanduni.p4p.scalang.ScalaClass;
+import com.aucklanduni.p4p.scalang.ScalaElement;
 
 /**
  * Created by Taz on 17/06/15.
  */
-public class sStatement extends ScalaClass {
+public class sStatement extends ScalaElement {
 
     @Override
     protected String toPrintAfterDone() {
@@ -13,14 +13,14 @@ public class sStatement extends ScalaClass {
     }
 
     public enum en_sStatement {
-        Variables,
-        Control,
-        Exception,
-        Return,
-        Method,
-        Done
-    }
+        dp_Variables,
+        dp_Control,
+        dp_Exception,
+        dp_Return,
+        dp_Method,
+        dp_Done;
 
-    public Enum aa_type = en_sStatement.Variables;
+    }
+    public Enum aa_type = en_sStatement.dp_Variables;
 
 }

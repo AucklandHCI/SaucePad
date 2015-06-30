@@ -20,7 +20,7 @@ import android.widget.GridView;
 
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.KeypadItem;
-import com.aucklanduni.p4p.scalang.ScalaClass;
+import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.statement.control.sControl;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
@@ -162,7 +162,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             getStringLiteralInput();
             return;
         }else if (items.size() == 0) { // application has printed a mandatory character.
-            items = keypad.getNextItems(); //get next item
+            items = keypad.getNextItems(""); //get next item
             if(items == null){
                 getStringLiteralInput();
                 return;
@@ -170,7 +170,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
             try {
                 while (items.size() == 0) {
-                    items = keypad.getNextItems();
+                    items = keypad.getNextItems("");
 
                 }
             }catch(NullPointerException e){
@@ -223,14 +223,14 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                         Context.INPUT_METHOD_SERVICE);
                 //txtName is a reference of an EditText Field
                 imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-                setItemAdapter(keypad.getNextItems());
+                setItemAdapter(keypad.getNextItems(""));
 
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                setItemAdapter(keypad.getNextItems());
+                setItemAdapter(keypad.getNextItems(""));
                 dialog.cancel();
             }
         });
@@ -280,13 +280,13 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         }
 
 
-        Stack<ScalaClass> stack = keypad.getTypeStack();
+        Stack<ScalaElement> stack = keypad.getTypeStack();
         if (value.contains("Another")){
             stack.peek().incrementCount();
         }else if (value.contains("Done")){
             stack.peek().incrementCount();
             printText(stack.peek().getItemAfterDone());
-            ScalaClass prev = stack.get(stack.size() - 2);
+            ScalaElement prev = stack.get(stack.size() - 2);
             prev.incrementCount();
         }
 
@@ -324,7 +324,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
         }
 
-        setItemAdapter(keypad.getNextItems());
+        setItemAdapter(keypad.getNextItems(input.getValue()));
 
 
 //

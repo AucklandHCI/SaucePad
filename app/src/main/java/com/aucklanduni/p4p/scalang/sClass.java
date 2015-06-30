@@ -1,14 +1,12 @@
 package com.aucklanduni.p4p.scalang;
 
-import com.aucklanduni.p4p.scalang.expression.sIdentifier;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Taz on 13/05/15.
  */
-public class sClass extends ScalaClass {
+public class sClass extends ScalaElement {
 
     public String a_mand_class = "class";
     public String b_class_name = null;

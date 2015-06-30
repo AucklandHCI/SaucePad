@@ -27,17 +27,22 @@ import java.util.Stack;
 
 /**
  * Created by Taz on 13/05/15.
+ * This class is in charge of getting the next thing
+ * that is to be displayed to the user
  */
 public class Keypad {
 
-//    private ScalaClass type = null;
-//    private ScalaClass prevType = null;
-
-    private Stack<ScalaClass> typeStack = new Stack<>();
+    /**
+     * used to keep track of the types
+     * e.g. from sClass -> sMethod -> sParameter -> sMethod etc.
+     */
+    private Stack<ScalaElement> typeStack = new Stack<>();
     private Stack<Symbol> symbolStack = new Stack<>();
 
-    //    private boolean isList = false;
-    private Map<String, ScalaClass> items = new HashMap<String,ScalaClass>();
+    /**
+     * matches an instance to a string representative of that class
+     */
+    private Map<String, ScalaElement> items = new HashMap<String,ScalaElement>();
     private int count = 0;
     private int listCount = 0;
     private boolean isList = false;
@@ -77,9 +82,21 @@ public class Keypad {
 
     }
 
-    public List<KeypadItem> getNextItems() throws RuntimeException {
+    /**
+     * Gets the next items that are to be displayed to the user.
+     * This is called every time the user has pressed a key on the
+     * keypad.
+     * @param value
+     * @return
+     * @throws RuntimeException
+     */
+    public List<KeypadItem> getNextItems(String value) throws RuntimeException {
 
-        ScalaClass type;
+        if (value.equals("Variables")){
+            return setType(value);
+        }
+
+        ScalaElement type;
         try {
             type = typeStack.peek();
             if (type == null) {
@@ -93,16 +110,15 @@ public class Keypad {
 
 
         List<KeypadItem> keyPad = new ArrayList<>(); // whats displayed on the keyboard
-        String className = type.getName(); //Scala Class
+        String className = type.getName(); //which ScalaElement we're looking at
         count = type.getCount(); // index for which field we're at
-
 
         try {
 
             Class cls = type.getClass(); // class object
 
             if (count == 0) {
-                type = (ScalaClass) cls.newInstance();
+                type = (ScalaElement) cls.newInstance();
                 typeStack.pop();
                 typeStack.push(type);
             }
@@ -117,18 +133,22 @@ public class Keypad {
             Log.d(TAG, "class Name = " + className);
 
             Log.d(TAG, " numFields = " + numFields + " count = " + count);
+
+            /**
+             * as long as it's within the number of fields,
+             * do the appropriate action.
+             */
             if (count < numFields) {
 //                throw new RuntimeException("count too large.");
 
-
                 field = fields[count];
 
-
+                // do the appropriate action, defined in "ScalaElement"
                 keyPad =  typeStack.peek().doInteraction(field, typeStack.peek(),this);
+
                 if (keyPad == null){
                     return keyPad;
                 }
-
                 if (keyPad.size() == 2){ // null marker to symbolise printing
                     if (keyPad.get(0) == null){
                         String toPrint = keyPad.get(1).getValue();
@@ -138,9 +158,9 @@ public class Keypad {
                     }
                 }
             }else{
+                //if it's reached the end of the field count, reset the count
+                // and pop off the type stack.
                 type.resetCount();
-
-
                 typeStack.pop();
 
 //                if (isList){
@@ -151,6 +171,7 @@ public class Keypad {
                 field = null;
 
 
+
                 if(type instanceof sMethod && currentScope instanceof MethodSymbol){
                     currentScope = currentScope.getEnclosingScope();
                 }
@@ -159,6 +180,7 @@ public class Keypad {
                     currentScope = currentScope.getEnclosingScope();
                 }
 
+                // puts the current symbol into the current scope
                 currentScope.define(symbolStack.pop());
 
                 Log.d(TAG, "== Printing all symbols for "+ currentScope.getScopeName());
@@ -177,7 +199,7 @@ public class Keypad {
 
 //    public List<KeypadItem> getNextItems() throws RuntimeException{
 //
-//        ScalaClass type;
+//        ScalaElement type;
 //        try {
 //            type = typeStack.peek();
 //            if (type == null){
@@ -200,7 +222,7 @@ public class Keypad {
 //            Class cls = type.getClass(); // class object
 //
 //            if (count == 0) {
-//                type = (ScalaClass) cls.newInstance();
+//                type = (ScalaElement) cls.newInstance();
 //                typeStack.pop();
 //                typeStack.push(type);
 //            }
@@ -286,7 +308,7 @@ public class Keypad {
 //                        typeStack.push(null);
 //                        return (List<KeypadItem>) field.get(type);
 //
-//                    }else if (ScalaClass.class.isAssignableFrom(listClass)){
+//                    }else if (ScalaElement.class.isAssignableFrom(listClass)){
 ////                        prevType = type;
 //
 //                        type = items.get(listClass.getSimpleName());
@@ -363,9 +385,13 @@ public class Keypad {
 //    }
 
 
-    public ScalaClass getType(){
+    /**
+     * Gets the current ScalaElement being processed.
+     * @return
+     */
+    public ScalaElement getType(){
         try {
-            ScalaClass sC = typeStack.peek();
+            ScalaElement sC = typeStack.peek();
             if (sC == null){
                 typeStack.pop();
             }
@@ -474,6 +500,11 @@ public class Keypad {
     }
 
 
+    /**
+     * Sets the value of the field depending on what was
+     * entered by the user.
+     * @param input
+     */
     public void setField(String input){
 
         if(field == null){
@@ -488,7 +519,7 @@ public class Keypad {
 
         try{
 
-            if (typeStack.peek().getClass() == sVariable.class) {
+            if (typeStack.peek().getClass() == sParameter.class) {
 
                 boolean needsNew = true;
                 Symbol currentSymbol = symbolStack.peek();
@@ -502,7 +533,7 @@ public class Keypad {
                     if (currentScope instanceof MethodSymbol) {
                         symbolStack.push(new VariableSymbol("", null, (ClassSymbol) currentScope.getEnclosingScope()));
                     } else{
-                        throw new RuntimeException("Variables must be in Methods!");
+                        throw new RuntimeException("Parameters must be in Methods!");
                     }
                 }
 
@@ -521,7 +552,7 @@ public class Keypad {
                 if (field.getName().contains("name")){
                     symbolStack.peek().setName(input);
 
-                    ScalaClass type = typeStack.peek();
+                    ScalaElement type = typeStack.peek();
 
                     if(type instanceof sMethod && currentScope instanceof MethodSymbol){
                         ((MethodSymbol) currentScope).setName(input);
@@ -545,7 +576,7 @@ public class Keypad {
                 //TODO need to find a way to add to the correct list
 
                 if(!isList) {
-                    ScalaClass currentType = typeStack.peek();
+                    ScalaElement currentType = typeStack.peek();
                     Field temp = field;
                     try{
                         Field toSet = currentType.getClass().getFields()[
@@ -569,7 +600,7 @@ public class Keypad {
         }
     }
 
-    private void addToList(ScalaClass addTo, ScalaClass obj){
+    private void addToList(ScalaElement addTo, ScalaElement obj){
         Class cls = addTo.getClass();
         Field currentField = cls.getFields()[addTo.getCount() + 1];
         if (currentField.getType() != List.class){
@@ -579,8 +610,8 @@ public class Keypad {
         ParameterizedType listType = (ParameterizedType) currentField.getGenericType();
         Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0];
 
-        if (ScalaClass.class.isAssignableFrom(listClass)) {
-//            throw new RuntimeException("List not of type ScalaClass");
+        if (ScalaElement.class.isAssignableFrom(listClass)) {
+//            throw new RuntimeException("List not of type ScalaElement");
 
 
             try {
@@ -600,7 +631,11 @@ public class Keypad {
         return currentScope;
     }
 
-    public void pushOnTypeStack(ScalaClass obj){
+    public void setCurrentScope(Scope s){
+        currentScope = s;
+    }
+
+    public void pushOnTypeStack(ScalaElement obj){
         typeStack.push(obj);
     }
 
@@ -608,7 +643,7 @@ public class Keypad {
         symbolStack.push(symbol);
     }
 
-    public Stack<ScalaClass> getTypeStack (){
+    public Stack<ScalaElement> getTypeStack (){
         return typeStack;
     }
 }
