@@ -10,6 +10,10 @@ import java.util.List;
  */
 public class sMethod extends ScalaElement implements sMember {
 
+    public enum en_sMethodDone {
+        dp_Another_method, dp_Done_with_methods
+    }
+
     public String a_mand_def = indent() + "def";
     public String a_method_name = null;
     public String b_mand_left_bracket = "("; //"mand_" for mandatory item
@@ -20,7 +24,10 @@ public class sMethod extends ScalaElement implements sMember {
 //    public List<KeypadItem> f_statement_options = new ArrayList<>();
     public List<sStatement> f_statements = new ArrayList<>();
 
-    public String z_right_brace = "}" + unIndent() ;
+
+    public String x_right_brace = "}" + unIndent() + unIndent();
+    public Enum y_options = en_sMethodDone.dp_Another_method;
+    public String z_empty = "";
 
     //===== Private Fields =====
 
@@ -60,11 +67,7 @@ public class sMethod extends ScalaElement implements sMember {
 
     @Override
     public String toPrintAfterDone() {
-        if(!doneParams){
-            doneParams = true;
-            return d_right_bracket;
-        }
-        return z_right_brace;
+        return x_right_brace;
     }
 
     //    public List<sParameter> getParameters() {

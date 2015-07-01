@@ -8,7 +8,6 @@ import com.aucklanduni.p4p.symtab.Type;
 public class sVariable extends ScalaElement implements sMember {
 
     public enum en_sVarType {var, val}
-    //TODO change "equals" -> "="
     public enum en_sDone {
         equals, dp_Another_field, dp_Done_with_fields;
 

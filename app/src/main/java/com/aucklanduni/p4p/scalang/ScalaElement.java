@@ -2,7 +2,9 @@ package com.aucklanduni.p4p.scalang;
 
 import android.util.Log;
 
+import com.aucklanduni.p4p.scalang.statement.control.sControl;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
+import com.aucklanduni.p4p.symtab.LocalScope;
 import com.aucklanduni.p4p.symtab.MethodSymbol;
 import com.aucklanduni.p4p.symtab.Scope;
 import com.aucklanduni.p4p.symtab.Type;
@@ -290,6 +292,12 @@ public abstract class ScalaElement {
 
                 throw new RuntimeException("Fields must be in classes");
 
+            }
+        }else if(en.equals(sControl.en_sControl_types.dp_If) || en.equals(sControl.en_sControl_types.dp_For)){
+            if(currentScope instanceof MethodSymbol){
+                Scope s = new LocalScope(currentScope);
+                currentScope = s;
+                keypad.setCurrentScope(s);
             }
         }
 

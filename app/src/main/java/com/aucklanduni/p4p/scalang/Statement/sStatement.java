@@ -1,4 +1,4 @@
-package com.aucklanduni.p4p.scalang.Statement;
+package com.aucklanduni.p4p.scalang.statement;
 
 import com.aucklanduni.p4p.scalang.ScalaElement;
 

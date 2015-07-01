@@ -96,6 +96,8 @@ public class Keypad {
             return setType(value);
         }
 
+
+
         ScalaElement type;
         try {
             type = typeStack.peek();
@@ -106,6 +108,12 @@ public class Keypad {
             }
         } catch (EmptyStackException e) {
             return kpFrag.getInitialList();
+        }
+
+        if (value.equals("Back")){
+            typeStack.peek().setCount(type.getClass().getFields().length);
+            typeStack.pop();
+            return new ArrayList<>();
         }
 
 
@@ -143,6 +151,12 @@ public class Keypad {
 
                 field = fields[count];
 
+                if (field.getDeclaringClass() != cls){
+                    type.setCount(numFields);
+                    return new ArrayList<>();
+                }
+
+
                 // do the appropriate action, defined in "ScalaElement"
                 keyPad =  typeStack.peek().doInteraction(field, typeStack.peek(),this);
 
@@ -170,18 +184,32 @@ public class Keypad {
 
                 field = null;
 
-
-
-                if(type instanceof sMethod && currentScope instanceof MethodSymbol){
+                Log.e(TAG,"scope type = " + currentScope);
+                if(type instanceof sIf && currentScope instanceof LocalScope){
+                    currentScope = currentScope.getEnclosingScope();
+                }else if(type instanceof sMethod && currentScope instanceof MethodSymbol){
+                    currentScope = currentScope.getEnclosingScope();
+                }else if(type instanceof sClass && currentScope instanceof ClassSymbol){
                     currentScope = currentScope.getEnclosingScope();
                 }
 
-                if(type instanceof sClass && currentScope instanceof ClassSymbol){
-                    currentScope = currentScope.getEnclosingScope();
-                }
+
 
                 // puts the current symbol into the current scope
-                currentScope.define(symbolStack.pop());
+                boolean toDefine = true;
+                Symbol symbol = symbolStack.peek();
+
+                Log.e(TAG, "sym = " + symbol + ", scope = " + currentScope.getScopeName());
+                if ( symbol instanceof  Scope){
+                    Scope symScope = (Scope)symbol;
+                    if (currentScope.equals(symScope)){
+                        toDefine = false;
+                    }
+                }
+
+                if (toDefine) {
+                    currentScope.define(symbolStack.pop());
+                }
 
                 Log.d(TAG, "== Printing all symbols for "+ currentScope.getScopeName());
                 currentScope.printAll();
@@ -466,7 +494,7 @@ public class Keypad {
 
             case "Control":
 
-                currentScope = new LocalScope(currentScope);
+                //currentScope = new LocalScope(currentScope);
 
                 break;
 
