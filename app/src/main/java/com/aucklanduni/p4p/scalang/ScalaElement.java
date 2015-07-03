@@ -140,11 +140,13 @@ public abstract class ScalaElement {
 //            Log.e(TAG, "[DI] TYPES: " + fieldType.getSimpleName());
 
             if (fieldType == String.class) {
-                items = doStringInteraction((String)field.get(obj));
+                items = doStringInteraction((String) field.get(obj));
+            }else if(Number.class.isAssignableFrom(fieldType)){
+                items = doNumericalInteraction((Number)field.get(obj));
             }else if (fieldType == Type.class){
-                items =  doTypeInteraction((Type)field.get(obj));
+                items =  doTypeInteraction((Type) field.get(obj));
             }else if (fieldType == List.class){
-                items = doListInteraction((List)field.get(obj));
+                items = doListInteraction((List) field.get(obj));
             }else if (fieldType == Enum.class){
                 items = doEnumInteraction((Enum) field.get(obj));
             }
@@ -196,6 +198,18 @@ public abstract class ScalaElement {
         items.add(new KeypadItem(str));
 
         return items;
+    }
+
+    protected List<KeypadItem> doNumericalInteraction(Number num){
+        List<KeypadItem> items = new ArrayList<>();
+        if (num.intValue() == 0){
+            items.add(null);
+            items.add(null);
+            return items;
+        }else{
+            items.add(new KeypadItem(num.toString()));
+            return items;
+        }
     }
 
     /**

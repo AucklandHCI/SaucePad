@@ -51,7 +51,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
     private String TAG = "testing";
 
-    private static HashMap<String, sStatement> statClasses = new HashMap<>();
+
 
 
     private GridView gv_keyPad;
@@ -84,8 +84,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         ctx = context;
         initalList.add(new KeypadItem("New Class", true));
 
-        statClasses.put("Control", new sControl());
-        statClasses.put("If", new sIf());
+//        statClasses.put("Control", new sControl());
+//        statClasses.put("If", new sIf());
 
 
 //                {
@@ -159,12 +159,12 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         }
 
         if (items == null){ // get input form user
-            getStringLiteralInput();
+            getLiteralInput(String.class);
             return;
         }else if (items.size() == 0) { // application has printed a mandatory character.
             items = keypad.getNextItems(""); //get next item
             if(items == null){
-                getStringLiteralInput();
+                getLiteralInput(String.class);
                 return;
             }
 
@@ -179,6 +179,16 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
 
 //            setItemAdapter(keypad.getNextItems());
+        }
+
+        if(items.size() == 2){
+            KeypadItem first = items.get(0);
+            KeypadItem second = items.get(1);
+
+            if (first == null && second == null){
+                getLiteralInput(Integer.class);
+                return;
+            }
         }
 //        if(items != null){
 //            for (KeypadItem s : items){
@@ -199,7 +209,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
     }
 
-    private void getStringLiteralInput(){
+    private void getLiteralInput(Class type){
+
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
         builder.setTitle("Title");
@@ -207,7 +219,12 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         // Set up the input
         final EditText input = new EditText(this.getActivity());
         // Specify the type of input expected;
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        if(type == Integer.class){
+            input.setInputType(InputType.TYPE_CLASS_PHONE);
+        }else{
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+        }
+
         input.requestFocus();
         builder.setView(input);
 
@@ -290,9 +307,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             prev.incrementCount();
         }
 
-        if (statClasses.containsKey(value)){
-            stack.push(statClasses.get(value));
-        }
+//        if (statClasses.containsKey(value)){
+//            stack.push(statClasses.get(value));
+//        }
 
         if(input.getValue() == "Back"){
             Object poped = stk_bckSpc.pop(); //gets the poped "object"

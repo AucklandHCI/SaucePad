@@ -4,7 +4,9 @@ import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
 import com.aucklanduni.p4p.scalang.statement.control.sControl;
+import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
+import com.aucklanduni.p4p.scalang.statement.sStatement;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
 import com.aucklanduni.p4p.symtab.GlobalScope;
 import com.aucklanduni.p4p.symtab.LocalScope;
@@ -43,6 +45,7 @@ public class Keypad {
      * matches an instance to a string representative of that class
      */
     private Map<String, ScalaElement> items = new HashMap<String,ScalaElement>();
+    private static HashMap<String, sStatement> statClasses = new HashMap<>();
     private int count = 0;
     private int listCount = 0;
     private boolean isList = false;
@@ -73,6 +76,10 @@ public class Keypad {
         items.put("Control", new sControl());
         items.put("If", new sIf());
 
+        statClasses.put("Control", new sControl());
+        statClasses.put("If", new sIf());
+        statClasses.put("For", new sFor());
+
 
         symbolStack.push(new NullSymbol());
 
@@ -94,6 +101,10 @@ public class Keypad {
 
         if (value.equals("Variables")){
             return setType(value);
+        }
+
+        if (statClasses.containsKey(value)){
+            typeStack.push(statClasses.get(value));
         }
 
 
@@ -164,11 +175,15 @@ public class Keypad {
                     return keyPad;
                 }
                 if (keyPad.size() == 2){ // null marker to symbolise printing
-                    if (keyPad.get(0) == null){
-                        String toPrint = keyPad.get(1).getValue();
+                    KeypadItem first = keyPad.get(0);
+                    KeypadItem second = keyPad.get(1);
+                    if (first == null && second != null){
+                        String toPrint = second.getValue();
                         typeStack.peek().incrementCount();
                         kpFrag.printText(toPrint);
                         return new ArrayList<>();
+                    }else if (first == null && second == null){
+                        return keyPad;
                     }
                 }
             }else{

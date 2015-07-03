@@ -2,6 +2,7 @@ package com.aucklanduni.p4p.scalang.statement.control;
 
 import com.aucklanduni.p4p.scalang.KeypadItem;
 import com.aucklanduni.p4p.scalang.expression.sInput;
+import com.aucklanduni.p4p.scalang.statement.sStatement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +19,8 @@ public class sIf extends sControl{
     public Enum  f_condition_options;
 //    public String g_condition = "empty";
     public String h_mand_right_bracket_and_brace = "){"+ indent();
-
-    public String z_right_brace = "}" + unIndent();
+    public List<sStatement> i_statements = new ArrayList<>();
+    public String z_right_brace = "}" + newLine;
 
     public sIf(){
 
