@@ -305,24 +305,42 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             ScalaClass currentLoc = stack.elementAt(stkSize - 1);
             int count = currentLoc.getCount();
             Field[] field = currentLoc.getClass().getDeclaredFields();
-            Field toRemove = field[count];
 
-            while (toRemove.toString().contains("mand")){
-                count -= 1;
-                toRemove = field[count];
-            }
+            boolean containsMand = false;
 
-            for (Field f:field) {
-                try {
-                    Object fieldVal = f.get((Object) currentLoc);  //Gets the values of the fields in a given scala class.
-                    f.set((Object) currentLoc,null); //sets the value of the field in the given object to null.
-                }catch (NullPointerException nullPointer){
+            try {
+                while(!containsMand){
+                    Field toRemove = field[count];
+                    Object fieldVal = toRemove.get((Object) currentLoc);  //Gets the values of the fields in a given scala class.
 
-                }catch (IllegalAccessException illAccess){
-
+                    if(fieldVal.toString().contains("mand")) {
+                        count -= 1;
+                        toRemove = field[count];
+                    }else{
+                        containsMand = true;
+                    }
                 }
 
+//                toRemove.set((Object) currentLoc,null); //sets the value of the field in the given object to null.
+            }catch (NullPointerException nullPointer){
+
+            }catch (IllegalAccessException illAccess){
+
             }
+
+
+
+//            for (Field f:field) {
+//                try {
+//                    Object fieldVal = f.get((Object) currentLoc);  //Gets the values of the fields in a given scala class.
+//                    f.set((Object) currentLoc,null); //sets the value of the field in the given object to null.
+//                }catch (NullPointerException nullPointer){
+//
+//                }catch (IllegalAccessException illAccess){
+//
+//                }
+//
+//            }
 
 
 
