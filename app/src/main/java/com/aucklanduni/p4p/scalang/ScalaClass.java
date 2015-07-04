@@ -58,8 +58,6 @@ public abstract class ScalaClass {
         count = 0;
     }
 
-
-
     public String getItemAfterDone(){
         incrementCount();
         return toPrintAfterDone();

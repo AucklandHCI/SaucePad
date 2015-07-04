@@ -303,8 +303,28 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 //            Log.d(TAG,"TEXT ON SCREEN: " + textOnScreen);
             int stkSize = stack.size() - 1; //gets the scopes in the stack
             ScalaClass currentLoc = stack.elementAt(stkSize - 1);
-            Field[] f = currentLoc.getClass().getFields();
             int count = currentLoc.getCount();
+            Field[] field = currentLoc.getClass().getDeclaredFields();
+            Field toRemove = field[count];
+
+            while (toRemove.toString().contains("mand")){
+                count -= 1;
+                toRemove = field[count];
+            }
+
+            for (Field f:field) {
+                try {
+                    Object fieldVal = f.get((Object) currentLoc);  //Gets the values of the fields in a given scala class.
+                    f.set((Object) currentLoc,null); //sets the value of the field in the given object to null.
+                }catch (NullPointerException nullPointer){
+
+                }catch (IllegalAccessException illAccess){
+
+                }
+
+            }
+
+
 
 
 
