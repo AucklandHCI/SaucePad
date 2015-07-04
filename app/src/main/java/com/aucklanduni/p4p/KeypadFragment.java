@@ -307,17 +307,20 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             Field[] field = currentLoc.getClass().getDeclaredFields();
 
             boolean containsMand = false;
+            String strToRemove ="";
 
             try {
                 while(!containsMand){
-                    Field toRemove = field[count];
+                    Field toRemove = field[count-1];
                     Object fieldVal = toRemove.get((Object) currentLoc);  //Gets the values of the fields in a given scala class.
-
-                    if(fieldVal.toString().contains("mand")) {
+                    strToRemove = fieldVal +" "+ strToRemove;
+                    if(toRemove.getName().toString().contains("mand")) {
                         count -= 1;
+                        currentLoc.decrementCount();
                         toRemove = field[count];
                     }else{
                         containsMand = true;
+                        toRemove.set((Object) currentLoc,null);
                     }
                 }
 
