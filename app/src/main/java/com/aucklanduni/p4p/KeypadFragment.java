@@ -144,7 +144,11 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     public void printText(String text){
+        String x = editor.getText().toString();
+
         editor.setText(editor.getText() + " " + text);
+
+        String y = editor.getText().toString();
     }
 
     public void addToStack(String text){
@@ -303,7 +307,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 //            Log.d(TAG,"TEXT ON SCREEN: " + textOnScreen);
             int stkSize = stack.size() - 1; //gets the scopes in the stack
             ScalaClass currentLoc = stack.elementAt(stkSize - 1);
-            int count = currentLoc.getCount();
+            int count = currentLoc.getCount() - 1; //We need to minus one so that the count is to the element before.
             Field[] field = currentLoc.getClass().getDeclaredFields();
 
             boolean containsMand = false;
@@ -311,9 +315,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
             try {
                 while(!containsMand){
-                    Field toRemove = field[count-1];
+                    Field toRemove = field[count];
                     Object fieldVal = toRemove.get((Object) currentLoc);  //Gets the values of the fields in a given scala class.
-                    strToRemove = fieldVal +" "+ strToRemove;
+                    strToRemove = fieldVal + strToRemove;
                     if(toRemove.getName().toString().contains("mand")) {
                         count -= 1;
                         currentLoc.decrementCount();
@@ -321,6 +325,15 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                     }else{
                         containsMand = true;
                         toRemove.set((Object) currentLoc,null);
+
+                        String screenText = editor.getText().toString();
+                        Log.d(TAG,screenText);
+                        Log.d(TAG,strToRemove);
+                        boolean x = screenText.contains(strToRemove);
+                        String newScreenString = screenText.replace(strToRemove,"");
+                        editor.getText().clear();
+                        printText(newScreenString);
+
                     }
                 }
 
