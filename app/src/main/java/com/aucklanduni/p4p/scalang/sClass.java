@@ -27,4 +27,16 @@ public class sClass extends ScalaElement {
     public String toPrintAfterDone() {
         return z_right_brace;
     }
+
+    public String get_class_name() {
+        return b_class_name;
+    }
+
+    public List<sField> get_fields() {
+        return d_fields;
+    }
+
+    public List<sMethod> get_methods() {
+        return e_methods;
+    }
 }

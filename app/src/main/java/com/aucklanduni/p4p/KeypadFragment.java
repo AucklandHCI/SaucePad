@@ -21,6 +21,9 @@ import android.widget.GridView;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.KeypadItem;
 import com.aucklanduni.p4p.scalang.ScalaElement;
+import com.aucklanduni.p4p.scalang.printer.ScalaPrinter;
+import com.aucklanduni.p4p.scalang.printer.sPrinter;
+import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.scalang.statement.control.sControl;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
@@ -50,9 +53,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     private String mParam2;
 
     private String TAG = "testing";
-
-
-
+    private sClass mainClass;
+//    private final ScalaPrinter printer = new ScalaPrinter();
 
     private GridView gv_keyPad;
     private EditText editor;
@@ -143,7 +145,10 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     public void printText(String text){
-        editor.setText(editor.getText() + " " + text);
+        editor.setText("");
+//        editor.setText(editor.getText() + " " + text);
+        ScalaPrinter printer = new ScalaPrinter();
+        editor.setText(printer.getSource(mainClass));
     }
 
     public void addToStack(String text){
@@ -233,9 +238,10 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 enteredText = input.getText().toString() + " ";
-                printText(enteredText);
+//                printText(enteredText);
                 addToStack(enteredText);
                 keypad.setField(enteredText);
+                printText("");
                 InputMethodManager imm = (InputMethodManager) ctx.getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 //txtName is a reference of an EditText Field
@@ -291,10 +297,13 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         KeypadItem input = (KeypadItem) parent.getAdapter().getItem(position);
         String value = input.getValue();
 
+
         if (!input.dontPrint()){ // if not dummy print it
-            editor.setText(editor.getText() + " " + value);
+//            editor.setText(editor.getText() + " " + value);
+
             keypad.setField(value);
         }
+
 
 
         Stack<ScalaElement> stack = keypad.getTypeStack();
@@ -302,7 +311,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             stack.peek().incrementCount();
         }else if (value.contains("Done")){
             stack.peek().incrementCount();
-            printText(stack.peek().getItemAfterDone());
+//            printText(stack.peek().getItemAfterDone());
             ScalaElement prev = stack.get(stack.size() - 2);
             prev.incrementCount();
         }
@@ -327,7 +336,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             String editStr = editor.getText().toString();
             String x = editStr.replace(popedStr,""); // Removes unwanted string
             editor.getText().clear();
-            printText(x);
+//            printText(x);
 //            keypad.getPrevItems();
             setItemAdapter(stk_prevKeyPadItems.pop());
             return;
@@ -340,6 +349,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 return;
             }
         }
+
+        printText("");
 
         setItemAdapter(keypad.getNextItems(input.getValue()));
 
@@ -357,6 +368,10 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 //            setAdapter(numbers);
 //        }
 
+    }
+
+    public void setMainClass(sClass mainClass) {
+        this.mainClass = mainClass;
     }
 
     public List<KeypadItem> getInitialList(){

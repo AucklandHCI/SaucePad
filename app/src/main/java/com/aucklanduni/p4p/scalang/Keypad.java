@@ -136,11 +136,7 @@ public class Keypad {
 
             Class cls = type.getClass(); // class object
 
-            if (count == 0) {
-                type = (ScalaElement) cls.newInstance();
-                typeStack.pop();
-                typeStack.push(type);
-            }
+
 
             Field[] fields = cls.getFields(); //array of fields
 
@@ -149,9 +145,9 @@ public class Keypad {
 //            }
             int numFields = fields.length;
 
-            Log.d(TAG, "class Name = " + className);
-
-            Log.d(TAG, " numFields = " + numFields + " count = " + count);
+//            Log.d(TAG, "class Name = " + className);
+//
+//            Log.d(TAG, " numFields = " + numFields + " count = " + count);
 
             /**
              * as long as it's within the number of fields,
@@ -180,7 +176,7 @@ public class Keypad {
                     if (first == null && second != null){
                         String toPrint = second.getValue();
                         typeStack.peek().incrementCount();
-                        kpFrag.printText(toPrint);
+//                        kpFrag.printText(toPrint);
                         return new ArrayList<>();
                     }else if (first == null && second == null){
                         return keyPad;
@@ -190,7 +186,10 @@ public class Keypad {
                 //if it's reached the end of the field count, reset the count
                 // and pop off the type stack.
                 type.resetCount();
+
+                type = (ScalaElement) cls.newInstance();
                 typeStack.pop();
+                typeStack.push(type);
 
 //                if (isList){
 //                    addToList(typeStack.peek(), type);
@@ -534,7 +533,12 @@ public class Keypad {
         }
 
 //        this.type = items.get(input);
-        typeStack.push(items.get(input));//type);
+        ScalaElement se = items.get(input);
+        if (se instanceof sClass){
+            kpFrag.setMainClass((sClass) se);
+        }
+
+        typeStack.push(se);//type);
 
         return null;
 
@@ -688,5 +692,9 @@ public class Keypad {
 
     public Stack<ScalaElement> getTypeStack (){
         return typeStack;
+    }
+
+    public sClass getMainClass(){
+        return (sClass) items.get("New Class");
     }
 }

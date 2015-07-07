@@ -18,4 +18,12 @@ public class sParameter extends ScalaElement {//} extends sVariable{
     public String toPrintAfterDone() {
         return "";
     }
+
+    public String get_param_name() {
+        return a_param_name;
+    }
+
+    public Type get_paramType() {
+        return c_paramType;
+    }
 }

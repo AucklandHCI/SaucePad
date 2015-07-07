@@ -19,4 +19,16 @@ public class sField extends sVariable {
 
         return newLine;
     }
+
+    public Enum get_Declaration() {
+        return a_varType;
+    }
+
+    public String get_var_name() {
+        return b_var_name;
+    }
+
+    public Type get_var_Type() {
+        return d_var_Type;
+    }
 }

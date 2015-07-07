@@ -77,6 +77,19 @@ public class sMethod extends ScalaElement implements sMember {
 //    public void addParameters(sParameter parameter) {
 //        this.parameters.add(parameter);
 //    }
+
+
+    public String get_method_name() {
+        return a_method_name;
+    }
+
+    public List<sParameter> get_parameters() {
+        return c_parameters;
+    }
+
+    public List<sStatement> get_statements() {
+        return f_statements;
+    }
 }
 
 // def name( a : Int )
