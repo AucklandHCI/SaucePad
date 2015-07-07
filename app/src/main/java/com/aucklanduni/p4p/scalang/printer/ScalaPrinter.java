@@ -21,21 +21,25 @@ public class ScalaPrinter {
         }
         printer.print(cName);
         printer.print("{");
+        printer.print("\n");
         printer.indent();
 
         List<sField> fields = obj.get_fields();
 
         for (sField f : fields){
             drawField(f);
+            printer.print("\n");
         }
 
         List<sMethod> methods = obj.get_methods();
 
         for (sMethod m : methods){
             drawMethod(m);
+            printer.print("\n");
         }
 
         printer.print("}");
+        printer.print("\n");
         printer.unindent();
     }
 

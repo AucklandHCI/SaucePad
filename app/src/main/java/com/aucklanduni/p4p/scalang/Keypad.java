@@ -51,6 +51,7 @@ public class Keypad {
     private boolean isList = false;
     private KeypadFragment kpFrag;
     private Field field;
+    private ScalaElement temporaryElement;
 
     private Scope globalScope = new GlobalScope();
     private Scope currentScope = globalScope;
@@ -187,8 +188,9 @@ public class Keypad {
                 // and pop off the type stack.
                 type.resetCount();
 
+//                isList = false;
                 type = (ScalaElement) cls.newInstance();
-                typeStack.pop();
+                temporaryElement = typeStack.pop();
                 typeStack.push(type);
 
 //                if (isList){
@@ -622,21 +624,50 @@ public class Keypad {
             }else if (fieldType == List.class){
                 //TODO need to find a way to add to the correct list
 
-                if(!isList) {
-                    ScalaElement currentType = typeStack.peek();
-                    Field temp = field;
-                    try{
-                        Field toSet = currentType.getClass().getFields()[
-                        currentType.getCount() + 1];
 
-                        field = toSet;
-                        setType(input);
-                        field = temp;
-//                        currentType.decrementCount();
-                    }catch (ArrayIndexOutOfBoundsException e){
-                        field = temp;
+//                if(!isList) {
+//                    ScalaElement currentType = typeStack.peek();
+//                    Field temp = field;
+//                    try{
+//                        Field toSet = currentType.getClass().getFields()[
+//                        currentType.getCount() + 1];
+//
+//                        field = toSet;
+//                        setType(input);
+//                        field = temp;
+////                        currentType.decrementCount();
+//                    }catch (ArrayIndexOutOfBoundsException e){
+//                        field = temp;
+//                    }
+//                }
+
+
+            }
+
+            if (isList){
+                ScalaElement current = typeStack.peek();
+                ScalaElement previous = typeStack.get(typeStack.size() - 2);
+                int prevCount = previous.getCount();
+                Field f = previous.getClass().getFields()[prevCount];
+                if (f.getType() == List.class){
+                    ParameterizedType listType = (ParameterizedType) f.getGenericType();
+                    Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0]; // Getting type of listClass
+
+                    if (listClass == current.getClass()){
+                        List SEList = (List) f.get(previous);
+                        if (SEList.contains(current)) {
+                            int index = SEList.indexOf(current);
+                            SEList.remove(index);
+                            SEList.add(index,current);
+                        }else{
+                            SEList.add(current);
+
+                        }
+                        String s = "";
                     }
                 }
+
+
             }
 
 //            Log.d(TAG, "[setField] stack peek = "+ typeStack.peek());
@@ -696,5 +727,9 @@ public class Keypad {
 
     public sClass getMainClass(){
         return (sClass) items.get("New Class");
+    }
+
+    public void setIsList(boolean value){
+        isList = value;
     }
 }

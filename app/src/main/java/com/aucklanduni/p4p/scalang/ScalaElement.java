@@ -251,6 +251,9 @@ public abstract class ScalaElement {
 
         Log.d(TAG, "[doList] list type = " + listClass.getSimpleName());
 
+
+        keypad.setIsList(true);
+
         if(listClass == sMethod.class) {
             Scope scope = keypad.getCurrentScope();
             if (!(currentScope instanceof ClassSymbol)){
