@@ -64,6 +64,16 @@ public class ScalaPrinter {
         }
         printer.print(fName, 1);
 
+        printer.print(": ",2);
+
+        Object fType = obj.get_var_Type();
+        if(fType == null){
+            return;
+        }
+        printer.print(fType.toString(),3);
+
+
+
         //TODO finish off the field
 
     }
