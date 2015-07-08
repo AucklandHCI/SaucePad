@@ -3,10 +3,12 @@ package com.aucklanduni.p4p.scalang.printer;
 import com.aucklanduni.p4p.ClickableText;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
+import com.aucklanduni.p4p.scalang.Statement.sStatement;
 import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.scalang.sField;
 import com.aucklanduni.p4p.scalang.sMethod;
 import com.aucklanduni.p4p.scalang.sParameter;
+import com.aucklanduni.p4p.scalang.sVariable;
 
 import java.util.List;
 
@@ -95,7 +97,7 @@ public class ScalaPrinter {
         //TODO add in parameters
         List<sParameter> params = obj.get_parameters();
 
-        int pLength = params.size() - 1;
+//        int pLength = params.size() - 1; //use this to help determine where the comma goes maybe...
 
         for (sParameter p : params){
             drawParam(p);
@@ -107,6 +109,14 @@ public class ScalaPrinter {
         //TODO figure out how to do return
         printer.print("{",5);
         //TODO method body
+
+//        printer.printLn();
+//        List<sStatement> states = obj.get_statements();
+//
+//        for(sStatement s : states){
+//            drawStats(s);
+//        }
+
         printer.print("}",7);
 
     }
@@ -134,6 +144,11 @@ public class ScalaPrinter {
 
 
     }
+
+//    private void drawStats(sStatement obj){
+//        printer.setScalaElement(obj);
+//
+//    }
 
     public String getSource(sClass obj){
         drawClass(obj);
