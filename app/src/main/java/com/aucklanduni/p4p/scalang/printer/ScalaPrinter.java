@@ -95,10 +95,14 @@ public class ScalaPrinter {
         //TODO add in parameters
         List<sParameter> params = obj.get_parameters();
 
+        int pLength = params.size() - 1;
+
         for (sParameter p : params){
             drawParam(p);
-            printer.print(",",3);
+            //TODO figure out commas for parameters
+            printer.print(" , ",3);
         }
+
         printer.print(")",4);
         //TODO figure out how to do return
         printer.print("{",5);
@@ -109,7 +113,25 @@ public class ScalaPrinter {
 
     private void drawParam(sParameter obj) {
         printer.setScalaElement(obj);
-        
+
+        String pName = obj.a_param_name;
+
+        if(pName == null){
+            return;
+        }
+
+        printer.print(obj.a_param_name,0);
+
+        printer.print(" : ",1);
+
+        Object pType = obj.c_paramType;
+
+        if(pType == null){
+            return;
+        }
+
+        printer.print(pType.toString(),2);
+
 
     }
 
