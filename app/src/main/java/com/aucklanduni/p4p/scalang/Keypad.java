@@ -140,7 +140,7 @@ public class Keypad {
 
 
 
-            Field[] fields = cls.getFields(); //array of fields
+            Field[] fields = cls.getDeclaredFields(); //array of fields
 
 //            for (Field fi : fields){
 //                Log.d(TAG, fi.getClassName());
@@ -192,7 +192,7 @@ public class Keypad {
 //                isList = false;
                 type = (ScalaElement) cls.newInstance();
                 temporaryElement = typeStack.pop();
-                typeStack.push(type);
+//                typeStack.push(type);
 
 //                if (isList){
 //                    addToList(typeStack.peek(), type);

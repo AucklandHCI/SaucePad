@@ -6,6 +6,7 @@ import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.scalang.sField;
 import com.aucklanduni.p4p.scalang.sMethod;
+import com.aucklanduni.p4p.scalang.sParameter;
 
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class ScalaPrinter {
         if(fType == null){
             return;
         }
-        printer.print(fType.toString(),3);
+        printer.print(fType.toString(), 3);
 
 
 
@@ -90,13 +91,25 @@ public class ScalaPrinter {
 
         printer.print(mName,1);
 
-        printer.print("(",2);
+        printer.print("(", 2);
         //TODO add in parameters
+        List<sParameter> params = obj.get_parameters();
+
+        for (sParameter p : params){
+            drawParam(p);
+            printer.print(",",3);
+        }
         printer.print(")",4);
         //TODO figure out how to do return
         printer.print("{",5);
         //TODO method body
         printer.print("}",7);
+
+    }
+
+    private void drawParam(sParameter obj) {
+        printer.setScalaElement(obj);
+        
 
     }
 
