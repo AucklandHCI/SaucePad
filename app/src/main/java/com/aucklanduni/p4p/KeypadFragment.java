@@ -187,7 +187,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
     public void printText(String text){
         editor.setText("");
-        ScalaPrinter printer = new ScalaPrinter();
+        ScalaPrinter printer = new ScalaPrinter(keypad);
 
         String source = printer.getSource(mainClass);
         editor.setText(source, TextView.BufferType.SPANNABLE);
@@ -211,6 +211,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
             if (Character.isLetterOrDigit(possibleWord.charAt(0))) {
                 ClickableText ct = cTexts.get(ctIndex);
+
+                ct.setOnClickListener(this);
                 spans.setSpan(ct, start, end,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 ctIndex++;
@@ -227,7 +229,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         stk_bckSpc.push(text);
     }
 
-    private void setItemAdapter(List<KeypadItem> items){
+    public void setItemAdapter(List<KeypadItem> items){
 
         if(items != null){
             if(items.size() != 0){

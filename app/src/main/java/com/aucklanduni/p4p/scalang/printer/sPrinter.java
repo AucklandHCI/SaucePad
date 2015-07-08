@@ -1,6 +1,7 @@
 package com.aucklanduni.p4p.scalang.printer;
 
 import com.aucklanduni.p4p.ClickableText;
+import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
 
 import java.util.ArrayList;
@@ -16,7 +17,12 @@ public class sPrinter{
     private final StringBuilder buf = new StringBuilder();
     private List<ClickableText> clickableTexts = new ArrayList<>();
     private ScalaElement scalaElement;
+    private Keypad keypad;
 
+
+    public sPrinter(Keypad keypad){
+        this.keypad = keypad;
+    }
 
     public void setScalaElement(ScalaElement element){
         this.scalaElement = element;
@@ -45,7 +51,7 @@ public class sPrinter{
         buf.append(arg);
 
         if (Character.isLetterOrDigit(arg.charAt(0))) {
-            clickableTexts.add(new ClickableText(arg.trim(), scalaElement, count));
+            clickableTexts.add(new ClickableText(arg.trim(), scalaElement, count,keypad));
         }
     }
 
@@ -71,5 +77,6 @@ public class sPrinter{
     public String toString() {
         return getSource();
     }
+
 
 }

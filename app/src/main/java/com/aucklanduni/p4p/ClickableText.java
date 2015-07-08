@@ -1,10 +1,12 @@
 package com.aucklanduni.p4p;
 
+import android.graphics.Color;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.Toast;
 
+import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
 
 /**
@@ -16,17 +18,16 @@ public class ClickableText extends ClickableSpan {
 
     private String word;
     private ScalaElement scalaElement;
+    private Keypad keypad;
     private int seCount = 0;
+    private boolean clicked = false;
+    private KeypadFragment listener;
 
-    public ClickableText(String word, ScalaElement element, int count){
+    public ClickableText(String word, ScalaElement element, int count, Keypad keypad){
         this.word = word;
         this.seCount = count;
         scalaElement = element;
-    }
-
-    public ClickableText(String word) {
-
-        this.word = word;
+        this.keypad = keypad;
     }
 
     public String getWord() {
@@ -37,11 +38,25 @@ public class ClickableText extends ClickableSpan {
     public void onClick(View widget) {
         Toast.makeText(widget.getContext(), "SE = " + scalaElement.getClassName() + ", count = " + seCount, Toast.LENGTH_SHORT)
                 .show();
+        clicked = true;
+        widget.invalidate();
+
+        listener.setItemAdapter(keypad.editItem(scalaElement,seCount));
+
+
+
+    }
+
+    public void setOnClickListener(KeypadFragment kf){
+        listener = kf;
     }
 
     public void updateDrawState(TextPaint ds) {
-        super.updateDrawState(ds);
-//        ds.setColor(Color.BLACK);
+        if (clicked) {
+            ds.setColor(Color.BLUE);
+        }else{
+            ds.setColor(Color.BLACK);
+        }
     }
 
 }

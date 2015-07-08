@@ -58,6 +58,7 @@ public class Keypad {
 
 
     private String TAG = "testing";
+    private boolean editing;
 
     public Keypad(KeypadFragment keypadFragment){
         this.kpFrag = keypadFragment;
@@ -239,6 +240,36 @@ public class Keypad {
         }
 
         return keyPad;
+    }
+
+    public List<KeypadItem> editItem(ScalaElement element, int fieldCount){
+        Class cls = element.getClass();
+        editing = true;
+        typeStack.push(element);
+        try {
+            element = (ScalaElement) cls.newInstance();
+
+            Field[] fields = cls.getFields();
+            field = fields[fieldCount];
+
+            List<KeypadItem> keypadItems = element.doInteraction(field,element,this);
+            if (keypadItems == null){
+                return keypadItems;
+            }
+            if (keypadItems.size() == 2){ // null marker to symbolise printing
+                KeypadItem first = keypadItems.get(0);
+                KeypadItem second = keypadItems.get(1);
+                if (first == null && second == null){
+                    return keypadItems;
+                }
+            }
+            return keypadItems;
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return  null;
     }
 
 //    public List<KeypadItem> getNextItems() throws RuntimeException{
@@ -671,7 +702,12 @@ public class Keypad {
             }
 
 //            Log.d(TAG, "[setField] stack peek = "+ typeStack.peek());
-            typeStack.peek().incrementCount();
+            if(editing){
+                typeStack.pop();
+                editing = false;
+            }else {
+                typeStack.peek().incrementCount();
+            }
 
         }catch (IllegalAccessException e){
             e.printStackTrace();
