@@ -2,7 +2,7 @@ package com.aucklanduni.p4p.scalang;
 
 import android.util.Log;
 
-import com.aucklanduni.p4p.scalang.statement.control.sControl;
+import com.aucklanduni.p4p.scalang.Statement.Control.sControl;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
 import com.aucklanduni.p4p.symtab.LocalScope;
 import com.aucklanduni.p4p.symtab.MethodSymbol;
@@ -15,7 +15,6 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * Created by Taz on 13/05/15.

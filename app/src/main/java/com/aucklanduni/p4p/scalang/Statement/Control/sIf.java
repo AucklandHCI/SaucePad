@@ -1,8 +1,7 @@
-package com.aucklanduni.p4p.scalang.statement.control;
+package com.aucklanduni.p4p.scalang.Statement.Control;
 
-import com.aucklanduni.p4p.scalang.KeypadItem;
 import com.aucklanduni.p4p.scalang.expression.sInput;
-import com.aucklanduni.p4p.scalang.statement.sStatement;
+import com.aucklanduni.p4p.scalang.Statement.sStatement;
 
 import java.util.ArrayList;
 import java.util.List;
