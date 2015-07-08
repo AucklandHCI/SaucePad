@@ -1,5 +1,6 @@
 package com.aucklanduni.p4p.scalang.printer;
 
+import com.aucklanduni.p4p.ClickableText;
 import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.scalang.sField;
 import com.aucklanduni.p4p.scalang.sMethod;
@@ -14,75 +15,82 @@ public class ScalaPrinter {
     private sPrinter printer = new sPrinter();
 
     public void drawClass(sClass obj){
-        printer.print("class ");
+        printer.setScalaElement(obj);
+
+        printer.print("class ", 0);
         String cName = obj.get_class_name();
         if (cName == null){
             return;
         }
-        printer.print(cName);
-        printer.print("{");
-        printer.print("\n");
+        printer.print(cName,1);
+        printer.print("{\n",2);
+        printer.printLn();
         printer.indent();
 
         List<sField> fields = obj.get_fields();
 
         for (sField f : fields){
             drawField(f);
-            printer.print("\n");
+            printer.printLn();
         }
 
         List<sMethod> methods = obj.get_methods();
 
         for (sMethod m : methods){
             drawMethod(m);
-            printer.print("\n");
+            printer.printLn();
         }
 
-        printer.print("}");
-        printer.print("\n");
+        printer.print("}",5);
+        printer.printLn();
         printer.unindent();
     }
 
 
 
-    private void drawField(sField f) {
+    private void drawField(sField obj) {
+        printer.setScalaElement(obj);
 
-        printer.print(f.get_Declaration().toString());
-        printer.print(" ");
-        String fName = f.get_var_name();
+        printer.print(obj.get_Declaration().toString() + " ", 0);
+        String fName = obj.get_var_name();
         if (fName == null){
             return;
         }
-        printer.print(fName);
+        printer.print(fName, 1);
 
         //TODO finish off the field
 
     }
 
-    private void drawMethod(sMethod m) {
+    private void drawMethod(sMethod obj) {
+        printer.setScalaElement(obj);
 
-        printer.print("def ");
-        String mName = m.get_method_name();
+        printer.print("def ", 0);
+        String mName = obj.get_method_name();
 
         if (mName == null){
             return;
         }
 
-        printer.print(mName);
+        printer.print(mName,1);
 
-        printer.print("(");
+        printer.print("(",2);
         //TODO add in parameters
-        printer.print(")");
+        printer.print(")",4);
         //TODO figure out how to do return
-        printer.print("{");
+        printer.print("{",5);
         //TODO method body
-        printer.print("}");
+        printer.print("}",7);
 
     }
 
     public String getSource(sClass obj){
         drawClass(obj);
         return printer.getSource();
+    }
+
+    public List<ClickableText> getClickableTexts(){
+        return printer.getClickableTexts();
     }
 
 

@@ -130,7 +130,7 @@ public class Keypad {
 
 
         List<KeypadItem> keyPad = new ArrayList<>(); // whats displayed on the keyboard
-        String className = type.getName(); //which ScalaElement we're looking at
+        String className = type.getClassName(); //which ScalaElement we're looking at
         count = type.getCount(); // index for which field we're at
 
         try {
@@ -142,7 +142,7 @@ public class Keypad {
             Field[] fields = cls.getFields(); //array of fields
 
 //            for (Field fi : fields){
-//                Log.d(TAG, fi.getName());
+//                Log.d(TAG, fi.getClassName());
 //            }
             int numFields = fields.length;
 
@@ -257,7 +257,7 @@ public class Keypad {
 //
 //
 //        List<KeypadItem> keyPad = new ArrayList<>(); // whats displayed on the keyboard
-//        String className = type.getName(); //Scala Class
+//        String className = type.getClassName(); //Scala Class
 //        count = type.getCount(); // index for which field we're at
 //
 //
@@ -274,7 +274,7 @@ public class Keypad {
 //            Field[] fields = cls.getFields(); //array of fields
 //
 ////            for (Field fi : fields){
-////                Log.d(TAG, fi.getName());
+////                Log.d(TAG, fi.getClassName());
 ////            }
 //            int numFields = fields.length;
 //
@@ -293,10 +293,10 @@ public class Keypad {
 //
 //                Class fType = field.getType();
 //                Log.d(TAG, "field type: "+ fType.getSimpleName() +
-//                        ", field name: " + field.getName());
+//                        ", field name: " + field.getClassName());
 //
 //                if (fType == String.class) { // if string
-//                    String fName = field.getName();
+//                    String fName = field.getClassName();
 //                    String val = (String) field.get(type);
 //                    if (fName.contains("mand")) { // if mandatory
 //                        type = typeStack.peek();
@@ -358,7 +358,7 @@ public class Keypad {
 //                        type = items.get(listClass.getSimpleName());
 //                        typeStack.push(type);
 //                        isList = true;
-////                        Log.d(TAG,"type = "+type.getName());
+////                        Log.d(TAG,"type = "+type.getClassName());
 //
 //                        return new ArrayList<>();
 ////                        prevType = type;

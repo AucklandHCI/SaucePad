@@ -41,7 +41,7 @@ public abstract class ScalaElement {
      */
     private int count = 0;
 
-    public String getName(){
+    public String getClassName(){
         return getClass().getSimpleName();
     }
 

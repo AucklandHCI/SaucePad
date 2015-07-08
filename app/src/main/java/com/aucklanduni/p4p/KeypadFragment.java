@@ -4,12 +4,20 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
+import android.text.Layout;
+import android.text.Spannable;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -17,6 +25,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.KeypadItem;
@@ -28,9 +38,12 @@ import com.aucklanduni.p4p.scalang.statement.control.sControl;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Stack;
 
 
@@ -135,6 +148,31 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
         gv_keyPad = (GridView) view.findViewById(R.id.gv_KeyPad);
         editor = (EditText) view.findViewById(R.id.et_edit);
+        editor.setMovementMethod(LinkMovementMethod.getInstance());
+//        editor.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        Layout layout = ((EditText) v).getLayout();
+//                        float x = event.getX() + editor.getScrollX();
+//                        float y = event.getY() + editor.getScrollY();
+//                        int line = layout.getLineForVertical((int) y);
+//                        int offset = layout.getOffsetForHorizontal(line, x);
+//
+//                        if(offset>0) {
+//                            if (x > layout.getLineMax(0)) {
+//                                editor.setSelection(offset);     // touch was at end of text
+//                            }else {
+//                                editor.setSelection(offset - 1);
+//                            }
+//                        }
+//                        break;
+//                }
+//                return true;
+//            }
+//        });
 
         setItemAdapter(initalList);
         keypad = new Keypad(this);
@@ -144,11 +182,45 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         return view;
     }
 
+
+
+
     public void printText(String text){
         editor.setText("");
-//        editor.setText(editor.getText() + " " + text);
         ScalaPrinter printer = new ScalaPrinter();
-        editor.setText(printer.getSource(mainClass));
+
+        String source = printer.getSource(mainClass);
+        editor.setText(source, TextView.BufferType.SPANNABLE);
+        Spannable spans = (Spannable) editor.getText();
+
+        BreakIterator brIterator = BreakIterator.getWordInstance(Locale.US);
+        brIterator.setText(source);
+
+        List<ClickableText> cTexts = printer.getClickableTexts();
+
+        BreakIterator iterator = BreakIterator.getWordInstance(Locale.US);
+        iterator.setText(source);
+
+        int start = brIterator.first();
+        int ctIndex = 0;
+
+
+        for (int end = brIterator.next(); end != BreakIterator.DONE; start = end, end = brIterator
+                .next()) {
+            String possibleWord = source.substring(start, end);
+
+            if (Character.isLetterOrDigit(possibleWord.charAt(0))) {
+                ClickableText ct = cTexts.get(ctIndex);
+                spans.setSpan(ct, start, end,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ctIndex++;
+//                ClickableText clickSpan = new ClickableText(possibleWord);
+//                spans.setSpan(clickSpan, start, end,
+//                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+
+        //TODO need to hide the keyboard
     }
 
     public void addToStack(String text){
