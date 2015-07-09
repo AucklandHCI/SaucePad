@@ -3,7 +3,6 @@ package com.aucklanduni.p4p.scalang.printer;
 import com.aucklanduni.p4p.ClickableText;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
-import com.aucklanduni.p4p.scalang.Statement.sStatement;
 import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.scalang.sField;
 import com.aucklanduni.p4p.scalang.sMethod;
