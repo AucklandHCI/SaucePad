@@ -53,6 +53,7 @@ public class ClickableText extends ClickableSpan {
                 switch (which) {
                     case 0:
                         Toast.makeText(widget.getContext(), "NEW ELEMENT!!!!", Toast.LENGTH_LONG).show();
+                        listener.setItemAdapter(keypad.insertNewItem(scalaElement,seCount));
                         break;
                     case 1:
                         clicked = true;

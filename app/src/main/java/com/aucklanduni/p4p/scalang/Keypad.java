@@ -242,6 +242,30 @@ public class Keypad {
         return keyPad;
     }
 
+    public List<KeypadItem> insertNewItem(ScalaElement element, int fieldCount){
+        Class cls = element.getClass();
+
+        if(cls.toString().contains("sField")){
+            fieldCount++;
+        }
+
+        ScalaElement se  = typeStack.get(0);
+
+        String clsName = element.getClassName().toString();
+
+        switch (element.getClassName()){
+            case "sField":
+
+                break;
+            case "sMethod":
+                break;
+
+        }
+
+        return null;
+
+    }
+
     public List<KeypadItem> editItem(ScalaElement element, int fieldCount){
         Class cls = element.getClass();
 
