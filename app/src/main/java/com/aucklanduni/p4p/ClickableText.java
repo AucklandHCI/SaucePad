@@ -1,8 +1,12 @@
 package com.aucklanduni.p4p;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -38,10 +42,29 @@ public class ClickableText extends ClickableSpan {
     public void onClick(View widget) {
         Toast.makeText(widget.getContext(), "SE = " + scalaElement.getClassName() + ", count = " + seCount, Toast.LENGTH_SHORT)
                 .show();
-        clicked = true;
-        widget.invalidate();
+//
+//        CharSequence options[] = new CharSequence[] {"New Element", "Edit Selected", "Cancel"};
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(widget.getContext());
+//        builder.setTitle("Select Next Step");
+//        builder.setItems(options, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                // the user clicked on colors[which]
+//                switch (which) {
+//                    case 0:
+//                        Toast.makeText(widget.getContext(), "NEW ELEMENT!!!!", Toast.LENGTH_LONG).show();
+//                    case 1:
+                        clicked = true;
+                        widget.invalidate();
 
-        listener.setItemAdapter(keypad.editItem(scalaElement,seCount));
+                        listener.setItemAdapter(keypad.editItem(scalaElement,seCount));
+//                }
+//            }
+//        });
+//        builder.show();
+
+
 
 
 
