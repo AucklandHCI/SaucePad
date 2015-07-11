@@ -52,6 +52,7 @@ public class sPrinter{
 
         if (Character.isLetterOrDigit(arg.charAt(0))) {
             clickableTexts.add(new ClickableText(arg.trim(), scalaElement, count,keypad));
+
         }
     }
 

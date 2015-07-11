@@ -1,6 +1,6 @@
 package com.aucklanduni.p4p.scalang;
 
-import com.aucklanduni.p4p.scalang.statement.sStatement;
+import com.aucklanduni.p4p.scalang.Statement.sStatement;
 
 import java.util.ArrayList;
 import java.util.List;
