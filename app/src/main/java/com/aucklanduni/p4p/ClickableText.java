@@ -39,30 +39,31 @@ public class ClickableText extends ClickableSpan {
     }
 
     @Override
-    public void onClick(View widget) {
+    public void onClick(final View widget) {
         Toast.makeText(widget.getContext(), "SE = " + scalaElement.getClassName() + ", count = " + seCount, Toast.LENGTH_SHORT)
                 .show();
-//
-//        CharSequence options[] = new CharSequence[] {"New Element", "Edit Selected", "Cancel"};
-//
-//        AlertDialog.Builder builder = new AlertDialog.Builder(widget.getContext());
-//        builder.setTitle("Select Next Step");
-//        builder.setItems(options, new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                // the user clicked on colors[which]
-//                switch (which) {
-//                    case 0:
-//                        Toast.makeText(widget.getContext(), "NEW ELEMENT!!!!", Toast.LENGTH_LONG).show();
-//                    case 1:
+        CharSequence options[] = new CharSequence[] {"New Element", "Edit Selected", "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(widget.getContext());
+        builder.setTitle("Select Next Step");
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                switch (which) {
+                    case 0:
+                        Toast.makeText(widget.getContext(), "NEW ELEMENT!!!!", Toast.LENGTH_LONG).show();
+                        break;
+                    case 1:
                         clicked = true;
                         widget.invalidate();
 
                         listener.setItemAdapter(keypad.editItem(scalaElement,seCount));
-//                }
-//            }
-//        });
-//        builder.show();
+                        break;
+                }
+            }
+        });
+        builder.show();
 
 
 
