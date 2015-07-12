@@ -249,13 +249,29 @@ public class Keypad {
             fieldCount++;
         }
 
-        ScalaElement se  = typeStack.get(0);
+        ScalaElement se  = typeStack.get(0); //gets the class
+
+//        try {
+
+        sClass mainClass = (sClass) se;
+
+//        }catch (NullPointerException e){
+//
+//        }
 
         String clsName = element.getClassName().toString();
 
         switch (element.getClassName()){
             case "sField":
+                //Option1: try to duplicate a complete field and allow the user to edit it
+                
+                List fieldsToAddToo = mainClass.d_fields;
+                int getThis = fieldsToAddToo.size()-1;
+                Object copy = fieldsToAddToo.get(getThis);
+                fieldsToAddToo.add(copy);
 
+                /*Option2: Try to implement a form of cursor that goes through the process of declaring a new field,
+                 and once this declaring process it is complete we pass back to the current location.*/
                 break;
             case "sMethod":
                 break;
