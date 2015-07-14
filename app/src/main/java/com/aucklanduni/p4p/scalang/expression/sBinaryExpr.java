@@ -1,7 +1,7 @@
 package com.aucklanduni.p4p.scalang.expression;
 
 import com.aucklanduni.p4p.scalang.sEnum;
-import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
+import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 /**
  * Created by Taz on 13/07/15.
@@ -39,7 +39,8 @@ public class sBinaryExpr extends sExpression {
     }
 
     @Override
-    public void setEnum(String val) {
+    public Enum setEnum(String val) {
         b_op = sEnum.en_Operators.getEnum(val);
+        return b_op;
     }
 }

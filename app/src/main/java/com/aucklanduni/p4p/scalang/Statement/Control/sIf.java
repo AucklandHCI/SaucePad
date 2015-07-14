@@ -1,9 +1,8 @@
 package com.aucklanduni.p4p.scalang.statement.control;
 
-import com.aucklanduni.p4p.scalang.expression.sBinaryExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
-import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
+import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public class sIf extends sControl{
 //    public String g_condition = "empty";
 
 
-    public sBinaryExpr c_expr = new sBinaryExpr();
+    public sExpression c_expr = null;
 
     public String h_mand_right_bracket_and_brace = "){"+ indent();
     public List<sStatement> i_statements = new ArrayList<>();
@@ -44,7 +43,7 @@ public class sIf extends sControl{
         return "";
     }
 
-    public sBinaryExpr get_expr() {
+    public sExpression getCondition() {
         return c_expr;
     }
 }

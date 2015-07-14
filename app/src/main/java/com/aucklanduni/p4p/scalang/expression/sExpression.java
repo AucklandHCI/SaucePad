@@ -1,8 +1,7 @@
 package com.aucklanduni.p4p.scalang.expression;
 
 import com.aucklanduni.p4p.scalang.ScalaElement;
-import com.aucklanduni.p4p.scalang.sEnum;
-import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
+import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 /**
  * Created by Taz on 13/07/15.

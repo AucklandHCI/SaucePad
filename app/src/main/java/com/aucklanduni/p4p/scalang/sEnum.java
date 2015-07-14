@@ -63,7 +63,8 @@ public class sEnum {
     }
 
     public enum en_Expression_Types{
-        dp_Variables, dp_abc, dp_123, dp_Method_Call, True, False;
+//        dp_Variables, dp_abc, dp_123, dp_Method_Call, True, False;
+        dp_Plus, dp_Equals, dp_Value;
 
         static final Map<String,en_Expression_Types> valueMap =
                 new HashMap<>();
@@ -76,20 +77,20 @@ public class sEnum {
             return valueMap.get(val);
         }
 
-        @Override
-        public String toString() {
-            if (this == dp_123 || this == dp_abc){
-                return this.name() + "...";
-            }
-            if (this == True) {
-                return "true";
-            }
-            if (this == False){
-                return "false";
-            }
-
-            return super.toString();
-        }
+//        @Override
+//        public String toString() {
+//            if (this == dp_123 || this == dp_abc){
+//                return this.name() + "...";
+//            }
+//            if (this == True) {
+//                return "true";
+//            }
+//            if (this == False){
+//                return "false";
+//            }
+//
+//            return super.toString();
+//        }
 
     }
 

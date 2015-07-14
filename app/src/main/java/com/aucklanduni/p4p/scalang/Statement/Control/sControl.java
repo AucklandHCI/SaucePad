@@ -2,7 +2,7 @@ package com.aucklanduni.p4p.scalang.statement.control;
 
 import com.aucklanduni.p4p.scalang.sEnum;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
-import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
+import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 /**
  * Created by Taz on 17/06/15.

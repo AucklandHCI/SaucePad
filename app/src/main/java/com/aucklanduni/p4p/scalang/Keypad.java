@@ -4,12 +4,13 @@ import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
 import com.aucklanduni.p4p.scalang.expression.sBinaryExpr;
+import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
+import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
 import com.aucklanduni.p4p.scalang.expression.sValueExpr;
 import com.aucklanduni.p4p.scalang.statement.control.sControl;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
-import com.aucklanduni.p4p.scalang.statement.sStatement;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
 import com.aucklanduni.p4p.symtab.GlobalScope;
 import com.aucklanduni.p4p.symtab.LocalScope;
@@ -26,8 +27,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -48,6 +51,8 @@ public class Keypad {
      * matches an instance to a string representative of that class
      */
     private Map<String, ScalaElement> items = new HashMap<String,ScalaElement>();
+    private Map<String, Class<? extends sExpression>> expressions = new HashMap<>();
+
     private static HashMap<String, ScalaElement> options = new HashMap<>();
     private static List<String> listItem = new ArrayList<>();
 
@@ -84,9 +89,10 @@ public class Keypad {
         items.put("If", new sIf());
 
 
-
-
-
+        // == Expressions ===
+        expressions.put("Plus", sPlusExpr.class);
+        expressions.put("Value", sValueExpr.class);
+        expressions.put("Equals", sEqualsExpr.class);
 
         // Options
         options.put("Control", new sControl());
@@ -127,11 +133,13 @@ public class Keypad {
                 }
             }
         }
-        if (typeStack.peek() instanceof sBinaryExpr){
-            if(value.equals("Operand")){
-                return setType(value);
-            }
+        if (expressions.containsKey(value)){
+            sExpression expr = (sExpression) setField(value);
+            typeStack.push(expr);
         }
+
+
+
         if (value.equals("Variables")){
             return setType(value);
         }else if (value.equals("abc...")){
@@ -229,9 +237,9 @@ public class Keypad {
 //                isList = false;
                 type = (ScalaElement) cls.newInstance();
                 temporaryElement = typeStack.pop();
-                if(!isList || listClass != typeStack.peek() ){
-                    typeStack.peek().incrementCount();
-                }
+//                if(!isList || listClass != typeStack.peek() ){
+//                    typeStack.peek().incrementCount();
+//                }
 //                typeStack.push(type);
 
 //                if (isList){
@@ -652,16 +660,18 @@ public class Keypad {
      * entered by the user.
      * @param input
      */
-    public void setField(String input){
+    public Object setField(String input){
+
+        Object value = null;
 
         if(field == null){
-            return;
+            return null;
         }
 
         if(typeStack.peek() == null){
             typeStack.pop();
             typeStack.peek().incrementCount();
-            return;
+            return null;
         }
 
         Log.e(TAG,"[setField] value= " + input);
@@ -692,6 +702,7 @@ public class Keypad {
 
             if (fieldType == String.class) {
                 field.set(typeStack.peek(), input);
+                value = input;
 
                 /*
                 if the name of the field contains "name" then
@@ -716,17 +727,33 @@ public class Keypad {
             }else if (fieldType == Type.class) {
                 Symbol s = currentScope.resolve(input);
                 if (s instanceof Type) {
-                    field.set(typeStack.peek(), (Type) s);
-                    symbolStack.peek().setType((Type) s);
+
+                    Type t = (Type) s;
+
+                    field.set(typeStack.peek(), t);
+
+                    value = t;
+
+                    symbolStack.peek().setType(t);
+
                 } else {
                     throw new RuntimeException("Incorrect 'Type' provided");
                 }
             }else if (Enum.class.isAssignableFrom(fieldType)){
 
-                typeStack.peek().setEnum(input);
+                value = typeStack.peek().setEnum(input);
 
-            }else if (fieldType == sValueExpr.class){
-//                field.set(typeStack.peek(), new sValueExpr);
+            }else if (sExpression.class.isAssignableFrom(fieldType)){
+
+                try {
+
+                    sExpression expr = expressions.get(input).newInstance();
+                    field.set(typeStack.peek(), expr);
+                    value = expr;
+
+                }catch (InstantiationException e) {
+                    e.printStackTrace();
+                }
 
             }else if (fieldType == List.class){
                 //TODO need to find a way to add to the correct list
@@ -772,6 +799,8 @@ public class Keypad {
         }catch (IllegalAccessException e){
             e.printStackTrace();
         }
+
+        return value;
     }
 
     private void addToList() throws IllegalAccessException {

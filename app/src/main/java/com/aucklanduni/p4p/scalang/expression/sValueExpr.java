@@ -1,7 +1,7 @@
 package com.aucklanduni.p4p.scalang.expression;
 
+import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 import com.aucklanduni.p4p.scalang.sEnum;
-import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
 
 /**
  * Created by Taz on 13/07/15.
@@ -9,8 +9,8 @@ import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
 public class sValueExpr extends sExpression {
 
 
-    public sEnum.en_Expression_Types a_value = sEnum.en_Expression_Types.dp_Variables;
-    private String value = " ";
+    public sEnum.en_Input_Types a_value = sEnum.en_Input_Types.dp_Variables;
+    public String value = " ";
 
     @Override
     public void accept(VoidVisitor v) {
@@ -23,11 +23,12 @@ public class sValueExpr extends sExpression {
     }
 
     @Override
-    public void setEnum(String val) {
-        sEnum.en_Expression_Types temp = sEnum.en_Expression_Types.getEnum(val);
+    public Enum setEnum(String val) {
+//        sEnum.en_Expression_Types temp = sEnum.en_Expression_Types.getEnum(val);
 
 //        a_value = (temp == null ) ? a_value : temp;
         value = val;
+        return a_value;
     }
 
     public String getValue() {

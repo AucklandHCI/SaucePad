@@ -6,7 +6,9 @@ import com.aucklanduni.p4p.ClickableText;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.expression.sBinaryExpr;
+import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
+import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
 import com.aucklanduni.p4p.scalang.expression.sValueExpr;
 import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.scalang.sField;
@@ -14,7 +16,6 @@ import com.aucklanduni.p4p.scalang.sMethod;
 import com.aucklanduni.p4p.scalang.sParameter;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
-import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
 
 import java.util.List;
 
@@ -166,7 +167,10 @@ public class ScalaPrinter implements VoidVisitor{
     public void visit(sIf obj) {
         printer.setScalaElement(obj);
         printer.print("if (", 0);
-        obj.get_expr().accept(this);
+        sExpression condition = obj.getCondition();
+        if (condition != null){
+            condition.accept(this);
+        }
         printer.print(") {", 3);
 
         printer.printLn();
@@ -184,6 +188,8 @@ public class ScalaPrinter implements VoidVisitor{
 
     public void visit(sExpression obj) {
 
+        throw new IllegalStateException(obj.getClassName());
+
     }
 
     public void visit(sBinaryExpr obj) {
@@ -198,6 +204,47 @@ public class ScalaPrinter implements VoidVisitor{
     public void visit(sValueExpr obj) {
         printer.setScalaElement(obj);
         printer.print(obj.getValue(),0);
+    }
+
+    @Override
+    public void visit(sPlusExpr obj) {
+        printer.setScalaElement(obj);
+
+        printer.print("(", 0);
+
+        sExpression left = obj.get_summand1();
+        if (left != null){
+            left.accept(this);
+        }
+        printer.print(" + ", 1);
+
+        sExpression right = obj.get_summand2();
+        if (right != null){
+            right.accept(this);
+        }
+
+        printer.print(")", 1);
+
+    }
+
+    @Override
+    public void visit(sEqualsExpr obj) {
+        printer.setScalaElement(obj);
+
+        printer.print("(", 0);
+
+        sExpression left = obj.get_left();
+        if (left != null){
+            left.accept(this);
+        }
+        printer.print(" == ", 1);
+
+        sExpression right = obj.get_right();
+        if (right != null){
+            right.accept(this);
+        }
+
+        printer.print(")", 1);
     }
 
     //    private void printStats(sStatement obj){

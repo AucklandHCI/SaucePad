@@ -3,8 +3,7 @@ package com.aucklanduni.p4p.scalang;
 import android.util.Log;
 
 import com.aucklanduni.p4p.scalang.expression.sExpression;
-import com.aucklanduni.p4p.scalang.statement.control.sControl;
-import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
+import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
 import com.aucklanduni.p4p.symtab.LocalScope;
 import com.aucklanduni.p4p.symtab.MethodSymbol;
@@ -174,8 +173,8 @@ public abstract class ScalaElement {
     }
 
     private List<KeypadItem> doExpressionInteraction(sExpression expr) {
-        keypad.getTypeStack().push(expr);
-        return new ArrayList<>();
+
+        return getEnumsAsList(sEnum.en_Expression_Types.values());
     }
 
     protected List<KeypadItem> doValueInteraction(Object o){
@@ -299,8 +298,6 @@ public abstract class ScalaElement {
      */
     protected List<KeypadItem> doEnumInteraction(Enum en){
 
-        List<KeypadItem> items = new ArrayList<>();
-
         /**
          * Checks to see if field/Variable is created, and creates the
          * appropriate symbol for the symbol table.
@@ -331,6 +328,12 @@ public abstract class ScalaElement {
 
         Object[] values = en.getDeclaringClass().getEnumConstants();
 
+        return getEnumsAsList(values);
+    }
+
+    private List<KeypadItem> getEnumsAsList(Object[] values){
+
+        List<KeypadItem> items = new ArrayList<>();
 
         boolean dontPrint;
         String enumValue;
@@ -358,7 +361,8 @@ public abstract class ScalaElement {
         return items;
     }
 
-    public void setEnum(String val){
+    public Enum setEnum(String val){
+        return null;
 
     }
     public void backSpace(){}

@@ -1,8 +1,10 @@
-package com.aucklanduni.p4p.scalang.visitor;
+package com.aucklanduni.p4p.scalang.printer;
 
 import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.expression.sBinaryExpr;
+import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
+import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
 import com.aucklanduni.p4p.scalang.expression.sValueExpr;
 import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.scalang.sField;
@@ -15,19 +17,21 @@ import com.aucklanduni.p4p.scalang.statement.control.sIf;
  */
 public interface VoidVisitor {
 
-    public void visit(ScalaElement obj);
+    void visit(ScalaElement obj);
 
     // ScalaElements ---------
-    public void visit(sClass obj);
-    public void visit(sField obj);
-    public void visit(sMethod obj);
-    public void visit(sParameter obj);
-    public void visit(sIf obj);
+    void visit(sClass obj);
+    void visit(sField obj);
+    void visit(sMethod obj);
+    void visit(sParameter obj);
+    void visit(sIf obj);
     
     
     
     // sExpression ------------
-    public void visit(sExpression obj);
-    public void visit(sBinaryExpr obj);
-    public void visit(sValueExpr obj);
+    void visit(sExpression obj);
+    void visit(sBinaryExpr obj);
+    void visit(sValueExpr obj);
+    void visit(sPlusExpr obj);
+    void visit(sEqualsExpr obj);
 }
