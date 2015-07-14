@@ -284,6 +284,9 @@ public class Keypad {
 
     public List<KeypadItem> editItem(ScalaElement element, int fieldCount){
         Class cls = element.getClass();
+        if(cls.toString().contains("sField")){
+            fieldCount++;
+        }
         editing = true;
         typeStack.push(element);
         try {

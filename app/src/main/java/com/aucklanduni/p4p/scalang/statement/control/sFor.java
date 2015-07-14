@@ -1,4 +1,4 @@
-package com.aucklanduni.p4p.scalang.statement.control;
+package com.aucklanduni.p4p.scalang.Statement.Control;
 
 import com.aucklanduni.p4p.scalang.sEnum;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
