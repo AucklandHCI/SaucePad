@@ -375,8 +375,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             stack.peek().incrementCount();
             keypad.setIsList(false);
             stack.peek().getItemAfterDone();
-            ScalaElement prev = stack.get(stack.size() - 2);
-            prev.incrementCount();
+//            ScalaElement prev = stack.get(stack.size() - 2);
+//            prev.incrementCount();
         }
 
 //        if (statClasses.containsKey(value)){

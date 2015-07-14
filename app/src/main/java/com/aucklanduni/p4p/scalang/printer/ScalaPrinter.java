@@ -1,28 +1,41 @@
 package com.aucklanduni.p4p.scalang.printer;
 
+import android.util.Log;
+
 import com.aucklanduni.p4p.ClickableText;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
+import com.aucklanduni.p4p.scalang.expression.sBinaryExpr;
+import com.aucklanduni.p4p.scalang.expression.sExpression;
+import com.aucklanduni.p4p.scalang.expression.sValueExpr;
 import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.scalang.sField;
 import com.aucklanduni.p4p.scalang.sMethod;
 import com.aucklanduni.p4p.scalang.sParameter;
-import com.aucklanduni.p4p.scalang.sVariable;
+import com.aucklanduni.p4p.scalang.statement.control.sIf;
+import com.aucklanduni.p4p.scalang.statement.sStatement;
+import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
 
 import java.util.List;
 
 /**
  * Created by Taz on 7/07/15.
  */
-public class ScalaPrinter {
+public class ScalaPrinter implements VoidVisitor{
 
     private sPrinter printer;
+    private String TAG = "testing";
 
     public ScalaPrinter(Keypad keypad){
         printer = new sPrinter(keypad);
     }
 
-    public void drawClass(sClass obj){
+    @Override
+    public void visit(ScalaElement obj) {
+        throw new IllegalStateException(obj.getClassName());
+    }
+
+    public void visit(sClass obj){
         printer.setScalaElement(obj);
 
         printer.print("class ", 0);
@@ -38,25 +51,25 @@ public class ScalaPrinter {
         List<sField> fields = obj.get_fields();
 
         for (sField f : fields){
-            drawField(f);
+           f.accept(this);
             printer.printLn();
         }
 
         List<sMethod> methods = obj.get_methods();
 
         for (sMethod m : methods){
-            drawMethod(m);
+            m.accept(this);
             printer.printLn();
         }
 
+        printer.unindent();
         printer.print("}",5);
         printer.printLn();
-        printer.unindent();
     }
 
 
 
-    private void drawField(sField obj) {
+    public void visit(sField obj) {
         printer.setScalaElement(obj);
 
         printer.print(obj.get_Declaration().toString() + " ", 0);
@@ -80,7 +93,7 @@ public class ScalaPrinter {
 
     }
 
-    private void drawMethod(sMethod obj) {
+    public void visit(sMethod obj) {
         printer.setScalaElement(obj);
 
         printer.print("def ", 0);
@@ -99,7 +112,7 @@ public class ScalaPrinter {
 //        int pLength = params.size() - 1; //use this to help determine where the comma goes maybe...
 
         for (sParameter p : params){
-            drawParam(p);
+            p.accept(this);
             //TODO figure out commas for parameters
             printer.print(" , ",3);
         }
@@ -109,18 +122,24 @@ public class ScalaPrinter {
         printer.print("{",5);
         //TODO method body
 
-//        printer.printLn();
-//        List<sStatement> states = obj.get_statements();
-//
-//        for(sStatement s : states){
-//            drawStats(s);
-//        }
+        printer.printLn();
+        List<sStatement> states = obj.get_statements();
 
+
+        Log.e(TAG, "states size: " + states.size());
+        printer.indent();
+        for(sStatement s : states){
+           s.accept(this);
+        }
+
+
+        printer.unindent();
         printer.print("}",7);
+
 
     }
 
-    private void drawParam(sParameter obj) {
+    public void visit(sParameter obj) {
         printer.setScalaElement(obj);
 
         String pName = obj.a_param_name;
@@ -144,13 +163,50 @@ public class ScalaPrinter {
 
     }
 
-//    private void drawStats(sStatement obj){
+    public void visit(sIf obj) {
+        printer.setScalaElement(obj);
+        printer.print("if (", 0);
+        obj.get_expr().accept(this);
+        printer.print(") {", 3);
+
+        printer.printLn();
+        printer.indent();
+
+        //statements
+
+        printer.unindent();
+
+        printer.print("}",5);
+        printer.unindent();
+        printer.printLn();
+
+    }
+
+    public void visit(sExpression obj) {
+
+    }
+
+    public void visit(sBinaryExpr obj) {
+        obj.getLeft().accept(this);
+        printer.printSpace();
+        printer.print(obj.getOperator().toString(), 1);
+        printer.printSpace();
+        obj.getRight().accept(this);
+    }
+
+    @Override
+    public void visit(sValueExpr obj) {
+        printer.setScalaElement(obj);
+        printer.print(obj.getValue(),0);
+    }
+
+    //    private void printStats(sStatement obj){
 //        printer.setScalaElement(obj);
 //
 //    }
 
-    public String getSource(sClass obj){
-        drawClass(obj);
+    public String getSource(sClass obj) {
+        visit(obj);
         return printer.getSource();
     }
 

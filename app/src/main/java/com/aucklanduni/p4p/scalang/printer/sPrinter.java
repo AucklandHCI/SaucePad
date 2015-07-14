@@ -1,5 +1,7 @@
 package com.aucklanduni.p4p.scalang.printer;
 
+import android.util.Log;
+
 import com.aucklanduni.p4p.ClickableText;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
@@ -63,6 +65,10 @@ public class sPrinter{
     public void printLn() {
         buf.append("\n");
         indented = false;
+    }
+
+    public void printSpace() {
+        buf.append(" ");
     }
 
     public String getSource() {

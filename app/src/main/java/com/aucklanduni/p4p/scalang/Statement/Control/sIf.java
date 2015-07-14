@@ -1,7 +1,9 @@
 package com.aucklanduni.p4p.scalang.statement.control;
 
-import com.aucklanduni.p4p.scalang.expression.sInput;
+import com.aucklanduni.p4p.scalang.expression.sBinaryExpr;
+import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
+import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,22 +13,37 @@ import java.util.List;
  */
 public class sIf extends sControl{
     public String a_mand_if = "if (";
-    public Enum b_variable_options = sInput.en_Input_Types.dp_Variables;
+//    public Enum b_variable_options = sEnum.en_Input_Types.dp_Variables;
 //    public String c_var = "empty";
-    public Enum d_operator_options = sInput.en_Operators.equals;
+//    public Enum d_operator_options = sEnum.en_Operators.equals;
 //    public String e_operator = "empty";
-    public Enum  f_condition_options;
+//    public Enum  f_condition_options;
 //    public String g_condition = "empty";
+
+
+    public sBinaryExpr c_expr = new sBinaryExpr();
+
     public String h_mand_right_bracket_and_brace = "){"+ indent();
     public List<sStatement> i_statements = new ArrayList<>();
     public String z_right_brace = "}" + newLine;
 
     public sIf(){
 
-        f_condition_options = b_variable_options;
+//        f_condition_options = b_variable_options;
 
     }
 
+    @Override
+    public void accept(VoidVisitor v) {
+        v.visit(this);
+    }
 
+    @Override
+    protected String toPrintAfterDone() {
+        return "";
+    }
 
+    public sBinaryExpr get_expr() {
+        return c_expr;
+    }
 }

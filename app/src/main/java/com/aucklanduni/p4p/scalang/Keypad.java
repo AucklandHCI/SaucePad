@@ -3,6 +3,9 @@ package com.aucklanduni.p4p.scalang;
 import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
+import com.aucklanduni.p4p.scalang.expression.sBinaryExpr;
+import com.aucklanduni.p4p.scalang.expression.sExpression;
+import com.aucklanduni.p4p.scalang.expression.sValueExpr;
 import com.aucklanduni.p4p.scalang.statement.control.sControl;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
@@ -45,13 +48,15 @@ public class Keypad {
      * matches an instance to a string representative of that class
      */
     private Map<String, ScalaElement> items = new HashMap<String,ScalaElement>();
-    private static HashMap<String, sStatement> statClasses = new HashMap<>();
+    private static HashMap<String, ScalaElement> options = new HashMap<>();
+    private static List<String> listItem = new ArrayList<>();
+
     private int count = 0;
     private int listCount = 0;
     private boolean isList = false;
     private KeypadFragment kpFrag;
     private Field field;
-    private ScalaElement temporaryElement;
+    private ScalaElement temporaryElement, listClass;
 
     private Scope globalScope = new GlobalScope();
     private Scope currentScope = globalScope;
@@ -78,9 +83,20 @@ public class Keypad {
         items.put("Control", new sControl());
         items.put("If", new sIf());
 
-        statClasses.put("Control", new sControl());
-        statClasses.put("If", new sIf());
-        statClasses.put("For", new sFor());
+
+
+
+
+
+        // Options
+        options.put("Control", new sControl());
+        options.put("If", new sIf());
+        options.put("For", new sFor());
+
+        // Temp
+        listItem.add("If");
+        listItem.add("For");
+
 
 
         symbolStack.push(new NullSymbol());
@@ -101,13 +117,34 @@ public class Keypad {
      */
     public List<KeypadItem> getNextItems(String value) throws RuntimeException {
 
+        if (options.containsKey(value)){
+            typeStack.push(options.get(value));
+            if (listItem.contains(value)){
+                try {
+                    addToList();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if (typeStack.peek() instanceof sBinaryExpr){
+            if(value.equals("Operand")){
+                return setType(value);
+            }
+        }
         if (value.equals("Variables")){
             return setType(value);
+        }else if (value.equals("abc...")){
+            return null;
+        }else if (value.equals("123...")){
+            List<KeypadItem> i = new ArrayList<>();
+            i.add(null);
+            i.add(null);
+            return i;
         }
 
-        if (statClasses.containsKey(value)){
-            typeStack.push(statClasses.get(value));
-        }
+
+
 
 
 
@@ -140,16 +177,16 @@ public class Keypad {
 
 
 
-            Field[] fields = cls.getDeclaredFields(); //array of fields
+            Field[] fields = cls.getFields(); //array of fields
 
 //            for (Field fi : fields){
 //                Log.d(TAG, fi.getClassName());
 //            }
             int numFields = fields.length;
 
-//            Log.d(TAG, "class Name = " + className);
+            Log.d(TAG, "class Name = " + className);
 //
-//            Log.d(TAG, " numFields = " + numFields + " count = " + count);
+            Log.d(TAG, "numFields = " + numFields + ", count = " + count);
 
             /**
              * as long as it's within the number of fields,
@@ -170,7 +207,7 @@ public class Keypad {
                 keyPad =  typeStack.peek().doInteraction(field, typeStack.peek(),this);
 
                 if (keyPad == null){
-                    return keyPad;
+                    return null;
                 }
                 if (keyPad.size() == 2){ // null marker to symbolise printing
                     KeypadItem first = keyPad.get(0);
@@ -192,6 +229,9 @@ public class Keypad {
 //                isList = false;
                 type = (ScalaElement) cls.newInstance();
                 temporaryElement = typeStack.pop();
+                if(!isList || listClass != typeStack.peek() ){
+                    typeStack.peek().incrementCount();
+                }
 //                typeStack.push(type);
 
 //                if (isList){
@@ -480,7 +520,7 @@ public class Keypad {
 
         Log.d(TAG, "[setType] input = " + input);
 
-        switch (input){
+        switch (input) {
             case "New Param":
                 if (listCount > 0) {
                     kpFrag.printText(",");
@@ -492,7 +532,7 @@ public class Keypad {
 //
 //                }
 
-                if (!(currentScope instanceof MethodSymbol)){
+                if (!(currentScope instanceof MethodSymbol)) {
                     throw new RuntimeException("Can only add parameters to Method objects");
                 }//else{
 //                    currentScope.define(vs);
@@ -510,7 +550,7 @@ public class Keypad {
 
             case "New Method":
 
-                if (!(currentScope instanceof ClassSymbol)){
+                if (!(currentScope instanceof ClassSymbol)) {
                     throw new RuntimeException("Method must be in a class");
                 }
 
@@ -533,7 +573,7 @@ public class Keypad {
                 return null;
 
             case "New Class":
-                ClassSymbol cs = new ClassSymbol("NewClassScope",globalScope);
+                ClassSymbol cs = new ClassSymbol("NewClassScope", globalScope);
                 symbolStack.push(cs);
 //                currentScope.define(cs);
                 currentScope = cs;
@@ -549,15 +589,39 @@ public class Keypad {
                 List<String> vars = currentScope.getByInstanceOf(VariableSymbol.class);
                 List<KeypadItem> ret = new ArrayList<>();
                 Collections.sort(vars);
-                for(String v : vars){
+                for (String v : vars) {
                     ret.add(new KeypadItem(v));
                 }
 
                 Log.d(TAG, "[setType|V] var list size = " + vars.size());
                 return ret;
 
-        }
+            case "Operand":
+                List<KeypadItem> toRet = new ArrayList<>();
+                Object[] values = sEnum.en_Operators.values();
 
+                String enumValue;
+                for (Object o : values) {
+
+                    enumValue = o.toString();
+
+                    /**
+                     * not all 'options' need to be printed to the screen and
+                     * so any enums that have the prefix 'dp_' are NOT printed
+                     */
+                    if (enumValue.contains("dp_")) {
+                        enumValue = enumValue.replace("dp_", "");
+                    }
+                    enumValue = enumValue.replace("_", " ");
+
+
+//            enumValue = Enum.valueOf(en.getClass(), enumValue).toString();
+
+                    toRet.add(new KeypadItem(enumValue));
+
+                }
+                return toRet;
+        }
         if (!items.containsKey(input)){
 //            throw new RuntimeException("Key missing!");
 //            kpFrag.printText(input);
@@ -596,6 +660,8 @@ public class Keypad {
             typeStack.peek().incrementCount();
             return;
         }
+
+        Log.e(TAG,"[setField] value= " + input);
 
         try{
 
@@ -644,14 +710,21 @@ public class Keypad {
                 }
 
 
-            }else if (fieldType == Type.class){
+            }else if (fieldType == Type.class) {
                 Symbol s = currentScope.resolve(input);
-                if (s instanceof Type){
+                if (s instanceof Type) {
                     field.set(typeStack.peek(), (Type) s);
                     symbolStack.peek().setType((Type) s);
-                }else{
+                } else {
                     throw new RuntimeException("Incorrect 'Type' provided");
                 }
+            }else if (Enum.class.isAssignableFrom(fieldType)){
+
+                typeStack.peek().setEnum(input);
+
+            }else if (fieldType == sValueExpr.class){
+//                field.set(typeStack.peek(), new sValueExpr);
+
             }else if (fieldType == List.class){
                 //TODO need to find a way to add to the correct list
 
@@ -673,30 +746,14 @@ public class Keypad {
 //                }
 
 
+            }else{
+
             }
 
+
+
             if (isList){
-                ScalaElement current = typeStack.peek();
-                ScalaElement previous = typeStack.get(typeStack.size() - 2);
-                int prevCount = previous.getCount();
-                Field f = previous.getClass().getFields()[prevCount];
-                if (f.getType() == List.class){
-                    ParameterizedType listType = (ParameterizedType) f.getGenericType();
-                    Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0]; // Getting type of listClass
-
-                    if (listClass == current.getClass()){
-                        List SEList = (List) f.get(previous);
-                        if (SEList.contains(current)) {
-                            int index = SEList.indexOf(current);
-                            SEList.remove(index);
-                            SEList.add(index,current);
-                        }else{
-                            SEList.add(current);
-
-                        }
-                        String s = "";
-                    }
-                }
+                addToList();
 
 
             }
@@ -714,30 +771,49 @@ public class Keypad {
         }
     }
 
-    private void addToList(ScalaElement addTo, ScalaElement obj){
-        Class cls = addTo.getClass();
-        Field currentField = cls.getFields()[addTo.getCount() + 1];
-        if (currentField.getType() != List.class){
-            throw new RuntimeException("Field not of type List");
-        }
+    private void addToList() throws IllegalAccessException {
+//        Class cls = addTo.getClass();
+//        Field currentField = cls.getFields()[addTo.getCount() + 1];
+//        if (currentField.getType() != List.class){
+//            throw new RuntimeException("Field not of type List");
+//        }
+//
+//        ParameterizedType listType = (ParameterizedType) currentField.getGenericType();
+//        Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0];
+//
+//        if (ScalaElement.class.isAssignableFrom(listClass)) {
+////            throw new RuntimeException("List not of type ScalaElement");
+//
+//
+//            try {
+//                List listField = (List) currentField.get(addTo);
+//                listField.add(obj);
+//                currentField.set(addTo, listField);
+//
+//            } catch (IllegalAccessException e) {
+//                e.printStackTrace();
+//            }
+//        }
+        ScalaElement current = typeStack.peek();
+        int prevCount = listClass.getCount();
+        Field f = listClass.getClass().getFields()[prevCount];
+        if (f.getType() == List.class){
+            ParameterizedType listType = (ParameterizedType) f.getGenericType();
+            Class<?> classOfList = (Class<?>) listType.getActualTypeArguments()[0]; // Getting type of listClass
 
-        ParameterizedType listType = (ParameterizedType) currentField.getGenericType();
-        Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0];
+            if (classOfList.isAssignableFrom(current.getClass())){
+                List SEList = (List) f.get(this.listClass);
+                if (SEList.contains(current)) {
+                    int index = SEList.indexOf(current);
+                    SEList.remove(index);
+                    SEList.add(index,current);
+                }else{
+                    SEList.add(current);
 
-        if (ScalaElement.class.isAssignableFrom(listClass)) {
-//            throw new RuntimeException("List not of type ScalaElement");
-
-
-            try {
-                List listField = (List) currentField.get(addTo);
-                listField.add(obj);
-                currentField.set(addTo, listField);
-
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                }
+                String s = "";
             }
         }
-
 
     }
 
@@ -767,5 +843,10 @@ public class Keypad {
 
     public void setIsList(boolean value){
         isList = value;
+    }
+
+    public Keypad setListClass(ScalaElement listClass) {
+        this.listClass = listClass;
+        return this;
     }
 }

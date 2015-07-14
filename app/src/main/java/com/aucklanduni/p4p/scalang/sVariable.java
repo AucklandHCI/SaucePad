@@ -1,5 +1,6 @@
 package com.aucklanduni.p4p.scalang;
 
+import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
 import com.aucklanduni.p4p.symtab.Type;
 
 /**
@@ -7,28 +8,16 @@ import com.aucklanduni.p4p.symtab.Type;
  */
 public class sVariable extends ScalaElement implements sMember {
 
-    public enum en_sVarType {var, val}
-    public enum en_sDone {
-        equals, dp_Another_field, dp_Done_with_fields;
 
-        @Override
-        public String toString() {
-            if (this == equals){
-                return "==";
-            }
-            return super.toString();
-
-        }
-    }
 
     // val or val VariableName : DataType [=  Initial Value]
 //    public List<KeypadItem> a_var_val_options = new ArrayList<>();
 //    private boolean isVar;
-    public Enum a_varType = en_sVarType.var;
+    public sEnum.en_sVarType a_varType = sEnum.en_sVarType.var;
     public String b_var_name = null;
     public String c_mand_colon = ":";
     public Type d_var_Type;
-    public Enum e_options = en_sDone.equals;
+    public sEnum.en_sDone e_options = sEnum.en_sDone.equals;
     public String z_mand_newLine = indent();
 //    public List<KeypadItem> e_init_options = new ArrayList<>();
 
@@ -57,5 +46,10 @@ public class sVariable extends ScalaElement implements sMember {
 
     public Type get_var_Type() {
         return d_var_Type;
+    }
+
+    @Override
+    public void accept(VoidVisitor v) {
+        v.visit(this);
     }
 }

@@ -1,6 +1,7 @@
 package com.aucklanduni.p4p.scalang;
 
 import com.aucklanduni.p4p.scalang.statement.sStatement;
+import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,23 +11,18 @@ import java.util.List;
  */
 public class sMethod extends ScalaElement implements sMember {
 
-    public enum en_sMethodDone {
-        dp_Another_method, dp_Done_with_methods
-    }
-
     public String a_mand_def = indent() + "def";
     public String a_method_name = null;
     public String b_mand_left_bracket = "("; //"mand_" for mandatory item
 //    public List<KeypadItem> c_parameter_options = new ArrayList<>();
     public List<sParameter> c_parameters = new ArrayList<sParameter>();
-    public String d_right_bracket = ")";
     public String e_mand_left_brace = "{" + indent();
 //    public List<KeypadItem> f_statement_options = new ArrayList<>();
     public List<sStatement> f_statements = new ArrayList<>();
 
 
     public String x_right_brace = "}" + unIndent() + unIndent();
-    public Enum y_options = en_sMethodDone.dp_Another_method;
+    public sEnum.en_sMethodDone y_options = sEnum.en_sMethodDone.dp_Another_method;
     public String z_empty = "";
 
     //===== Private Fields =====
@@ -89,6 +85,11 @@ public class sMethod extends ScalaElement implements sMember {
 
     public List<sStatement> get_statements() {
         return f_statements;
+    }
+
+    @Override
+    public void accept(VoidVisitor v) {
+        v.visit(this);
     }
 }
 

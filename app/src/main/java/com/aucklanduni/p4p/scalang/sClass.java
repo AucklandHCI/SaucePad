@@ -1,5 +1,7 @@
 package com.aucklanduni.p4p.scalang;
 
+import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,5 +40,10 @@ public class sClass extends ScalaElement {
 
     public List<sMethod> get_methods() {
         return e_methods;
+    }
+
+    @Override
+    public void accept(VoidVisitor v) {
+        v.visit(this);
     }
 }

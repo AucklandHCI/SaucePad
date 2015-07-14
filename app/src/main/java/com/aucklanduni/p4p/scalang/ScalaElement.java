@@ -2,7 +2,9 @@ package com.aucklanduni.p4p.scalang;
 
 import android.util.Log;
 
+import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.statement.control.sControl;
+import com.aucklanduni.p4p.scalang.visitor.VoidVisitor;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
 import com.aucklanduni.p4p.symtab.LocalScope;
 import com.aucklanduni.p4p.symtab.MethodSymbol;
@@ -68,6 +70,8 @@ public abstract class ScalaElement {
         incrementCount();
         return toPrintAfterDone();
     }
+
+    public abstract void accept(VoidVisitor v);
 
     abstract protected String toPrintAfterDone();
 
@@ -146,8 +150,10 @@ public abstract class ScalaElement {
                 items =  doTypeInteraction((Type) field.get(obj));
             }else if (fieldType == List.class){
                 items = doListInteraction((List) field.get(obj));
-            }else if (fieldType == Enum.class){
+            }else if (Enum.class.isAssignableFrom(fieldType)){
                 items = doEnumInteraction((Enum) field.get(obj));
+            }else if (sExpression.class.isAssignableFrom(fieldType)){
+                items = doExpressionInteraction((sExpression) field.get(obj));
             }
 
 
@@ -165,6 +171,11 @@ public abstract class ScalaElement {
         }
 
         return items;
+    }
+
+    private List<KeypadItem> doExpressionInteraction(sExpression expr) {
+        keypad.getTypeStack().push(expr);
+        return new ArrayList<>();
     }
 
     protected List<KeypadItem> doValueInteraction(Object o){
@@ -252,6 +263,7 @@ public abstract class ScalaElement {
 
 
         keypad.setIsList(true);
+        keypad.setListClass(sCls);
 
         if(listClass == sMethod.class) {
             Scope scope = keypad.getCurrentScope();
@@ -294,7 +306,7 @@ public abstract class ScalaElement {
          * appropriate symbol for the symbol table.
          */
 
-        if(en.equals(sVariable.en_sVarType.var)){
+        if(en.equals(sEnum.en_sVarType.var)){
 
             if(currentScope instanceof MethodSymbol) {
 
@@ -309,7 +321,7 @@ public abstract class ScalaElement {
                 throw new RuntimeException("Fields must be in classes");
 
             }
-        }else if(en.equals(sControl.en_sControl_types.dp_If) || en.equals(sControl.en_sControl_types.dp_For)){
+        }else if(en.equals(sEnum.en_sControl_types.dp_If) || en.equals(sEnum.en_sControl_types.dp_For)){
             if(currentScope instanceof MethodSymbol){
                 Scope s = new LocalScope(currentScope);
                 currentScope = s;
@@ -346,6 +358,9 @@ public abstract class ScalaElement {
         return items;
     }
 
+    public void setEnum(String val){
+
+    }
     public void backSpace(){}
 
 //    protected List<KeypadItem> doInteraction(){
