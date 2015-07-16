@@ -2,6 +2,7 @@ package com.aucklanduni.p4p.scalang.printer;
 
 import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.expression.sBinaryExpr;
+import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
 import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
@@ -34,4 +35,5 @@ public interface VoidVisitor {
     void visit(sValueExpr obj);
     void visit(sPlusExpr obj);
     void visit(sEqualsExpr obj);
+    void visit(sBooleanExpr obj);
 }

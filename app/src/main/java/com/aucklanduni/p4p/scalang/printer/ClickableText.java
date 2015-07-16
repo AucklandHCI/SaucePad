@@ -1,4 +1,4 @@
-package com.aucklanduni.p4p;
+package com.aucklanduni.p4p.scalang.printer;
 
 import android.graphics.Color;
 import android.text.TextPaint;
@@ -6,6 +6,7 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.Toast;
 
+import com.aucklanduni.p4p.KeypadFragment;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
 
@@ -22,12 +23,14 @@ public class ClickableText extends ClickableSpan {
     private int seCount = 0;
     private boolean clicked = false;
     private KeypadFragment listener;
+    private int color;
 
-    public ClickableText(String word, ScalaElement element, int count, Keypad keypad){
+    public ClickableText(String word, ScalaElement element, int count, Keypad keypad, int color){
         this.word = word;
         this.seCount = count;
         scalaElement = element;
         this.keypad = keypad;
+        this.color = color;
     }
 
     public String getWord() {
@@ -55,7 +58,7 @@ public class ClickableText extends ClickableSpan {
         if (clicked) {
             ds.setColor(Color.BLUE);
         }else{
-            ds.setColor(Color.BLACK);
+            ds.setColor(color);
         }
     }
 

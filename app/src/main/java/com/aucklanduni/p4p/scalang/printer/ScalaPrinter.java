@@ -2,10 +2,10 @@ package com.aucklanduni.p4p.scalang.printer;
 
 import android.util.Log;
 
-import com.aucklanduni.p4p.ClickableText;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.expression.sBinaryExpr;
+import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
 import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
@@ -58,12 +58,14 @@ public class ScalaPrinter implements VoidVisitor{
 
         List<sMethod> methods = obj.get_methods();
 
+
         for (sMethod m : methods){
-            m.accept(this);
             printer.printLn();
+            m.accept(this);
         }
 
         printer.unindent();
+        printer.printLn();
         printer.print("}",5);
         printer.printLn();
     }
@@ -125,7 +127,7 @@ public class ScalaPrinter implements VoidVisitor{
 
         printer.printLn();
         List<sStatement> states = obj.get_statements();
-
+        printer.printLn();
 
         Log.e(TAG, "states size: " + states.size());
         printer.indent();
@@ -133,7 +135,7 @@ public class ScalaPrinter implements VoidVisitor{
            s.accept(this);
         }
 
-
+        printer.printLn();
         printer.unindent();
         printer.print("}",7);
 
@@ -176,12 +178,17 @@ public class ScalaPrinter implements VoidVisitor{
         printer.printLn();
         printer.indent();
 
-        //statements
+        printer.printLn();
+        List<sStatement> states = obj.getStatements();
 
+        for(sStatement s : states){
+            s.accept(this);
+        }
+
+        printer.printLn();
         printer.unindent();
 
         printer.print("}",5);
-        printer.unindent();
         printer.printLn();
 
     }
@@ -237,6 +244,7 @@ public class ScalaPrinter implements VoidVisitor{
         if (left != null){
             left.accept(this);
         }
+
         printer.print(" == ", 1);
 
         sExpression right = obj.get_right();
@@ -247,13 +255,16 @@ public class ScalaPrinter implements VoidVisitor{
         printer.print(")", 1);
     }
 
-    //    private void printStats(sStatement obj){
-//        printer.setScalaElement(obj);
-//
-//    }
+    @Override
+    public void visit(sBooleanExpr obj) {
+        printer.setScalaElement(obj);
+        printer.print(obj.getValue(),0);
+    }
 
     public String getSource(sClass obj) {
-        visit(obj);
+        if (obj != null) {
+            visit(obj);
+        }
         return printer.getSource();
     }
 

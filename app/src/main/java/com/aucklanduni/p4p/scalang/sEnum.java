@@ -63,8 +63,7 @@ public class sEnum {
     }
 
     public enum en_Expression_Types{
-//        dp_Variables, dp_abc, dp_123, dp_Method_Call, True, False;
-        dp_Plus, dp_Equals, dp_Value;
+        dp_Equals, dp_Plus, dp_Value, dp_Boolean;
 
         static final Map<String,en_Expression_Types> valueMap =
                 new HashMap<>();
@@ -92,6 +91,26 @@ public class sEnum {
 //            return super.toString();
 //        }
 
+    }
+
+    public enum en_sBoolean{
+        True, False;
+
+        static final Map<String,en_sBoolean> valueMap =
+                new HashMap<>();
+        static {
+            for (en_sBoolean o : en_sBoolean.values())
+                valueMap.put(o.toString(), o);
+        }
+
+        public static en_sBoolean getEnum(String val){
+            return valueMap.get(val);
+        }
+
+        @Override
+        public String toString() {
+            return this.name().toLowerCase();
+        }
     }
 
     public enum en_sControl_types {

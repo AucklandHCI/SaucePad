@@ -6,10 +6,10 @@ import com.aucklanduni.p4p.scalang.sEnum;
 /**
  * Created by Taz on 13/07/15.
  */
-public class sValueExpr extends sExpression {
+public class sBooleanExpr extends sExpression {
 
 
-    public sEnum.en_Input_Types a_value = sEnum.en_Input_Types.dp_Variables;
+    public sEnum.en_sBoolean a_value = sEnum.en_sBoolean.True;
     private String value = " ";
 
     @Override

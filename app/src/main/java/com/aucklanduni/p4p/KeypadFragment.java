@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.KeypadItem;
 import com.aucklanduni.p4p.scalang.ScalaElement;
+import com.aucklanduni.p4p.scalang.printer.ClickableText;
 import com.aucklanduni.p4p.scalang.printer.ScalaPrinter;
 import com.aucklanduni.p4p.scalang.sClass;
 
@@ -160,9 +161,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 //                return true;
 //            }
 //        });
-
-        setItemAdapter(initalList);
         keypad = new Keypad(this);
+        setItemAdapter(initalList);
+
 
         gv_keyPad.setOnItemClickListener(this);
 
@@ -172,7 +173,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
 
 
-    public void printText(String text){
+    public void printText(){
         editor.setText("");
         ScalaPrinter printer = new ScalaPrinter(keypad);
 
@@ -271,6 +272,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 //        adapter.add(bckSpace);
         gv_keyPad.setAdapter(adapter);
         gv_keyPad.invalidateViews();
+        printText();
 
 
     }
@@ -302,7 +304,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 //                printText(enteredText);
                 addToStack(enteredText);
                 keypad.setField(enteredText);
-                printText("");
+                printText();
                 InputMethodManager imm = (InputMethodManager) ctx.getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 //txtName is a reference of an EditText Field
@@ -413,7 +415,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
         }
 
-        printText("");
+        printText();
 
         setItemAdapter(keypad.getNextItems(input.getValue()));
 

@@ -1,12 +1,12 @@
 package com.aucklanduni.p4p.scalang.printer;
 
-import android.util.Log;
+import android.graphics.Color;
 
-import com.aucklanduni.p4p.ClickableText;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
 
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
 
 /**
@@ -20,6 +20,7 @@ public class sPrinter{
     private List<ClickableText> clickableTexts = new ArrayList<>();
     private ScalaElement scalaElement;
     private Keypad keypad;
+    private int color;
 
 
     public sPrinter(Keypad keypad){
@@ -27,7 +28,17 @@ public class sPrinter{
     }
 
     public void setScalaElement(ScalaElement element){
+
         this.scalaElement = element;
+        try {
+            if (scalaElement.equals(keypad.getTypeStack().peek())) {
+                color = Color.RED;
+            } else {
+                color = Color.BLACK;
+            }
+        }catch (EmptyStackException e){
+            color = Color.BLACK;
+        }
     }
 
     public void indent() {
@@ -53,7 +64,7 @@ public class sPrinter{
         buf.append(arg);
 
         if (Character.isLetterOrDigit(arg.charAt(0))) {
-            clickableTexts.add(new ClickableText(arg.trim(), scalaElement, count,keypad));
+            clickableTexts.add(new ClickableText(arg.trim(), scalaElement, count,keypad, color));
 
         }
     }

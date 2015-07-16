@@ -25,7 +25,7 @@ public class sIf extends sControl{
 
     public String h_mand_right_bracket_and_brace = "){"+ indent();
     public List<sStatement> i_statements = new ArrayList<>();
-    public String z_right_brace = "}" + newLine;
+    public String z_mand_right_brace = "}" + newLine;
 
     public sIf(){
 
@@ -45,5 +45,9 @@ public class sIf extends sControl{
 
     public sExpression getCondition() {
         return c_expr;
+    }
+
+    public List<sStatement> getStatements() {
+        return i_statements;
     }
 }

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
 import com.aucklanduni.p4p.scalang.expression.sBinaryExpr;
+import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
 import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
@@ -53,7 +54,7 @@ public class Keypad {
     private Map<String, ScalaElement> items = new HashMap<String,ScalaElement>();
     private Map<String, Class<? extends sExpression>> expressions = new HashMap<>();
 
-    private static HashMap<String, ScalaElement> options = new HashMap<>();
+    private static HashMap<String, Class<? extends ScalaElement>> options = new HashMap<>();
     private static List<String> listItem = new ArrayList<>();
 
     private int count = 0;
@@ -93,11 +94,12 @@ public class Keypad {
         expressions.put("Plus", sPlusExpr.class);
         expressions.put("Value", sValueExpr.class);
         expressions.put("Equals", sEqualsExpr.class);
+        expressions.put("Boolean", sBooleanExpr.class);
 
         // Options
-        options.put("Control", new sControl());
-        options.put("If", new sIf());
-        options.put("For", new sFor());
+        options.put("Control", sControl.class);
+        options.put("If", sIf.class);
+        options.put("For", sFor.class);
 
         // Temp
         listItem.add("If");
@@ -124,13 +126,16 @@ public class Keypad {
     public List<KeypadItem> getNextItems(String value) throws RuntimeException {
 
         if (options.containsKey(value)){
-            typeStack.push(options.get(value));
-            if (listItem.contains(value)){
-                try {
+            try {
+                ScalaElement elem = options.get(value).newInstance();
+                typeStack.push(elem);
+                if (listItem.contains(value)){
                     addToList();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
                 }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
             }
         }
         if (expressions.containsKey(value)){
@@ -534,7 +539,7 @@ public class Keypad {
         switch (input) {
             case "New Param":
                 if (listCount > 0) {
-                    kpFrag.printText(",");
+                    kpFrag.printText();
                     kpFrag.addToStack(",");
                 }
                 listCount++;
@@ -578,7 +583,7 @@ public class Keypad {
 
 //                typeStack.pop();
                 listCount = 0;
-                kpFrag.printText(typeStack.peek().getItemAfterDone());
+//                kpFrag.printText(typeStack.peek().getItemAfterDone());
 //                typeStack.peek().incrementCount();
                 typeStack.peek().incrementCount();
                 return null;
