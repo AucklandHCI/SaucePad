@@ -130,7 +130,7 @@ public class Keypad {
                 ScalaElement elem = options.get(value).newInstance();
                 typeStack.push(elem);
                 if (listItem.contains(value)){
-                    addToList();
+                    addToList(); //Adds the statement to the current method/classes statement list.
                 }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();

@@ -14,6 +14,7 @@ import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.scalang.sField;
 import com.aucklanduni.p4p.scalang.sMethod;
 import com.aucklanduni.p4p.scalang.sParameter;
+import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
 
@@ -151,9 +152,9 @@ public class ScalaPrinter implements VoidVisitor{
             return;
         }
 
-        printer.print(obj.a_param_name,0);
+        printer.print(obj.a_param_name, 0);
 
-        printer.print(" : ",1);
+        printer.print(" : ", 1);
 
         Object pType = obj.c_paramType;
 
@@ -161,7 +162,7 @@ public class ScalaPrinter implements VoidVisitor{
             return;
         }
 
-        printer.print(pType.toString(),2);
+        printer.print(pType.toString(), 2);
 
 
     }
@@ -190,6 +191,39 @@ public class ScalaPrinter implements VoidVisitor{
 
         printer.print("}",5);
         printer.printLn();
+
+    }
+
+    public void visit(sFor obj) {
+
+        printer.setScalaElement(obj);
+        printer.print("for (", 0);
+
+        sExpression condition = obj.getCondition();
+
+        if(condition != null){
+            condition.accept(this);
+        }
+
+        printer.print(") {", 3);
+
+        printer.printLn();
+        printer.indent();
+
+        printer.printLn();
+        List<sStatement> states = obj.getStatements();
+
+        for(sStatement s : states){
+            s.accept(this);
+        }
+
+        printer.printLn();
+        printer.unindent();
+
+        printer.print("}",5);
+        printer.printLn();
+
+
 
     }
 
