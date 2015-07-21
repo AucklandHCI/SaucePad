@@ -10,10 +10,10 @@ public class sField extends sVariable {
 
     public sEnum.en_sVarType a_varType = sEnum.en_sVarType.var;
     public String b_var_name = null;
-    public String c_mand_colon = ":";
+//    public String c_mand_colon = ":";
     public Type d_var_Type;
     public Enum e_options = sEnum.en_sDone.equals;
-    public String z_mand_newLine = indent();
+//    public String z_mand_newLine = indent();
 
     @Override
     public String toPrintAfterDone() {

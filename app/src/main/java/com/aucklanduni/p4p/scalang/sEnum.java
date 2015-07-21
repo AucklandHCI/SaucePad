@@ -76,20 +76,14 @@ public class sEnum {
             return valueMap.get(val);
         }
 
-//        @Override
-//        public String toString() {
-//            if (this == dp_123 || this == dp_abc){
-//                return this.name() + "...";
-//            }
-//            if (this == True) {
-//                return "true";
-//            }
-//            if (this == False){
-//                return "false";
-//            }
-//
-//            return super.toString();
-//        }
+        @Override
+        public String toString() {
+            if (this == dp_Boolean){
+                return "True/False";
+            }
+
+            return super.toString();
+        }
 
     }
 

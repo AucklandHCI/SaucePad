@@ -1,5 +1,6 @@
 package com.aucklanduni.p4p.scalang.printer;
 
+import android.text.style.ClickableSpan;
 import android.util.Log;
 
 import com.aucklanduni.p4p.scalang.Keypad;
@@ -11,12 +12,14 @@ import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
 import com.aucklanduni.p4p.scalang.expression.sValueExpr;
 import com.aucklanduni.p4p.scalang.sClass;
+import com.aucklanduni.p4p.scalang.sEnum;
 import com.aucklanduni.p4p.scalang.sField;
 import com.aucklanduni.p4p.scalang.sMethod;
 import com.aucklanduni.p4p.scalang.sParameter;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
+import com.aucklanduni.p4p.symtab.Type;
 
 import java.util.List;
 
@@ -27,10 +30,20 @@ public class ScalaPrinter implements VoidVisitor{
 
     private sPrinter printer;
     private String TAG = "testing";
+    private String cursor = "»";
+    private boolean cursorPrinted = false;
 
     public ScalaPrinter(Keypad keypad){
         printer = new sPrinter(keypad);
     }
+
+    private void printCursor() {
+        if (!cursorPrinted){
+            printer.printString(cursor);
+            cursorPrinted = true;
+        }
+    }
+
 
     @Override
     public void visit(ScalaElement obj) {
@@ -40,13 +53,14 @@ public class ScalaPrinter implements VoidVisitor{
     public void visit(sClass obj){
         printer.setScalaElement(obj);
 
-        printer.print("class ", 0);
+        printer.printString("class ");
         String cName = obj.get_class_name();
         if (cName == null){
+            printCursor();
             return;
         }
-        printer.print(cName,1);
-        printer.print("{\n",2);
+        printer.printScalaElement(cName,0);
+        printer.printString("{");
         printer.printLn();
         printer.indent();
 
@@ -58,16 +72,20 @@ public class ScalaPrinter implements VoidVisitor{
         }
 
         List<sMethod> methods = obj.get_methods();
-
+        if (fields.isEmpty() || methods.isEmpty()){
+            printCursor();
+        }
 
         for (sMethod m : methods){
             printer.printLn();
             m.accept(this);
         }
 
+
+
         printer.unindent();
         printer.printLn();
-        printer.print("}",5);
+        printer.printString("}");
         printer.printLn();
     }
 
@@ -76,20 +94,23 @@ public class ScalaPrinter implements VoidVisitor{
     public void visit(sField obj) {
         printer.setScalaElement(obj);
 
-        printer.print(obj.get_Declaration().toString() + " ", 0);
+        printer.printScalaElement(obj.get_Declaration().toString() + " ", 0);
         String fName = obj.get_var_name();
         if (fName == null){
+            printCursor();
             return;
         }
-        printer.print(fName, 1);
+        printer.printScalaElement(fName, 1);
 
-        printer.print(": ",2);
+        printer.printString(": ");
 
         Object fType = obj.get_var_Type();
         if(fType == null){
+            printCursor();
             return;
         }
-        printer.print(fType.toString(), 3);
+        printer.printScalaElement(fType.toString(), 2);
+
 
 
 
@@ -100,30 +121,37 @@ public class ScalaPrinter implements VoidVisitor{
     public void visit(sMethod obj) {
         printer.setScalaElement(obj);
 
-        printer.print("def ", 0);
+        printer.printString("def ");
         String mName = obj.get_method_name();
 
         if (mName == null){
+            printCursor();
             return;
         }
 
-        printer.print(mName,1);
+        printer.printScalaElement(mName, 0);
 
-        printer.print("(", 2);
+        printer.printString("(");
         //TODO add in parameters
         List<sParameter> params = obj.get_parameters();
 
 //        int pLength = params.size() - 1; //use this to help determine where the comma goes maybe...
 
-        for (sParameter p : params){
+        for (int i = 0; i < params.size(); i++){
+
+            if(i != 0 && i != params.size()-2) {
+                printer.printString(", ");
+            }
+
+            sParameter p = params.get(i);
             p.accept(this);
             //TODO figure out commas for parameters
-            printer.print(" , ",3);
+
         }
 
-        printer.print(")",4);
+        printer.printString(")");
         //TODO figure out how to do return
-        printer.print("{",5);
+        printer.printString("{");
         //TODO method body
 
         printer.printLn();
@@ -136,9 +164,13 @@ public class ScalaPrinter implements VoidVisitor{
            s.accept(this);
         }
 
+        if (states.isEmpty()){
+            printCursor();
+        }
+
         printer.printLn();
         printer.unindent();
-        printer.print("}",7);
+        printer.printString("}");
 
 
     }
@@ -146,35 +178,43 @@ public class ScalaPrinter implements VoidVisitor{
     public void visit(sParameter obj) {
         printer.setScalaElement(obj);
 
-        String pName = obj.a_param_name;
+        String pName = obj.getName();
 
         if(pName == null){
+            printCursor();
             return;
         }
 
-        printer.print(obj.a_param_name, 0);
+        printer.printScalaElement(pName, 0);
 
-        printer.print(" : ", 1);
+        printer.printString(" : ");
 
-        Object pType = obj.c_paramType;
+        Type pType = obj.getType();
 
         if(pType == null){
+            printCursor();
             return;
         }
 
-        printer.print(pType.toString(), 2);
+        printer.printScalaElement(pType.toString(), 1);
+
+        //TODO figure out how to put the cursor after the param
 
 
     }
 
     public void visit(sIf obj) {
         printer.setScalaElement(obj);
-        printer.print("if (", 0);
+        printer.printString("if");
+        printer.printString("(");
         sExpression condition = obj.getCondition();
         if (condition != null){
             condition.accept(this);
+//        }else{
+//            printCursor();
         }
-        printer.print(") {", 3);
+        printer.printString(")");
+        printer.printString("{");
 
         printer.printLn();
         printer.indent();
@@ -186,10 +226,14 @@ public class ScalaPrinter implements VoidVisitor{
             s.accept(this);
         }
 
+        if (states.isEmpty()){
+            printCursor();
+        }
+
         printer.printLn();
         printer.unindent();
 
-        printer.print("}",5);
+        printer.printString("}");
         printer.printLn();
 
     }
@@ -197,15 +241,19 @@ public class ScalaPrinter implements VoidVisitor{
     public void visit(sFor obj) {
 
         printer.setScalaElement(obj);
-        printer.print("for (", 0);
+        printer.printString("for ");
+        printer.printString("(");
 
         sExpression condition = obj.getCondition();
 
         if(condition != null){
             condition.accept(this);
+        }else{
+            printCursor();
         }
 
-        printer.print(") {", 3);
+        printer.printString(")");
+        printer.printString("{");
 
         printer.printLn();
         printer.indent();
@@ -217,10 +265,14 @@ public class ScalaPrinter implements VoidVisitor{
             s.accept(this);
         }
 
+        if(states.isEmpty()){
+            printCursor();
+        }
+
         printer.printLn();
         printer.unindent();
 
-        printer.print("}",5);
+        printer.printString("}");
         printer.printLn();
 
 
@@ -233,38 +285,46 @@ public class ScalaPrinter implements VoidVisitor{
 
     }
 
-    public void visit(sBinaryExpr obj) {
-        obj.getLeft().accept(this);
-        printer.printSpace();
-        printer.print(obj.getOperator().toString(), 1);
-        printer.printSpace();
-        obj.getRight().accept(this);
-    }
+//    @Override
+//    public void visit(sBinaryExpr obj) {
+//        obj.getLeft().accept(this);
+//        printer.printSpace();
+//        printer.printScalaElement(obj.getOperator().toString(), 1);
+//        printer.printSpace();
+//        obj.getRight().accept(this);
+//    }
 
     @Override
     public void visit(sValueExpr obj) {
         printer.setScalaElement(obj);
-        printer.print(obj.getValue(),0);
+        printer.printScalaElement(obj.getValue(),0);
     }
 
     @Override
     public void visit(sPlusExpr obj) {
         printer.setScalaElement(obj);
 
-        printer.print("(", 0);
+        printer.printString("(");
 
         sExpression left = obj.get_summand1();
         if (left != null){
             left.accept(this);
+        }else{
+            printCursor();
         }
-        printer.print(" + ", 1);
+
+        printer.printSpace();
+        printer.printString("+");
+        printer.printSpace();
 
         sExpression right = obj.get_summand2();
         if (right != null){
             right.accept(this);
+        }else{
+            printCursor();
         }
 
-        printer.print(")", 1);
+        printer.printString(")");
 
     }
 
@@ -272,38 +332,46 @@ public class ScalaPrinter implements VoidVisitor{
     public void visit(sEqualsExpr obj) {
         printer.setScalaElement(obj);
 
-        printer.print("(", 0);
+        printer.printString("(");
 
         sExpression left = obj.get_left();
         if (left != null){
             left.accept(this);
+        }else{
+            printCursor();
         }
 
-        printer.print(" == ", 1);
+        printer.printSpace();
+        printer.printString("==");
+        printer.printSpace();
 
         sExpression right = obj.get_right();
         if (right != null){
             right.accept(this);
+        }else {
+            printCursor();
         }
 
-        printer.print(")", 1);
+        printer.printString(")");
     }
 
     @Override
     public void visit(sBooleanExpr obj) {
         printer.setScalaElement(obj);
-        printer.print(obj.getValue(),0);
+        printer.printScalaElement(obj.getValue(), 0);
     }
 
     public String getSource(sClass obj) {
         if (obj != null) {
             visit(obj);
+        }else {
+            printCursor();
         }
         return printer.getSource();
     }
 
-    public List<ClickableText> getClickableTexts(){
-        return printer.getClickableTexts();
+    public List<ClickableSpan> getClickables(){
+        return printer.getClickables();
     }
 
 

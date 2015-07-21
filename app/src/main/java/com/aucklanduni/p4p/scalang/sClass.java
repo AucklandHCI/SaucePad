@@ -10,9 +10,9 @@ import java.util.List;
  */
 public class sClass extends ScalaElement {
 
-    public String a_mand_class = "class";
+//    public String a_mand_class = "class";
     public String b_class_name = null;
-    public String c_mand_left_brace = "{"+indent();
+//    public String c_mand_left_brace = "{"+indent();
 //    public List<KeypadItem> d_member_options = new ArrayList<>();
 //    public List<sMember> d_members = new ArrayList<>();
     public List<sField> d_fields = new ArrayList<>();

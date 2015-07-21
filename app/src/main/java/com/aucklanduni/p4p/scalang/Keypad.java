@@ -94,7 +94,7 @@ public class Keypad {
         expressions.put("Plus", sPlusExpr.class);
         expressions.put("Value", sValueExpr.class);
         expressions.put("Equals", sEqualsExpr.class);
-        expressions.put("Boolean", sBooleanExpr.class);
+        expressions.put("True/False", sBooleanExpr.class);
 
         // Options
         options.put("Control", sControl.class);

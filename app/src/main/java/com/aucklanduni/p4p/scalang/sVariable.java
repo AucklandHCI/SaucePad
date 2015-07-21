@@ -6,7 +6,7 @@ import com.aucklanduni.p4p.symtab.Type;
 /**
  * Created by Taz on 13/05/15.
  */
-public class sVariable extends ScalaElement implements sMember {
+public class sVariable extends ScalaElement {
 
 
 
@@ -15,10 +15,10 @@ public class sVariable extends ScalaElement implements sMember {
 //    private boolean isVar;
     public sEnum.en_sVarType a_varType = sEnum.en_sVarType.var;
     public String b_var_name = null;
-    public String c_mand_colon = ":";
+//    public String c_mand_colon = ":";
     public Type d_var_Type;
     public sEnum.en_sDone e_options = sEnum.en_sDone.equals;
-    public String z_mand_newLine = indent();
+//    public String z_mand_newLine = indent();
 //    public List<KeypadItem> e_init_options = new ArrayList<>();
 
     private boolean isField = false;

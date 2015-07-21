@@ -1,6 +1,8 @@
 package com.aucklanduni.p4p.scalang.printer;
 
 import android.graphics.Color;
+import android.text.style.ClickableSpan;
+import android.util.Log;
 
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
@@ -16,28 +18,35 @@ public class sPrinter{
 
     private int level = 0;
     private boolean indented = false;
-    private final StringBuilder buf = new StringBuilder();
-    private List<ClickableText> clickableTexts = new ArrayList<>();
+    private final StringBuilder buf;
+    private List<ClickableSpan> clickables= new ArrayList<>();
     private ScalaElement scalaElement;
     private Keypad keypad;
-    private int color;
+    private int color = Color.BLACK;
+    private int topElemCount = -1;
+
+    private String TAG = "testing";
 
 
     public sPrinter(Keypad keypad){
         this.keypad = keypad;
+        buf = new StringBuilder();
     }
 
     public void setScalaElement(ScalaElement element){
 
         this.scalaElement = element;
         try {
-            if (scalaElement.equals(keypad.getTypeStack().peek())) {
-                color = Color.RED;
-            } else {
-                color = Color.BLACK;
+            ScalaElement topElem = keypad.getTypeStack().peek();
+            if (scalaElement.equals(topElem)) {
+                topElemCount = topElem.getCount();
+//                color = Color.RED;
+
+//            } else {
+//                color = Color.BLACK;
             }
         }catch (EmptyStackException e){
-            color = Color.BLACK;
+//            color = Color.BLACK;
         }
     }
 
@@ -56,7 +65,7 @@ public class sPrinter{
         }
     }
 
-    public void print(String arg, int count) {
+    public void printScalaElement(String arg, int count) {
         if (!indented) {
             makeIndent();
             indented = true;
@@ -64,14 +73,25 @@ public class sPrinter{
         buf.append(arg);
 
         if (Character.isLetterOrDigit(arg.charAt(0))) {
-            clickableTexts.add(new ClickableText(arg.trim(), scalaElement, count,keypad, color));
+
+            Log.e(TAG, "SE = " + scalaElement.getClassName()+", topElemCount = " + topElemCount + ", count = " + count);
+
+            if (count == topElemCount-1){
+                color = Color.RED;
+            }else{
+                color = Color.BLACK;
+            }
+            clickables.add(new ClickableText(arg.trim(), scalaElement, count,keypad, color));
 
         }
     }
-
-    public void printLn(String arg, int count) {
-        print(arg, count);
-        printLn();
+    public void printString(String arg) {
+        if (!indented) {
+            makeIndent();
+            indented = true;
+        }
+        clickables.add(new NonClickableText(arg));
+        buf.append(arg);
     }
 
     public void printLn() {
@@ -87,8 +107,8 @@ public class sPrinter{
         return buf.toString();
     }
 
-    public List<ClickableText> getClickableTexts() {
-        return clickableTexts;
+    public List<ClickableSpan> getClickables() {
+        return clickables;
     }
 
     @Override

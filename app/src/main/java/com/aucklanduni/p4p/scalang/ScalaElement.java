@@ -200,8 +200,8 @@ public abstract class ScalaElement {
 
         if (str == null) { //symbolises the need for user input
             return null;
-        }else if( field.getName().contains("mand")){ // field value should be printed to screen
-            items.add(null);
+//        }else if( field.getName().contains("mand")){ // field value should be printed to screen
+//            items.add(null);
         }
 
         items.add(new KeypadItem(str));

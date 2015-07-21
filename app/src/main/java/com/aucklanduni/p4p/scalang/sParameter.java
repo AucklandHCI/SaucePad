@@ -10,7 +10,7 @@ public class sParameter extends ScalaElement {//} extends sVariable{
 
 
     public String a_param_name = null;
-    public String b_mand_colon = ":"; //"mand_" for mandatory item
+//    public String b_mand_colon = ":"; //"mand_" for mandatory item
     public Type c_paramType = null;
     public sEnum.en_sParamDone d_options = sEnum.en_sParamDone.dp_Done_with_parameters;
 
@@ -30,5 +30,17 @@ public class sParameter extends ScalaElement {//} extends sVariable{
     @Override
     public void accept(VoidVisitor v) {
         v.visit(this);
+    }
+
+    public String getName() {
+        return a_param_name;
+    }
+
+    public Type getType() {
+        return c_paramType;
+    }
+
+    public sEnum.en_sParamDone getOption() {
+        return d_options;
     }
 }

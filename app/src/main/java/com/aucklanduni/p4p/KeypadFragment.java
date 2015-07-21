@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.KeypadItem;
 import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.printer.ClickableText;
+import com.aucklanduni.p4p.scalang.printer.NonClickableText;
 import com.aucklanduni.p4p.scalang.printer.ScalaPrinter;
 import com.aucklanduni.p4p.scalang.sClass;
 
@@ -184,32 +186,51 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         BreakIterator brIterator = BreakIterator.getWordInstance(Locale.US);
         brIterator.setText(source);
 
-        List<ClickableText> cTexts = printer.getClickableTexts();
+        List<ClickableSpan> cTexts = printer.getClickables();
 
         BreakIterator iterator = BreakIterator.getWordInstance(Locale.US);
         iterator.setText(source);
 
         int start = brIterator.first();
-        int ctIndex = 0;
+        int cIndex = 0;
 
 
-        for (int end = brIterator.next(); end != BreakIterator.DONE; start = end, end = brIterator
-                .next()) {
-            String possibleWord = source.substring(start, end);
-
-            if (Character.isLetterOrDigit(possibleWord.charAt(0))) {
-                ClickableText ct = cTexts.get(ctIndex);
-
-                ct.setOnClickListener(this);
-                spans.setSpan(ct, start, end,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                ctIndex++;
-//                ClickableText clickSpan = new ClickableText(possibleWord);
-//                spans.setSpan(clickSpan, start, end,
-//                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        try {
+            for (int end = brIterator.next(); end != BreakIterator.DONE; start = end, end = brIterator
+                    .next()) {
+                String possibleWord = source.substring(start, end);
+                possibleWord = possibleWord.trim();
+                if (!possibleWord.isEmpty() && !possibleWord.equals("≤")) {
+//            if (Character.isLetterOrDigit(possibleWord.charAt(0))) {
+//                Log.e(TAG, "$" + possibleWord + "$");
+                    ClickableSpan cs = cTexts.get(cIndex);
+                    if (cs instanceof ClickableText) {
+                        ClickableText ct = (ClickableText) cs;
+                        ct.setOnClickListener(this);
+                        spans.setSpan(ct, start, end,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+//
+//
+                    cIndex++;
+////                ClickableText clickSpan = new ClickableText(possibleWord);
+////                spans.setSpan(clickSpan, start, end,
+////                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            }
+                }
             }
-        }
-
+//        }catch (IndexOutOfBoundsException e){
+//
+//
+//            for (ClickableSpan c : cTexts){
+//                if(c instanceof ClickableText){
+//                    Log.e(TAG, "*"+((ClickableText) c).getWord()+"*");
+//                }else{
+////                    Log.e(TAG, "*"+((NonClickableText) c).getWord()+"*");
+//                }
+//
+//            }
+//        }
         //TODO need to hide the keyboard
     }
 

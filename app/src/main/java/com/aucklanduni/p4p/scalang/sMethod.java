@@ -9,14 +9,14 @@ import java.util.List;
 /**
  * Created by Taz on 13/05/15.
  */
-public class sMethod extends ScalaElement implements sMember {
+public class sMethod extends ScalaElement {
 
-    public String a_mand_def = indent() + "def";
+//    public String a_mand_def = indent() + "def";
     public String a_method_name = null;
-    public String b_mand_left_bracket = "("; //"mand_" for mandatory item
+//    public String b_mand_left_bracket = "("; //"mand_" for mandatory item
 //    public List<KeypadItem> c_parameter_options = new ArrayList<>();
     public List<sParameter> c_parameters = new ArrayList<sParameter>();
-    public String e_mand_left_brace = "{" + indent();
+//    public String e_mand_left_brace = "{" + indent();
 //    public List<KeypadItem> f_statement_options = new ArrayList<>();
     public List<sStatement> f_statements = new ArrayList<>();
 
@@ -57,9 +57,9 @@ public class sMethod extends ScalaElement implements sMember {
         this.a_method_name = methodName;
     }
 
-    public String getMand_left_bracket() {
-        return b_mand_left_bracket;
-    }
+//    public String getMand_left_bracket() {
+//        return b_mand_left_bracket;
+//    }
 
     @Override
     public String toPrintAfterDone() {
