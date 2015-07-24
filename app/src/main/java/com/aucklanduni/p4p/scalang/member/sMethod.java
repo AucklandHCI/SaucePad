@@ -25,7 +25,7 @@ public class sMethod extends sMember {
 
 
     public String x_right_brace = "}" + unIndent() + unIndent();
-    public sEnum.en_sMethodDone y_options = sEnum.en_sMethodDone.dp_Another_method;
+//    public sEnum.en_sMethodDone y_options = sEnum.en_sMethodDone.dp_Another_method;
     public String z_empty = "";
 
     //===== Private Fields =====

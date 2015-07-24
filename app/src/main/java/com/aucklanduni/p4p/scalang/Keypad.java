@@ -148,11 +148,31 @@ public class Keypad {
             sExpression expr = (sExpression) setField(value);
             typeStack.push(expr);
         }else if(members.containsKey(value)){
-            sMember expr = (sMember) setField(value);
-            typeStack.push(expr);
+            try {
+
+                sMember member = members.get(value).newInstance();
+
+                if(member instanceof sMethod) {
+                    if (!(currentScope instanceof ClassSymbol)) {
+                        throw new RuntimeException("Method must be in a class");
+                    }
+
+                    MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope);
+                    pushOnSymbolStack(ms);
+                    setCurrentScope(ms);
+                }
+
+                typeStack.push(member);
+                addToList();
+//
+//                typeStack.push(expr);
+//                sMember expr = (sMember) setField(value);
+
+            }catch (Exception il){
+                il.printStackTrace();
+            }
+
         }
-
-
 
         if (value.equals("Variables")){
             return setType(value);

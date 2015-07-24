@@ -14,7 +14,7 @@ public class sField extends sMember {
     public String b_var_name = null;
 //    public String c_mand_colon = ":";
     public Type d_var_Type;
-    public Enum e_options = sEnum.en_sDone.equals;
+//    public Enum e_options = sEnum.en_sDone.equals;
 //    public String z_mand_newLine = indent();
 
     @Override
