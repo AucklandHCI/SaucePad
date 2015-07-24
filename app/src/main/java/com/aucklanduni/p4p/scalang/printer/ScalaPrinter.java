@@ -5,16 +5,15 @@ import android.util.Log;
 
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
-import com.aucklanduni.p4p.scalang.expression.sBinaryExpr;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
 import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
 import com.aucklanduni.p4p.scalang.expression.sValueExpr;
+import com.aucklanduni.p4p.scalang.member.sMember;
 import com.aucklanduni.p4p.scalang.sClass;
-import com.aucklanduni.p4p.scalang.sEnum;
-import com.aucklanduni.p4p.scalang.sField;
-import com.aucklanduni.p4p.scalang.sMethod;
+import com.aucklanduni.p4p.scalang.member.sField;
+import com.aucklanduni.p4p.scalang.member.sMethod;
 import com.aucklanduni.p4p.scalang.sParameter;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
@@ -64,21 +63,28 @@ public class ScalaPrinter implements VoidVisitor{
         printer.printLn();
         printer.indent();
 
-        List<sField> fields = obj.get_fields();
+//        List<sField> fields = obj.get_fields();
+//
+//        for (sField f : fields){
+//           f.accept(this);
+//            printer.printLn();
+//        }
+//
+//        List<sMethod> methods = obj.get_methods();
+//        if (fields.isEmpty() || methods.isEmpty()){
+//            printCursor();
+//        }
+//
+//        for (sMethod m : methods){
+//            printer.printLn();
+//            m.accept(this);
+//        }
 
-        for (sField f : fields){
-           f.accept(this);
-            printer.printLn();
-        }
+        List<sMember> members = obj.get_members();
 
-        List<sMethod> methods = obj.get_methods();
-        if (fields.isEmpty() || methods.isEmpty()){
-            printCursor();
-        }
-
-        for (sMethod m : methods){
-            printer.printLn();
+        for (sMember m : members){
             m.accept(this);
+            printer.printLn();
         }
 
 

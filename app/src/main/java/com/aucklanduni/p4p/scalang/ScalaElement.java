@@ -3,6 +3,8 @@ package com.aucklanduni.p4p.scalang;
 import android.util.Log;
 
 import com.aucklanduni.p4p.scalang.expression.sExpression;
+import com.aucklanduni.p4p.scalang.member.sMember;
+import com.aucklanduni.p4p.scalang.member.sMethod;
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
 import com.aucklanduni.p4p.symtab.LocalScope;
@@ -273,6 +275,11 @@ public abstract class ScalaElement {
             MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope);
             keypad.pushOnSymbolStack(ms);
             keypad.setCurrentScope(ms);
+
+        }else if(listClass == sMember.class){
+
+            return getEnumsAsList(sEnum.en_Member_Types.values());
+
         }
 
 

@@ -1,5 +1,8 @@
 package com.aucklanduni.p4p.scalang;
 
+import com.aucklanduni.p4p.scalang.member.sField;
+import com.aucklanduni.p4p.scalang.member.sMember;
+import com.aucklanduni.p4p.scalang.member.sMethod;
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 import java.util.ArrayList;
@@ -14,9 +17,9 @@ public class sClass extends ScalaElement {
     public String b_class_name = null;
 //    public String c_mand_left_brace = "{"+indent();
 //    public List<KeypadItem> d_member_options = new ArrayList<>();
-//    public List<sMember> d_members = new ArrayList<>();
-    public List<sField> d_fields = new ArrayList<>();
-    public List<sMethod> e_methods = new ArrayList<>();
+    public List<sMember> d_members = new ArrayList<>();
+//    public List<sField> d_fields = new ArrayList<>();
+//    public List<sMethod> e_methods = new ArrayList<>();
     private String z_right_brace = "}" + unIndent();
 
     public sClass(){
@@ -34,16 +37,20 @@ public class sClass extends ScalaElement {
         return b_class_name;
     }
 
-    public List<sField> get_fields() {
-        return d_fields;
-    }
-
-    public List<sMethod> get_methods() {
-        return e_methods;
-    }
+//    public List<sField> get_fields() {
+//        return d_fields;
+//    }
+//
+//    public List<sMethod> get_methods() {
+//        return e_methods;
+//    }
 
     @Override
     public void accept(VoidVisitor v) {
         v.visit(this);
+    }
+
+    public List<sMember> get_members() {
+        return d_members;
     }
 }

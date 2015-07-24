@@ -1,12 +1,14 @@
-package com.aucklanduni.p4p.scalang;
+package com.aucklanduni.p4p.scalang.member;
 
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
+import com.aucklanduni.p4p.scalang.sEnum;
+import com.aucklanduni.p4p.scalang.sVariable;
 import com.aucklanduni.p4p.symtab.Type;
 
 /**
  * Created by Taz on 13/05/15.
  */
-public class sField extends sVariable {
+public class sField extends sMember {
 
     public sEnum.en_sVarType a_varType = sEnum.en_sVarType.var;
     public String b_var_name = null;

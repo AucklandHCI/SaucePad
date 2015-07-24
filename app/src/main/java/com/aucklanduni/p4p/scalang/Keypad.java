@@ -3,12 +3,14 @@ package com.aucklanduni.p4p.scalang;
 import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
-import com.aucklanduni.p4p.scalang.expression.sBinaryExpr;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
 import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
 import com.aucklanduni.p4p.scalang.expression.sValueExpr;
+import com.aucklanduni.p4p.scalang.member.sField;
+import com.aucklanduni.p4p.scalang.member.sMember;
+import com.aucklanduni.p4p.scalang.member.sMethod;
 import com.aucklanduni.p4p.scalang.statement.control.sControl;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
@@ -28,10 +30,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -53,6 +53,7 @@ public class Keypad {
      */
     private Map<String, ScalaElement> items = new HashMap<String,ScalaElement>();
     private Map<String, Class<? extends sExpression>> expressions = new HashMap<>();
+    private Map<String, Class<? extends sMember>> members   = new HashMap<>();
 
     private static HashMap<String, Class<? extends ScalaElement>> options = new HashMap<>();
     private static List<String> listItem = new ArrayList<>();
@@ -96,6 +97,10 @@ public class Keypad {
         expressions.put("Equals", sEqualsExpr.class);
         expressions.put("True/False", sBooleanExpr.class);
 
+        //== Members ==
+        members.put("Field", sField.class);
+        members.put("Method", sMethod.class);
+
         // Options
         options.put("Control", sControl.class);
         options.put("If", sIf.class);
@@ -138,8 +143,12 @@ public class Keypad {
                 e.printStackTrace();
             }
         }
+
         if (expressions.containsKey(value)){
             sExpression expr = (sExpression) setField(value);
+            typeStack.push(expr);
+        }else if(members.containsKey(value)){
+            sMember expr = (sMember) setField(value);
             typeStack.push(expr);
         }
 
@@ -748,7 +757,7 @@ public class Keypad {
 
                 value = typeStack.peek().setEnum(input);
 
-            }else if (sExpression.class.isAssignableFrom(fieldType)){
+            }else if (sExpression.class.isAssignableFrom(fieldType)) { //field type is class of object, can you assign object to something that requires sExpression
 
                 try {
 
@@ -756,7 +765,18 @@ public class Keypad {
                     field.set(typeStack.peek(), expr);
                     value = expr;
 
-                }catch (InstantiationException e) {
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                }
+            }else if (sMember.class.isAssignableFrom(fieldType)){
+
+                try {
+
+                    sMember expr = members.get(input).newInstance();
+                    field.set(typeStack.peek(), expr);
+                    value = expr;
+
+                } catch (InstantiationException e) {
                     e.printStackTrace();
                 }
 

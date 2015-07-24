@@ -1,5 +1,8 @@
-package com.aucklanduni.p4p.scalang;
+package com.aucklanduni.p4p.scalang.member;
 
+import com.aucklanduni.p4p.scalang.ScalaElement;
+import com.aucklanduni.p4p.scalang.sEnum;
+import com.aucklanduni.p4p.scalang.sParameter;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
@@ -9,7 +12,7 @@ import java.util.List;
 /**
  * Created by Taz on 13/05/15.
  */
-public class sMethod extends ScalaElement {
+public class sMethod extends sMember {
 
 //    public String a_mand_def = indent() + "def";
     public String a_method_name = null;

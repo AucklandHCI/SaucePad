@@ -62,7 +62,7 @@ public class sEnum {
 
     }
 
-    public enum en_Expression_Types{
+    public enum en_Expression_Types{  //do the same thing for member
         dp_Equals, dp_Plus, dp_Value, dp_Boolean;
 
         static final Map<String,en_Expression_Types> valueMap =
@@ -83,6 +83,22 @@ public class sEnum {
             }
 
             return super.toString();
+        }
+
+    }
+
+    public enum en_Member_Types{  //do the same thing for member
+        dp_Field,dp_Method;
+
+        static final Map<String,en_Expression_Types> valueMap =
+                new HashMap<>();
+        static {
+            for (en_Expression_Types o : en_Expression_Types.values())
+                valueMap.put(o.toString(), o);
+        }
+
+        public static en_Expression_Types getEnum(String val){
+            return valueMap.get(val);
         }
 
     }

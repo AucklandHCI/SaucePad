@@ -1,15 +1,14 @@
 package com.aucklanduni.p4p.scalang.printer;
 
 import com.aucklanduni.p4p.scalang.ScalaElement;
-import com.aucklanduni.p4p.scalang.expression.sBinaryExpr;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
 import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
 import com.aucklanduni.p4p.scalang.expression.sValueExpr;
 import com.aucklanduni.p4p.scalang.sClass;
-import com.aucklanduni.p4p.scalang.sField;
-import com.aucklanduni.p4p.scalang.sMethod;
+import com.aucklanduni.p4p.scalang.member.sField;
+import com.aucklanduni.p4p.scalang.member.sMethod;
 import com.aucklanduni.p4p.scalang.sParameter;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
