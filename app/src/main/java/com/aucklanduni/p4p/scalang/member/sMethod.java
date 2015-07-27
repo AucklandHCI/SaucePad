@@ -1,5 +1,8 @@
 package com.aucklanduni.p4p.scalang.member;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.sEnum;
 import com.aucklanduni.p4p.scalang.sParameter;
@@ -14,13 +17,11 @@ import java.util.List;
  */
 public class sMethod extends sMember {
 
-//    public String a_mand_def = indent() + "def";
     public String a_method_name = null;
-//    public String b_mand_left_bracket = "("; //"mand_" for mandatory item
-//    public List<KeypadItem> c_parameter_options = new ArrayList<>();
+
+    @Nullable
     public List<sParameter> c_parameters = new ArrayList<sParameter>();
-//    public String e_mand_left_brace = "{" + indent();
-//    public List<KeypadItem> f_statement_options = new ArrayList<>();
+
     public List<sStatement> f_statements = new ArrayList<>();
 
 
@@ -29,6 +30,7 @@ public class sMethod extends sMember {
     public String z_empty = "";
 
     //===== Private Fields =====
+
 
     private boolean doneParams = false;
 
@@ -50,6 +52,7 @@ public class sMethod extends sMember {
 //        f_statement_options.add(new KeypadItem("Return", true));
 //        f_statement_options.add(new KeypadItem("Method", true));
 //        f_statement_options.add(new KeypadItem("Done", true));
+
     }
 
     public String getMethodName() {
@@ -60,23 +63,10 @@ public class sMethod extends sMember {
         this.a_method_name = methodName;
     }
 
-//    public String getMand_left_bracket() {
-//        return b_mand_left_bracket;
-//    }
-
     @Override
     public String toPrintAfterDone() {
         return x_right_brace;
     }
-
-    //    public List<sParameter> getParameters() {
-//        return parameters;
-//    }
-//
-//    public void addParameters(sParameter parameter) {
-//        this.parameters.add(parameter);
-//    }
-
 
     public String get_method_name() {
         return a_method_name;

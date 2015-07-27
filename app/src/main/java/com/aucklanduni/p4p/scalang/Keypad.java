@@ -1,5 +1,6 @@
 package com.aucklanduni.p4p.scalang;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
@@ -25,12 +26,15 @@ import com.aucklanduni.p4p.symtab.Symbol;
 import com.aucklanduni.p4p.symtab.Type;
 import com.aucklanduni.p4p.symtab.VariableSymbol;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,7 +66,7 @@ public class Keypad {
 
     private int count = 0;
     private int listCount = 0;
-    private boolean isList = false;
+    private boolean isList = false, isNullable = false;
     private KeypadFragment kpFrag;
     private Field field;
     private ScalaElement temporaryElement, listClass;
@@ -82,7 +86,7 @@ public class Keypad {
         items.put("sMethod", new sMethod());
         items.put("New Method", new sMethod());
         items.put("sParameter", new sParameter());
-        items.put("New Param", new sParameter());
+        items.put("Parameter", items.get("sParameter"));
         items.put("sVariable", new sVariable());
 //        items.put("sField", new sField());
 //        items.put("New Field", new sField());
@@ -129,6 +133,11 @@ public class Keypad {
      */
     public List<KeypadItem> getNextItems(String value) throws RuntimeException {
 
+        if(items.containsKey(value)){
+            setType(value);
+        }
+
+
         if (options.containsKey(value)){
             try {
                 ScalaElement elem = options.get(value).newInstance();
@@ -142,6 +151,7 @@ public class Keypad {
                 e.printStackTrace();
             }
         }
+
 
         if (expressions.containsKey(value)){
             sExpression expr = (sExpression) setField(value);
@@ -227,6 +237,32 @@ public class Keypad {
             if (count < numFields) {
 
                 field = fields[count];
+
+                isNullable = (field.getAnnotation(Nullable.class) != null);
+
+                if (isNullable){
+                    List<KeypadItem> optionalItems = new ArrayList<>();
+
+                    if(field.getType() == List.class){
+                        ParameterizedType listType = (ParameterizedType) field.getGenericType();
+                        Class classOfList = (Class)listType.getActualTypeArguments()[0];
+                        if(ScalaElement.class.isAssignableFrom(classOfList)){
+
+                            ScalaElement elem = items.get(classOfList.getSimpleName());
+                            ScalaElement current = typeStack.peek();
+                            optionalItems.add(new KeypadItem(elem.getClassName(), true));
+                            current.incrementCount();
+                            List<KeypadItem> x = getNextItems("");
+                            optionalItems.addAll(x);
+                            current.decrementCount();
+
+                            return optionalItems;
+                        }
+                    }
+                }
+
+
+
 
                 if (field.getDeclaringClass() != cls){
                     type.setCount(numFields);
@@ -419,6 +455,16 @@ public class Keypad {
 
                 Log.d(TAG, "[setType|V] var list size = " + vars.size());
                 return ret;
+
+            case "Parameter":
+                typeStack.push(items.get(input));
+                try {
+                    addToList();
+                    return null;
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
 
 //            case "Operand":
 //                List<KeypadItem> toRet = new ArrayList<>();
@@ -666,5 +712,17 @@ public class Keypad {
 
     public Set<String> getExpressionTyps(){
         return expressions.keySet();
+    }
+
+    public Set<String> getStatementTypes() {
+        Set<String> s = new HashSet<>();
+        s.add("Variables");
+        s.add("Control");
+        s.add("Exception");
+        s.add("Return");
+        s.add("Method");
+        s.add("Done");
+
+        return s;
     }
 }

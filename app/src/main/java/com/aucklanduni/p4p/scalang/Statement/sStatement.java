@@ -15,7 +15,7 @@ public class sStatement extends ScalaElement {
     }
 
 
-    public sEnum.en_sStatement aa_type = sEnum.en_sStatement.dp_Variables;
+//    public sEnum.en_sStatement aa_type = sEnum.en_sStatement.dp_Variables;
 
     @Override
     public void accept(VoidVisitor v) {
