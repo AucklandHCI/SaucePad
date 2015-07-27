@@ -156,6 +156,8 @@ public abstract class ScalaElement {
                 items = doEnumInteraction((Enum) field.get(obj));
             }else if (sExpression.class.isAssignableFrom(fieldType)){
                 items = doExpressionInteraction((sExpression) field.get(obj));
+            }else if(fieldType == Object.class){
+                items = doObjectInteraction((Object) field.get(obj));
             }
 
 
@@ -173,6 +175,12 @@ public abstract class ScalaElement {
         }
 
         return items;
+    }
+
+    private List<KeypadItem> doObjectInteraction(Object o) {
+
+        return getKeyboardItemsFromList(keypad.getExpressionTyps(),true);
+
     }
 
     private List<KeypadItem> doExpressionInteraction(sExpression expr) {
