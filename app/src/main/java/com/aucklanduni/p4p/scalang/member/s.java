@@ -8,7 +8,7 @@ import com.aucklanduni.p4p.symtab.Type;
 /**
  * Created by Taz on 13/05/15.
  */
-public class sField extends sMember {
+public class s extends sMember {
 
     public sEnum.en_sVarType a_varType = sEnum.en_sVarType.var;
     public String b_var_name = null;

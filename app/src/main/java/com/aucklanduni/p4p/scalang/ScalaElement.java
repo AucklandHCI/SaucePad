@@ -16,6 +16,7 @@ import com.aucklanduni.p4p.symtab.VariableSymbol;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -176,7 +177,7 @@ public abstract class ScalaElement {
 
     private List<KeypadItem> doExpressionInteraction(sExpression expr) {
 
-        return getEnumsAsList(sEnum.en_Expression_Types.values());
+        return getKeyboardItemsFromList(keypad.getExpressionTyps(), true);
     }
 
     protected List<KeypadItem> doValueInteraction(Object o){
@@ -278,7 +279,7 @@ public abstract class ScalaElement {
 
         }else if(listClass == sMember.class){
 
-            return getEnumsAsList(sEnum.en_Member_Types.values());
+            return getKeyboardItemsFromList(keypad.getMemberTypes(), true);
 
         }
 
@@ -335,34 +336,40 @@ public abstract class ScalaElement {
 
         Object[] values = en.getDeclaringClass().getEnumConstants();
 
-        return getEnumsAsList(values);
+        List<String> enums = new ArrayList<>();
+        for (Object o : values){
+            enums.add(o.toString());
+        }
+
+        return getKeyboardItemsFromList(enums, false);
     }
 
-    private List<KeypadItem> getEnumsAsList(Object[] values){
+    private List<KeypadItem> getKeyboardItemsFromList(Collection<String> values, boolean fromKeys){
 
         List<KeypadItem> items = new ArrayList<>();
 
         boolean dontPrint;
-        String enumValue;
-        for(Object o : values) {
+        for(String s: values) {
             dontPrint = false;
-
-            enumValue = o.toString();
 
             /**
              * not all 'options' need to be printed to the screen and
              * so any enums that have the prefix 'dp_' are NOT printed
              */
-            if (enumValue.contains("dp_")){
+            if (s.contains("dp_")){
                 dontPrint = true;
-                enumValue = enumValue.replace("dp_", "");
+                s = s.replace("dp_", "");
             }
-            enumValue = enumValue.replace("_", " ");
+
+            if(fromKeys){
+                dontPrint = true;
+            }
+            s = s.replace("_", " ");
 
 
 //            enumValue = Enum.valueOf(en.getClass(), enumValue).toString();
 
-            items.add(new KeypadItem(enumValue, dontPrint));
+            items.add(new KeypadItem(s, dontPrint));
         }
 
         return items;

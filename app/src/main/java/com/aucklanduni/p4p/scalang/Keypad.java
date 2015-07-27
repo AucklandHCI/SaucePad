@@ -8,9 +8,10 @@ import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
 import com.aucklanduni.p4p.scalang.expression.sValueExpr;
-import com.aucklanduni.p4p.scalang.member.sField;
 import com.aucklanduni.p4p.scalang.member.sMember;
 import com.aucklanduni.p4p.scalang.member.sMethod;
+import com.aucklanduni.p4p.scalang.member.sVal;
+import com.aucklanduni.p4p.scalang.member.sVar;
 import com.aucklanduni.p4p.scalang.statement.control.sControl;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
@@ -24,14 +25,15 @@ import com.aucklanduni.p4p.symtab.Symbol;
 import com.aucklanduni.p4p.symtab.Type;
 import com.aucklanduni.p4p.symtab.VariableSymbol;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -82,8 +84,8 @@ public class Keypad {
         items.put("sParameter", new sParameter());
         items.put("New Param", new sParameter());
         items.put("sVariable", new sVariable());
-        items.put("sField", new sField());
-        items.put("New Field", new sField());
+//        items.put("sField", new sField());
+//        items.put("New Field", new sField());
 
         // == Statements ===
         // ==== Control ====
@@ -98,7 +100,8 @@ public class Keypad {
         expressions.put("True/False", sBooleanExpr.class);
 
         //== Members ==
-        members.put("Field", sField.class);
+        members.put("Var", sVar.class);
+        members.put("Val", sVal.class);
         members.put("Method", sMethod.class);
 
         // Options
@@ -113,10 +116,6 @@ public class Keypad {
 
 
         symbolStack.push(new NullSymbol());
-
-//        ClassSymbol cs = new ClassSymbol("testClassSym",currentScope);
-//        currentScope = cs;
-//        currentSymbol = globalScope;
 
     }
 
@@ -164,10 +163,6 @@ public class Keypad {
 
                 typeStack.push(member);
                 addToList();
-//
-//                typeStack.push(expr);
-//                sMember expr = (sMember) setField(value);
-
             }catch (Exception il){
                 il.printStackTrace();
             }
@@ -184,11 +179,6 @@ public class Keypad {
             i.add(null);
             return i;
         }
-
-
-
-
-
 
         ScalaElement type;
         try {
@@ -235,7 +225,6 @@ public class Keypad {
              * do the appropriate action.
              */
             if (count < numFields) {
-//                throw new RuntimeException("count too large.");
 
                 field = fields[count];
 
@@ -268,18 +257,8 @@ public class Keypad {
                 // and pop off the type stack.
                 type.resetCount();
 
-//                isList = false;
                 type = (ScalaElement) cls.newInstance();
                 temporaryElement = typeStack.pop();
-//                if(!isList || listClass != typeStack.peek() ){
-//                    typeStack.peek().incrementCount();
-//                }
-//                typeStack.push(type);
-
-//                if (isList){
-//                    addToList(typeStack.peek(), type);
-//                    isList = false;
-//                }
 
                 field = null;
 
@@ -357,194 +336,6 @@ public class Keypad {
         return  null;
     }
 
-//    public List<KeypadItem> getNextItems() throws RuntimeException{
-//
-//        ScalaElement type;
-//        try {
-//            type = typeStack.peek();
-//            if (type == null){
-//                //throw new RuntimeException("Key type was null");
-//                typeStack.pop();
-//                type = typeStack.peek();
-//            }
-//        }catch (EmptyStackException e){
-//            return kpFrag.getInitialList();
-//        }
-//
-//
-//        List<KeypadItem> keyPad = new ArrayList<>(); // whats displayed on the keyboard
-//        String className = type.getClassName(); //Scala Class
-//        count = type.getCount(); // index for which field we're at
-//
-//
-//        try {
-//
-//            Class cls = type.getClass(); // class object
-//
-//            if (count == 0) {
-//                type = (ScalaElement) cls.newInstance();
-//                typeStack.pop();
-//                typeStack.push(type);
-//            }
-//
-//            Field[] fields = cls.getFields(); //array of fields
-//
-////            for (Field fi : fields){
-////                Log.d(TAG, fi.getClassName());
-////            }
-//            int numFields = fields.length;
-//
-//            Log.d(TAG, "class Name = " + className);
-//
-//            Log.d(TAG, " numFields = " + numFields + " count = " + count);
-//            if (count < numFields) {
-////                throw new RuntimeException("count too large.");
-//
-//
-//                field = fields[count];
-//
-//
-//                return typeStack.peek().doInteraction(field, typeStack.peek());
-//
-//
-//                Class fType = field.getType();
-//                Log.d(TAG, "field type: "+ fType.getSimpleName() +
-//                        ", field name: " + field.getClassName());
-//
-//                if (fType == String.class) { // if string
-//                    String fName = field.getClassName();
-//                    String val = (String) field.get(type);
-//                    if (fName.contains("mand")) { // if mandatory
-//                        type = typeStack.peek();
-//                        type.incrementCount();
-//
-//                        kpFrag.printText(val);
-//                        kpFrag.addToStack(val);
-//                        return new ArrayList<>(); //return empty list for method sake
-//                    }
-//
-//                    //Log.d(TAG, "val = " + val);
-//                    if (val == null) {
-////                        type.incrementCount(); // increment count to look at next field
-//                        return null; // null acts as marker to get input from user.
-//                    }
-//                    keyPad.add(new KeypadItem(val)); // add it to the keypad to display.
-//
-//                }else if(fType == Type.class){
-//
-//                    // get all the types that are in scope and display them
-//                    // alphabetically.
-//                    Log.d(TAG, "curScope = " + currentScope.getScopeName());
-//                    List<String> typeNames = currentScope.getByInstanceOf(Type.class);
-//                    Collections.sort(typeNames);
-//                    for (String name : typeNames){
-//                        keyPad.add(new KeypadItem(name));
-//                    }
-//
-//                }else if(fType == List.class){
-//
-//                    ParameterizedType listType = (ParameterizedType) field.getGenericType();
-//                    Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0]; // Getting type of list
-//
-//                    Log.d(TAG, "=== listclass: "+ listClass.getSimpleName());
-//
-//                    if (listClass == KeypadItem.class) {
-//
-////                        prevType = type;
-//////                        type.incrementCount();
-////                        type = null;
-//
-//
-//                        try{
-//                            if (fields[count + 1].getType() == List.class) {
-//                                isList = true;
-//                            }else{
-//                                isList = false;
-//                            }
-//
-//                        }catch (ArrayIndexOutOfBoundsException e){
-//                            isList = false;
-//                        }
-//                        typeStack.push(null);
-//                        return (List<KeypadItem>) field.get(type);
-//
-//                    }else if (ScalaElement.class.isAssignableFrom(listClass)){
-////                        prevType = type;
-//
-//                        type = items.get(listClass.getSimpleName());
-//                        typeStack.push(type);
-//                        isList = true;
-////                        Log.d(TAG,"type = "+type.getClassName());
-//
-//                        return new ArrayList<>();
-////                        prevType = type;
-////                        type = null;
-////                        isList = true;
-//
-//
-//                    }
-////                    keyPad.add(new KeypadItem(newParam,true));
-////                    keyPad.add(new KeypadItem(done,true));
-////                    return keyPad;
-//
-//
-//
-//                }
-//
-////                type.incrementCount();
-//            }else{
-//                type.resetCount();
-//
-//                typeStack.pop();
-//
-//                if (isList){
-//                    addToList(typeStack.peek(), type);
-//                    isList = false;
-//                }
-//
-//                field = null;
-////                if (typeStack.size() >= 2){
-//////                if (prevType != null){
-////
-//////                    type =
-////                    typeStack.pop(); //prevType;
-//////                    prevType = null;
-////                    isList = false;
-////
-////                }
-//
-//
-//                if(type instanceof sMethod && currentScope instanceof MethodSymbol){
-//                    currentScope = currentScope.getEnclosingScope();
-//                }
-//
-//                if(type instanceof sClass && currentScope instanceof ClassSymbol){
-//                    currentScope = currentScope.getEnclosingScope();
-//                }
-//
-//                currentScope.define(symbolStack.pop());
-//
-//                Log.d(TAG, "== Printing all symbols for "+ currentScope.getScopeName());
-//                currentScope.printAll();
-//                Log.d(TAG, "==========================");
-//            }
-//
-//
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        } catch (InstantiationException e) {
-//            e.printStackTrace();
-////        } catch (EmptyStackException e){
-////            return kpFrag.getInitialList();
-//        }
-//        return keyPad;
-//    }
-
-//    public List<KeypadItem> getPrevItems() throws RuntimeException{
-//        return null;
-//    }
-
-
     /**
      * Gets the current ScalaElement being processed.
      * @return
@@ -566,56 +357,44 @@ public class Keypad {
         Log.d(TAG, "[setType] input = " + input);
 
         switch (input) {
-            case "New Param":
-                if (listCount > 0) {
-                    kpFrag.printText();
-                    kpFrag.addToStack(",");
-                }
-                listCount++;
-
-//                if (prevType != null && isList){
+//            case "New Param":
+//                if (listCount > 0) {
+//                    kpFrag.printText();
+//                    kpFrag.addToStack(",");
+//                }
+//                listCount++;
 //
-//                }
-
-                if (!(currentScope instanceof MethodSymbol)) {
-                    throw new RuntimeException("Can only add parameters to Method objects");
-                }//else{
-//                    currentScope.define(vs);
-                symbolStack.push(new VariableSymbol("", null, (ClassSymbol) currentScope.getEnclosingScope()));
-                //}
-                break;
-
-//            case "New Field":
-//                if (currentScope instanceof ClassSymbol) {
-//                    symbolStack.push(new VariableSymbol("newField", null, (ClassSymbol) currentScope));
-//                } else {
-//                    throw new RuntimeException("Fields must be in classes");
-//                }
+//                if (!(currentScope instanceof MethodSymbol)) {
+//                    throw new RuntimeException("Can only add parameters to Method objects");
+//                }//else{
+////                    currentScope.define(vs);
+//                symbolStack.push(new VariableSymbol("", null, (ClassSymbol) currentScope.getEnclosingScope()));
+//                //}
 //                break;
 
-            case "New Method":
+//            case "New Method":
+//
+//                if (!(currentScope instanceof ClassSymbol)) {
+//                    throw new RuntimeException("Method must be in a class");
+//                }
+//
+//                MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope);
+//                symbolStack.push(ms);
+////                currentScope.define(ms);
+//                currentScope = ms;
+//                break;
 
-                if (!(currentScope instanceof ClassSymbol)) {
-                    throw new RuntimeException("Method must be in a class");
-                }
-
-                MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope);
-                symbolStack.push(ms);
-//                currentScope.define(ms);
-                currentScope = ms;
-                break;
-
-            case "Done":
-//                type = prevType;
-//                prevType = null;
-
-
-//                typeStack.pop();
-                listCount = 0;
-//                kpFrag.printText(typeStack.peek().getItemAfterDone());
+//            case "Done":
+////                type = prevType;
+////                prevType = null;
+//
+//
+////                typeStack.pop();
+//                listCount = 0;
+////                kpFrag.printText(typeStack.peek().getItemAfterDone());
+////                typeStack.peek().incrementCount();
 //                typeStack.peek().incrementCount();
-                typeStack.peek().incrementCount();
-                return null;
+//                return null;
 
             case "New Class":
                 ClassSymbol cs = new ClassSymbol("NewClassScope", globalScope);
@@ -624,11 +403,11 @@ public class Keypad {
                 currentScope = cs;
                 break;
 
-            case "Control":
-
-                //currentScope = new LocalScope(currentScope);
-
-                break;
+//            case "Control":
+//
+//                //currentScope = new LocalScope(currentScope);
+//
+//                break;
 
             case "Variables":
                 List<String> vars = currentScope.getByInstanceOf(VariableSymbol.class);
@@ -641,31 +420,31 @@ public class Keypad {
                 Log.d(TAG, "[setType|V] var list size = " + vars.size());
                 return ret;
 
-            case "Operand":
-                List<KeypadItem> toRet = new ArrayList<>();
-                Object[] values = sEnum.en_Operators.values();
-
-                String enumValue;
-                for (Object o : values) {
-
-                    enumValue = o.toString();
-
-                    /**
-                     * not all 'options' need to be printed to the screen and
-                     * so any enums that have the prefix 'dp_' are NOT printed
-                     */
-                    if (enumValue.contains("dp_")) {
-                        enumValue = enumValue.replace("dp_", "");
-                    }
-                    enumValue = enumValue.replace("_", " ");
-
-
-//            enumValue = Enum.valueOf(en.getClass(), enumValue).toString();
-
-                    toRet.add(new KeypadItem(enumValue));
-
-                }
-                return toRet;
+//            case "Operand":
+//                List<KeypadItem> toRet = new ArrayList<>();
+//                Object[] values = sEnum.en_Operators.values();
+//
+//                String enumValue;
+//                for (Object o : values) {
+//
+//                    enumValue = o.toString();
+//
+//                    /**
+//                     * not all 'options' need to be printed to the screen and
+//                     * so any enums that have the prefix 'dp_' are NOT printed
+//                     */
+//                    if (enumValue.contains("dp_")) {
+//                        enumValue = enumValue.replace("dp_", "");
+//                    }
+//                    enumValue = enumValue.replace("_", " ");
+//
+//
+////            enumValue = Enum.valueOf(en.getClass(), enumValue).toString();
+//
+//                    toRet.add(new KeypadItem(enumValue));
+//
+//                }
+//                return toRet;
         }
         if (!items.containsKey(input)){
 //            throw new RuntimeException("Key missing!");
@@ -708,7 +487,7 @@ public class Keypad {
             return null;
         }
 
-        Log.e(TAG,"[setField] value= " + input);
+        Log.e(TAG, "[setField] value= " + input);
 
         try{
 
@@ -800,37 +579,15 @@ public class Keypad {
                     e.printStackTrace();
                 }
 
-            }else if (fieldType == List.class){
-                //TODO need to find a way to add to the correct list
-
-
-//                if(!isList) {
-//                    ScalaElement currentType = typeStack.peek();
-//                    Field temp = field;
-//                    try{
-//                        Field toSet = currentType.getClass().getFields()[
-//                        currentType.getCount() + 1];
+//            }else if (fieldType == List.class){
+//                //TODO need to find a way to add to the correct list
 //
-//                        field = toSet;
-//                        setType(input);
-//                        field = temp;
-////                        currentType.decrementCount();
-//                    }catch (ArrayIndexOutOfBoundsException e){
-//                        field = temp;
-//                    }
-//                }
-
-
-            }else{
+//            }else{
 
             }
 
-
-
             if (isList){
                 addToList();
-
-
             }
 
 //            Log.d(TAG, "[setField] stack peek = "+ typeStack.peek());
@@ -849,28 +606,6 @@ public class Keypad {
     }
 
     private void addToList() throws IllegalAccessException {
-//        Class cls = addTo.getClass();
-//        Field currentField = cls.getFields()[addTo.getCount() + 1];
-//        if (currentField.getType() != List.class){
-//            throw new RuntimeException("Field not of type List");
-//        }
-//
-//        ParameterizedType listType = (ParameterizedType) currentField.getGenericType();
-//        Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0];
-//
-//        if (ScalaElement.class.isAssignableFrom(listClass)) {
-////            throw new RuntimeException("List not of type ScalaElement");
-//
-//
-//            try {
-//                List listField = (List) currentField.get(addTo);
-//                listField.add(obj);
-//                currentField.set(addTo, listField);
-//
-//            } catch (IllegalAccessException e) {
-//                e.printStackTrace();
-//            }
-//        }
         ScalaElement current = typeStack.peek();
         int prevCount = listClass.getCount();
         Field f = listClass.getClass().getFields()[prevCount];
@@ -886,12 +621,10 @@ public class Keypad {
                     SEList.add(index,current);
                 }else{
                     SEList.add(current);
-
                 }
                 String s = "";
             }
         }
-
     }
 
     public Scope getCurrentScope(){
@@ -925,5 +658,13 @@ public class Keypad {
     public Keypad setListClass(ScalaElement listClass) {
         this.listClass = listClass;
         return this;
+    }
+
+    public Set<String> getMemberTypes(){
+        return members.keySet();
+    }
+
+    public Set<String> getExpressionTyps(){
+        return expressions.keySet();
     }
 }

@@ -11,9 +11,10 @@ import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
 import com.aucklanduni.p4p.scalang.expression.sValueExpr;
 import com.aucklanduni.p4p.scalang.member.sMember;
-import com.aucklanduni.p4p.scalang.sClass;
-import com.aucklanduni.p4p.scalang.member.sField;
 import com.aucklanduni.p4p.scalang.member.sMethod;
+import com.aucklanduni.p4p.scalang.member.sVal;
+import com.aucklanduni.p4p.scalang.member.sVar;
+import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.scalang.sParameter;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
@@ -97,11 +98,12 @@ public class ScalaPrinter implements VoidVisitor{
 
 
 
-    public void visit(sField obj) {
+    @Override
+    public void visit(sVal obj) {
         printer.setScalaElement(obj);
 
-        printer.printScalaElement(obj.get_Declaration().toString() + " ", 0);
-        String fName = obj.get_var_name();
+        printer.printString("val ");
+        String fName = obj.get_val_name();
         if (fName == null){
             printCursor();
             return;
@@ -117,10 +119,28 @@ public class ScalaPrinter implements VoidVisitor{
         }
         printer.printScalaElement(fType.toString(), 2);
 
+    }
 
+    @Override
+    public void visit(sVar obj) {
+        printer.setScalaElement(obj);
 
+        printer.printString("var ");
+        String fName = obj.get_var_name();
+        if (fName == null){
+            printCursor();
+            return;
+        }
+        printer.printScalaElement(fName, 1);
 
-        //TODO finish off the field
+        printer.printString(": ");
+
+        Object fType = obj.get_var_Type();
+        if(fType == null){
+            printCursor();
+            return;
+        }
+        printer.printScalaElement(fType.toString(), 2);
 
     }
 
@@ -151,15 +171,11 @@ public class ScalaPrinter implements VoidVisitor{
 
             sParameter p = params.get(i);
             p.accept(this);
-            //TODO figure out commas for parameters
-
         }
 
         printer.printString(")");
         //TODO figure out how to do return
         printer.printString("{");
-        //TODO method body
-
         printer.printLn();
         List<sStatement> states = obj.get_statements();
         printer.printLn();

@@ -76,11 +76,6 @@ public class sPrinter{
 
             Log.e(TAG, "SE = " + scalaElement.getClassName()+", topElemCount = " + topElemCount + ", count = " + count);
 
-            if (count == topElemCount-1){
-                color = Color.RED;
-            }else{
-                color = Color.BLACK;
-            }
             clickables.add(new ClickableText(arg.trim(), scalaElement, count,keypad, color));
 
         }

@@ -6,9 +6,10 @@ import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
 import com.aucklanduni.p4p.scalang.expression.sValueExpr;
-import com.aucklanduni.p4p.scalang.sClass;
-import com.aucklanduni.p4p.scalang.member.sField;
 import com.aucklanduni.p4p.scalang.member.sMethod;
+import com.aucklanduni.p4p.scalang.member.sVal;
+import com.aucklanduni.p4p.scalang.member.sVar;
+import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.scalang.sParameter;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
@@ -22,7 +23,8 @@ public interface VoidVisitor {
 
     // ScalaElements ---------
     void visit(sClass obj);
-    void visit(sField obj);
+    void visit(sVar obj);
+    void visit(sVal obj);
     void visit(sMethod obj);
     void visit(sParameter obj);
     void visit(sIf obj);
