@@ -244,8 +244,8 @@ public class ScalaPrinter implements VoidVisitor{
         sExpression condition = obj.getCondition();
         if (condition != null){
             condition.accept(this);
-//        }else{
-//            printCursor();
+        }else{
+            printCursor();
         }
         printer.printString(")");
         printer.printString("{");
@@ -319,19 +319,19 @@ public class ScalaPrinter implements VoidVisitor{
 
     }
 
-//    @Override
-//    public void visit(sBinaryExpr obj) {
-//        obj.getLeft().accept(this);
-//        printer.printSpace();
-//        printer.printScalaElement(obj.getOperator().toString(), 1);
-//        printer.printSpace();
-//        obj.getRight().accept(this);
-//    }
-
     @Override
     public void visit(sValueExpr obj) {
         printer.setScalaElement(obj);
-        printer.printScalaElement(obj.getValue(),0);
+
+        String val = obj.getValue();
+
+        if (val == null){
+           printCursor();
+            return;
+        }
+
+
+        printer.printScalaElement(val,0);
     }
 
     @Override
@@ -392,7 +392,15 @@ public class ScalaPrinter implements VoidVisitor{
     @Override
     public void visit(sBooleanExpr obj) {
         printer.setScalaElement(obj);
-        printer.printScalaElement(obj.getValue(), 0);
+
+        String val = obj.getValue();
+
+        if(val == null){
+            printCursor();
+            return;
+        }
+
+        printer.printScalaElement(val, 0);
     }
 
     public String getSource(sClass obj) {

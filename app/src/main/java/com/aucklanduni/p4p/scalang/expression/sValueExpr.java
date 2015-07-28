@@ -10,7 +10,7 @@ public class sValueExpr extends sExpression {
 
 
     public sEnum.en_Input_Types a_value = sEnum.en_Input_Types.dp_Variables;
-    private String value = " ";
+    private String value = null;
 
     @Override
     public void accept(VoidVisitor v) {

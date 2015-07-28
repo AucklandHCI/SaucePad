@@ -36,4 +36,8 @@ public class NonClickableText extends ClickableSpan {
         super.updateDrawState(ds);
     }
 
+    @Override
+    public String toString() {
+        return word;
+    }
 }

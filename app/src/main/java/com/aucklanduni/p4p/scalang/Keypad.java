@@ -57,12 +57,15 @@ public class Keypad {
     /**
      * matches an instance to a string representative of that class
      */
-    private Map<String, ScalaElement> items = new HashMap<String,ScalaElement>();
+    private Map<String, Class<? extends ScalaElement>> items = new HashMap<>();
     private Map<String, Class<? extends sExpression>> expressions = new HashMap<>();
     private Map<String, Class<? extends sMember>> members   = new HashMap<>();
+    private Set<String> statements = new HashSet<>();
 
     private static HashMap<String, Class<? extends ScalaElement>> options = new HashMap<>();
     private static List<String> listItem = new ArrayList<>();
+
+    private List<KeypadItem> nullFieldNextItems = new ArrayList<>();
 
     private int count = 0;
     private int listCount = 0;
@@ -81,20 +84,26 @@ public class Keypad {
     public Keypad(KeypadFragment keypadFragment){
         this.kpFrag = keypadFragment;
         // == Scala basics ==
-        items.put("sClass", new sClass());
-        items.put("New Class", new sClass());
-        items.put("sMethod", new sMethod());
-        items.put("New Method", new sMethod());
-        items.put("sParameter", new sParameter());
+        items.put("sClass", sClass.class);
+//        items.put("New Class", new sClass());
+        items.put("sMethod",  sMethod.class);
+//        items.put("New Method", new sMethod());
+        items.put("sParameter", sParameter.class);
         items.put("Parameter", items.get("sParameter"));
-        items.put("sVariable", new sVariable());
+        items.put("sVariable", sVariable.class);
 //        items.put("sField", new sField());
 //        items.put("New Field", new sField());
 
         // == Statements ===
+        statements.add("Variables");
+        statements.add("Control");
+        statements.add("Exception");
+        statements.add("Return");
+        statements.add("Method");
+        statements.add("Done");
         // ==== Control ====
-        items.put("Control", new sControl());
-        items.put("If", new sIf());
+        items.put("Control", sControl.class);
+        items.put("If", sIf.class);
 
 
         // == Expressions ===
@@ -133,9 +142,19 @@ public class Keypad {
      */
     public List<KeypadItem> getNextItems(String value) throws RuntimeException {
 
+        if(isNullable){
+            for(KeypadItem ki : nullFieldNextItems) {
+                if (ki.getValue().equals(value)) {
+                    typeStack.peek().incrementCount();
+                    break;
+                }
+            }
+        }
+
         if(items.containsKey(value)){
             setType(value);
         }
+
 
 
         if (options.containsKey(value)){
@@ -176,7 +195,6 @@ public class Keypad {
             }catch (Exception il){
                 il.printStackTrace();
             }
-
         }
 
         if (value.equals("Variables")){
@@ -248,11 +266,14 @@ public class Keypad {
                         Class classOfList = (Class)listType.getActualTypeArguments()[0];
                         if(ScalaElement.class.isAssignableFrom(classOfList)){
 
-                            ScalaElement elem = items.get(classOfList.getSimpleName());
+                            ScalaElement elem = (ScalaElement) classOfList.newInstance();
                             ScalaElement current = typeStack.peek();
                             optionalItems.add(new KeypadItem(elem.getClassName(), true));
                             current.incrementCount();
                             List<KeypadItem> x = getNextItems("");
+                            isNullable = true;
+                            nullFieldNextItems.clear();
+                            nullFieldNextItems.addAll(x);
                             optionalItems.addAll(x);
                             current.decrementCount();
 
@@ -433,6 +454,7 @@ public class Keypad {
 //                return null;
 
             case "New Class":
+                input = "sClass";
                 ClassSymbol cs = new ClassSymbol("NewClassScope", globalScope);
                 symbolStack.push(cs);
 //                currentScope.define(cs);
@@ -457,11 +479,15 @@ public class Keypad {
                 return ret;
 
             case "Parameter":
-                typeStack.push(items.get(input));
                 try {
+                    ScalaElement elem = items.get(input).newInstance();
+                    typeStack.push(elem);
+
                     addToList();
                     return null;
                 } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
                     e.printStackTrace();
                 }
 
@@ -500,7 +526,14 @@ public class Keypad {
         }
 
 //        this.type = items.get(input);
-        ScalaElement se = items.get(input);
+        ScalaElement se = null;
+        try {
+            se = items.get(input).newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         if (se instanceof sClass){
             kpFrag.setMainClass((sClass) se);
         }
@@ -533,7 +566,7 @@ public class Keypad {
             return null;
         }
 
-        Log.e(TAG, "[setField] value= " + input);
+        Log.e(TAG, "[setField] value= " + input + ", field = " + field.getName() + ", Class = " + typeStack.peek().getClassName());
 
         try{
 
@@ -693,10 +726,6 @@ public class Keypad {
         return typeStack;
     }
 
-    public sClass getMainClass(){
-        return (sClass) items.get("New Class");
-    }
-
     public void setIsList(boolean value){
         isList = value;
     }
@@ -715,14 +744,6 @@ public class Keypad {
     }
 
     public Set<String> getStatementTypes() {
-        Set<String> s = new HashSet<>();
-        s.add("Variables");
-        s.add("Control");
-        s.add("Exception");
-        s.add("Return");
-        s.add("Method");
-        s.add("Done");
-
-        return s;
+        return statements;
     }
 }

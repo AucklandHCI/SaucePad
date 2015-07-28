@@ -21,18 +21,10 @@ public class sMethod extends sMember {
 
     @Nullable
     public List<sParameter> c_parameters = new ArrayList<sParameter>();
-
     public List<sStatement> f_statements = new ArrayList<>();
-
-
-    public String x_right_brace = "}" + unIndent() + unIndent();
-//    public sEnum.en_sMethodDone y_options = sEnum.en_sMethodDone.dp_Another_method;
-    public String z_empty = "";
 
     //===== Private Fields =====
 
-
-    private boolean doneParams = false;
 
     //==========================
 
@@ -65,7 +57,7 @@ public class sMethod extends sMember {
 
     @Override
     public String toPrintAfterDone() {
-        return x_right_brace;
+        return "";
     }
 
     public String get_method_name() {

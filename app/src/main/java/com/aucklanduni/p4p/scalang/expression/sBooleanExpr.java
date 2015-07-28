@@ -10,7 +10,7 @@ public class sBooleanExpr extends sExpression {
 
 
     public sEnum.en_sBoolean a_value = sEnum.en_sBoolean.True;
-    private String value = " ";
+    private String value = null;
 
     @Override
     public void accept(VoidVisitor v) {

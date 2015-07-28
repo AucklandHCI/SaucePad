@@ -62,4 +62,8 @@ public class ClickableText extends ClickableSpan {
         }
     }
 
+    @Override
+    public String toString() {
+        return word;
+    }
 }

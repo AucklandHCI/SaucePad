@@ -74,7 +74,7 @@ public class sPrinter{
 
         if (Character.isLetterOrDigit(arg.charAt(0))) {
 
-            Log.e(TAG, "SE = " + scalaElement.getClassName()+", topElemCount = " + topElemCount + ", count = " + count);
+//            Log.e(TAG, "SE = " + scalaElement.getClassName()+", topElemCount = " + topElemCount + ", count = " + count);
 
             clickables.add(new ClickableText(arg.trim(), scalaElement, count,keypad, color));
 

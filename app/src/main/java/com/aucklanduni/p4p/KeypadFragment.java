@@ -195,14 +195,12 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         int cIndex = 0;
 
 
-//        try {
+        try {
             for (int end = brIterator.next(); end != BreakIterator.DONE; start = end, end = brIterator
                     .next()) {
                 String possibleWord = source.substring(start, end);
                 possibleWord = possibleWord.trim();
                 if (!possibleWord.isEmpty() && !possibleWord.equals("≤")) {
-//            if (Character.isLetterOrDigit(possibleWord.charAt(0))) {
-//                Log.e(TAG, "$" + possibleWord + "$");
                     ClickableSpan cs = cTexts.get(cIndex);
                     if (cs instanceof ClickableText) {
                         ClickableText ct = (ClickableText) cs;
@@ -210,27 +208,12 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                         spans.setSpan(ct, start, end,
                                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
-//
-//
                     cIndex++;
-////                ClickableText clickSpan = new ClickableText(possibleWord);
-////                spans.setSpan(clickSpan, start, end,
-////                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            }
                 }
             }
-//        }catch (IndexOutOfBoundsException e){
-//
-//
-//            for (ClickableSpan c : cTexts){
-//                if(c instanceof ClickableText){
-//                    Log.e(TAG, "*"+((ClickableText) c).getWord()+"*");
-//                }else{
-////                    Log.e(TAG, "*"+((NonClickableText) c).getWord()+"*");
-//                }
-//
-//            }
-//        }
+        }catch (IndexOutOfBoundsException e){
+            e.printStackTrace();
+        }
         //TODO need to hide the keyboard
     }
 
@@ -380,6 +363,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         KeypadItem input = (KeypadItem) parent.getAdapter().getItem(position);
         String value = input.getValue();
+
 
 
         if (!input.dontPrint()){ // if not dummy print it
