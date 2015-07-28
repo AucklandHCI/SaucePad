@@ -119,17 +119,14 @@ public class ScalaPrinter implements VoidVisitor{
         }
         printer.printScalaElement(fType.toString(), 2);
 
-        sExpression fValue = (sExpression)obj.get_val_value();
+        sExpression fValue = (sExpression)obj.get_value();
         if(fValue == null){
             printCursor();
             return;
         }
-        printer.printString("=");
-        if (fValue != null){
-            fValue.accept(this);
-        }
 
-
+        printer.printString(" = ");
+        fValue.accept(this);
 
     }
 

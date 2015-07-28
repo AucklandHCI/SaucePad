@@ -111,6 +111,7 @@ public class Keypad {
         expressions.put("Value", sValueExpr.class);
         expressions.put("Equals", sEqualsExpr.class);
         expressions.put("True/False", sBooleanExpr.class);
+        expressions.put("Continue",null);
 
         //== Members ==
         members.put("Var", sVar.class);
@@ -173,8 +174,12 @@ public class Keypad {
 
 
         if (expressions.containsKey(value)){
-            sExpression expr = (sExpression) setField(value);
-            typeStack.push(expr);
+            if(value != "Continue") {
+                sExpression expr = (sExpression) setField(value);
+                typeStack.push(expr);
+            }else{
+                typeStack.pop();
+            }
         }else if(members.containsKey(value)){
             try {
 

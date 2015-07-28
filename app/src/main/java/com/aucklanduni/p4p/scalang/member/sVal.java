@@ -30,7 +30,7 @@ public class sVal extends sMember {
         return d_var_Type;
     }
 
-    public sExpression get_val_value(){
+    public sExpression get_value(){
         return e_val_value;
     }
 
