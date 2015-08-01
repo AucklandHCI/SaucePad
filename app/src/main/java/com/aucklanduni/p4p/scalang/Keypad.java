@@ -4,6 +4,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
+import com.aucklanduni.p4p.scalang.statement.exception.sException;
+import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
 import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
@@ -26,11 +28,9 @@ import com.aucklanduni.p4p.symtab.Symbol;
 import com.aucklanduni.p4p.symtab.Type;
 import com.aucklanduni.p4p.symtab.VariableSymbol;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashMap;
@@ -60,6 +60,7 @@ public class Keypad {
     private Map<String, Class<? extends ScalaElement>> items = new HashMap<>();
     private Map<String, Class<? extends sExpression>> expressions = new HashMap<>();
     private Map<String, Class<? extends sMember>> members   = new HashMap<>();
+    private Map<String, Class<? extends sException>> exceptions   = new HashMap<>();
     private Set<String> statements = new HashSet<>();
 
     private static HashMap<String, Class<? extends ScalaElement>> options = new HashMap<>();
@@ -118,8 +119,11 @@ public class Keypad {
         members.put("Val", sVal.class);
         members.put("Method", sMethod.class);
 
+        // == Exceptions ==
+        items.put("Exception", sException.class);
+        exceptions.put("Illegal Argument", sIllegalArgumentException.class);
+
         // Options
-        options.put("Control", sControl.class);
         options.put("If", sIf.class);
         options.put("For", sFor.class);
 
@@ -150,6 +154,10 @@ public class Keypad {
                     break;
                 }
             }
+        }
+
+        if (value.equals("Control")){
+            String s = "f";
         }
 
         if(items.containsKey(value)){
@@ -535,6 +543,11 @@ public class Keypad {
         try {
             se = items.get(input).newInstance();
         } catch (InstantiationException e) {
+
+            // thrown if class is abstract
+            //TODO figure out which class and show subtypes
+
+
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();

@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
+import com.aucklanduni.p4p.scalang.statement.exception.sException;
+import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
 import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
@@ -415,6 +417,27 @@ public class ScalaPrinter implements VoidVisitor{
         return printer.getClickables();
     }
 
+    @Override
+    public void visit(sException obj) {
+        throw new IllegalStateException(obj.getClassName());
+    }
 
+    @Override
+    public void visit(sIllegalArgumentException obj) {
+        printer.setScalaElement(obj);
 
+        printer.printString("throw new IllegalArgumentException(");
+
+        String msg = obj.getMessage();
+
+        if(msg == null){
+            printCursor();
+        }else{
+            printer.printString("\"");
+            printer.printScalaElement(msg, 0);
+            printer.printString("\"");
+        }
+
+        printer.printString(")");
+    }
 }

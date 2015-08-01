@@ -1,6 +1,8 @@
 package com.aucklanduni.p4p.scalang.printer;
 
 import com.aucklanduni.p4p.scalang.ScalaElement;
+import com.aucklanduni.p4p.scalang.statement.exception.sException;
+import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
 import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
@@ -34,9 +36,12 @@ public interface VoidVisitor {
     
     // sExpression ------------
     void visit(sExpression obj);
-//    void visit(sBinaryExpr obj);
     void visit(sValueExpr obj);
     void visit(sPlusExpr obj);
     void visit(sEqualsExpr obj);
     void visit(sBooleanExpr obj);
+
+    // sException -------------
+    void visit(sException obj);
+    void visit(sIllegalArgumentException obj);
 }
