@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
+import com.aucklanduni.p4p.scalang.annotations.NullableField;
 import com.aucklanduni.p4p.scalang.statement.exception.sException;
 import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
@@ -82,6 +83,7 @@ public class Keypad {
 
     private String TAG = "testing";
     private boolean editing;
+    private boolean prevChanged =false;
 
     public Keypad(KeypadFragment keypadFragment){
         this.kpFrag = keypadFragment;
@@ -148,12 +150,20 @@ public class Keypad {
      */
     public List<KeypadItem> getNextItems(String value) throws RuntimeException {
 
-        if(isNullable){
+        if(isNullable && !value.isEmpty()){
+            boolean found = false;
             for(KeypadItem ki : nullFieldNextItems) {
                 if (ki.getValue().equals(value)) {
                     typeStack.peek().incrementCount();
+                    found = true;
                     break;
                 }
+            }
+
+            if (!found){
+                List<KeypadItem> itemList = typeStack.peek().doInteraction(field, typeStack.peek(),this);
+                isNullable = false;
+                return itemList;
             }
         }
 
@@ -297,10 +307,12 @@ public class Keypad {
 
                 field = fields[count];
 
-                isNullable = (field.getAnnotation(Nullable.class) != null);
+                NullableField nf = field.getAnnotation(NullableField.class);
+                isNullable = ( nf != null);
 
                 if (isNullable){
                     List<KeypadItem> optionalItems = new ArrayList<>();
+                    ScalaElement current = typeStack.peek();
 
                     if(field.getType() == List.class){
                         ParameterizedType listType = (ParameterizedType) field.getGenericType();
@@ -308,19 +320,52 @@ public class Keypad {
                         if(ScalaElement.class.isAssignableFrom(classOfList)){
 
                             ScalaElement elem = (ScalaElement) classOfList.newInstance();
-                            ScalaElement current = typeStack.peek();
                             optionalItems.add(new KeypadItem(elem.getClassName(), true));
-                            current.incrementCount();
-                            List<KeypadItem> x = getNextItems("");
-                            isNullable = true;
-                            nullFieldNextItems.clear();
-                            nullFieldNextItems.addAll(x);
-                            optionalItems.addAll(x);
-                            current.decrementCount();
+                        }
+                    }else{
+                        optionalItems.add(new KeypadItem( nf.name(), true));
+                    }
 
-                            return optionalItems;
+                    current.incrementCount();
+
+                    boolean popped = false;
+                    if (current.getCount() >= numFields){
+
+                        popped = true;
+                        typeStack.pop();
+                        ScalaElement prev = typeStack.peek();
+                        if (!prev.isList()){
+                            prevChanged = true;
+                            prev.incrementCount();
                         }
                     }
+
+                    Field f = field;
+                    Stack<ScalaElement> s = typeStack;
+
+                    List<KeypadItem> nextItems = getNextItems("");
+
+                    field = f;
+                    typeStack = s;
+
+                    isNullable = true;
+                    nullFieldNextItems.clear();
+                    nullFieldNextItems.addAll(nextItems);
+                    optionalItems.addAll(nextItems);
+                    current.decrementCount();
+
+                    if (prevChanged && !value.isEmpty()){
+                        typeStack.peek().decrementCount();
+                        prevChanged = false;
+                    }
+
+                    if (popped){
+                        typeStack.push(current);
+                    }
+
+
+
+                    return optionalItems;
                 }
 
 

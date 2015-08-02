@@ -13,11 +13,10 @@ public class sClass extends ScalaElement {
 
     public String b_class_name = null;
     public List<sMember> d_members = new ArrayList<>();
-    private String z_right_brace = "}" + unIndent();
 
     @Override
     public String toPrintAfterDone() {
-        return z_right_brace;
+        return "";
     }
 
     public String get_class_name() {

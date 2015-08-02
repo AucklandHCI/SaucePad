@@ -22,9 +22,9 @@
             android:layout_weight="0.3"
             android:id="@+id/gv_KeyPad"
             android:numColumns="auto_fit"
-            android:gravity="center"
+            android:gravity="center_vertical|center_horizontal"
             android:layout_gravity="center"
-            android:columnWidth="100dp"
+            android:columnWidth="120dp"
             android:stretchMode="spacingWidthUniform">
 
         </GridView>

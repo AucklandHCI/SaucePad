@@ -33,6 +33,7 @@ public abstract class ScalaElement {
 
     protected Field field;
     protected ScalaElement sCls;
+    protected boolean isList = false;
     protected Scope currentScope;
     protected Keypad keypad;
 
@@ -81,6 +82,10 @@ public abstract class ScalaElement {
 
     public boolean isDoneWithStatements() {
         return doneWithStatements;
+    }
+
+    public boolean isList() {
+        return isList;
     }
 
     public abstract void accept(VoidVisitor v);
@@ -156,18 +161,25 @@ public abstract class ScalaElement {
 
             if (fieldType == String.class) {
                 items = doStringInteraction((String) field.get(obj));
+                isList = false;
             }else if(Number.class.isAssignableFrom(fieldType)){
                 items = doNumericalInteraction((Number)field.get(obj));
+                isList = false;
             }else if (fieldType == Type.class){
                 items =  doTypeInteraction((Type) field.get(obj));
+                isList = false;
             }else if (fieldType == List.class){
                 items = doListInteraction((List) field.get(obj));
+                isList = true;
             }else if (Enum.class.isAssignableFrom(fieldType)){
                 items = doEnumInteraction((Enum) field.get(obj));
+                isList = false;
             }else if (sExpression.class.isAssignableFrom(fieldType)){
                 items = doExpressionInteraction((sExpression) field.get(obj));
+                isList = false;
             }else if(fieldType == Object.class){
                 items = doObjectInteraction((Object) field.get(obj));
+                isList = false;
             }
 
 

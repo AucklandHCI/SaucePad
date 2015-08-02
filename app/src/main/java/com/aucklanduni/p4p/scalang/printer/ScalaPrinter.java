@@ -112,13 +112,14 @@ public class ScalaPrinter implements VoidVisitor{
         }
         printer.printScalaElement(fName, 1);
 
-        printer.printString(": ");
-
-        Object fType = obj.get_var_Type();
+        Type fType = obj.get_var_Type();
         if(fType == null){
             printCursor();
             return;
         }
+
+        printer.printString(": ");
+
         printer.printScalaElement(fType.toString(), 2);
 
         sExpression fValue = obj.get_value();
@@ -144,13 +145,14 @@ public class ScalaPrinter implements VoidVisitor{
         }
         printer.printScalaElement(fName, 1);
 
-        printer.printString(": ");
 
-        Object fType = obj.get_var_Type();
+
+        Type fType = obj.get_var_Type();
         if(fType == null){
             printCursor();
             return;
         }
+        printer.printString(": ");
         printer.printScalaElement(fType.toString(), 2);
 
     }

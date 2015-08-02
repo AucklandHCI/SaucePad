@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.aucklanduni.p4p.scalang.ScalaElement;
+import com.aucklanduni.p4p.scalang.annotations.NullableField;
 import com.aucklanduni.p4p.scalang.sEnum;
 import com.aucklanduni.p4p.scalang.sParameter;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
@@ -19,7 +20,7 @@ public class sMethod extends ScalaElement implements sMember {
 
     public String a_method_name = null;
 
-    @Nullable
+    @NullableField
     public List<sParameter> c_parameters = new ArrayList<sParameter>();
     public List<sStatement> f_statements = new ArrayList<>();
 

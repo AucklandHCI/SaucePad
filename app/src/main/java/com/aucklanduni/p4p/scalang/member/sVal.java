@@ -1,5 +1,6 @@
 package com.aucklanduni.p4p.scalang.member;
 
+import com.aucklanduni.p4p.scalang.annotations.NullableField;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
@@ -11,6 +12,7 @@ import com.aucklanduni.p4p.symtab.Type;
 public class sVal extends sStatement implements sMember {
 
     public String b_val_name = null;
+    @NullableField(name = "Set Type")
     public Type d_var_Type;
     public sExpression e_val_value = null ;
 

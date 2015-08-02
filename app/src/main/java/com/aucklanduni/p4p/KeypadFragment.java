@@ -216,7 +216,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
         }
 
-        adapter = new ArrayAdapter<KeypadItem>(ctx, android.R.layout.simple_list_item_1, items);
+        adapter = new ArrayAdapter<KeypadItem>(ctx, R.layout.keypad_items /*android.R.layout.simple_list_item_1*/, items);
 //        KeypadItem bckSpace = new KeypadItem("Back", true);
 //        adapter.add(bckSpace);
         gv_keyPad.setAdapter(adapter);
