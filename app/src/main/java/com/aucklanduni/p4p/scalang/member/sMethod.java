@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by Taz on 13/05/15.
  */
-public class sMethod extends sMember {
+public class sMethod extends ScalaElement implements sMember {
 
     public String a_method_name = null;
 

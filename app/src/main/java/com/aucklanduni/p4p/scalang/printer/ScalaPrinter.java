@@ -195,9 +195,10 @@ public class ScalaPrinter implements VoidVisitor{
         printer.indent();
         for(sStatement s : states){
            s.accept(this);
+            printer.printLn();
         }
 
-        if (states.isEmpty()){
+        if (!obj.isDoneWithStatements()){
             printCursor();
         }
 
@@ -261,7 +262,7 @@ public class ScalaPrinter implements VoidVisitor{
             s.accept(this);
         }
 
-        if (states.isEmpty()){
+        if (!obj.isDoneWithStatements()){
             printCursor();
         }
 
@@ -426,7 +427,11 @@ public class ScalaPrinter implements VoidVisitor{
     public void visit(sIllegalArgumentException obj) {
         printer.setScalaElement(obj);
 
-        printer.printString("throw new IllegalArgumentException(");
+        printer.printString("throw");
+        printer.printSpace();
+        printer.printString("new");
+        printer.printSpace();
+        printer.printString("IllegalArgumentException(");
 
         String msg = obj.getMessage();
 
@@ -439,5 +444,6 @@ public class ScalaPrinter implements VoidVisitor{
         }
 
         printer.printString(")");
+        printer.printLn();
     }
 }

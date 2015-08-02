@@ -87,30 +87,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     public static KeypadFragment newInstance(Context context) {
         KeypadFragment fragment = new KeypadFragment();
         ctx = context;
+        initalList.clear();
         initalList.add(new KeypadItem("New Class", true));
-
-//        statClasses.put("Control", new sControl());
-//        statClasses.put("If", new sIf());
-
-
-//                {
-//                "A", "B", "C", "D", "E",
-//                "F", "G", "H", "I", "J",
-//                "K", "L", "M", "N", "O",
-//                "P", "Q", "R", "S", "T",
-//                "U", "V", "W", "X", "Y", "Z"};
-
-//        String [] n = new String[]{
-//                "0", "1", "2", "3", "4",
-//                "5", "6", "7", "8", "9",};
-
-//
-//        for(String s : n){
-//            numbers.add(s);
-//        }
-
-
-//        lettersayList<String>(Arrays.asList(l));
 
         return fragment;
     }
@@ -139,30 +117,6 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         gv_keyPad = (GridView) view.findViewById(R.id.gv_KeyPad);
         editor = (EditText) view.findViewById(R.id.et_edit);
         editor.setMovementMethod(LinkMovementMethod.getInstance());
-//        editor.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        Layout layout = ((EditText) v).getLayout();
-//                        float x = event.getX() + editor.getScrollX();
-//                        float y = event.getY() + editor.getScrollY();
-//                        int line = layout.getLineForVertical((int) y);
-//                        int offset = layout.getOffsetForHorizontal(line, x);
-//
-//                        if(offset>0) {
-//                            if (x > layout.getLineMax(0)) {
-//                                editor.setSelection(offset);     // touch was at end of text
-//                            }else {
-//                                editor.setSelection(offset - 1);
-//                            }
-//                        }
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
         keypad = new Keypad(this);
         setItemAdapter(initalList);
 
@@ -260,15 +214,6 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 getLiteralInput(Integer.class);
                 return;
             }
-        }
-//        if(items != null){
-//            for (KeypadItem s : items){
-//                Log.d(TAG, "item: " + s);
-//            }
-//        }
-
-        if(items.size() == 1 && items.get(0).toString() == "def"){
-            addToStack("def");
         }
 
         adapter = new ArrayAdapter<KeypadItem>(ctx, android.R.layout.simple_list_item_1, items);
@@ -380,8 +325,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             keypad.setIsList(true);
         }else if (value.contains("Done")){
             stack.peek().incrementCount();
+            stack.peek().setDoneWithStatements(true);
             keypad.setIsList(false);
-            stack.peek().getItemAfterDone();
+//            stack.peek().incrementCount();
             ScalaElement prev = stack.get(stack.size() - 2);
             prev.incrementCount();
         }

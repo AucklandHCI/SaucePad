@@ -36,6 +36,7 @@ public abstract class ScalaElement {
     protected Scope currentScope;
     protected Keypad keypad;
 
+    protected boolean doneWithStatements = false;
     protected String TAG = "testing";
 
     /**
@@ -69,9 +70,17 @@ public abstract class ScalaElement {
         count = 0;
     }
 
-    public String getItemAfterDone(){
-        incrementCount();
-        return toPrintAfterDone();
+//    public String getItemAfterDone(){
+//        incrementCount();
+//        return toPrintAfterDone();
+//    }
+
+    public void setDoneWithStatements(boolean val){
+        doneWithStatements = val;
+    }
+
+    public boolean isDoneWithStatements() {
+        return doneWithStatements;
     }
 
     public abstract void accept(VoidVisitor v);
@@ -355,7 +364,7 @@ public abstract class ScalaElement {
         return getKeyboardItemsFromList(enums, false);
     }
 
-    private List<KeypadItem> getKeyboardItemsFromList(Collection<String> values, boolean fromKeys){
+    public static List<KeypadItem> getKeyboardItemsFromList(Collection<String> values, boolean fromKeys){
 
         List<KeypadItem> items = new ArrayList<>();
 

@@ -2,15 +2,13 @@ package com.aucklanduni.p4p.scalang.member;
 
 import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
-import com.aucklanduni.p4p.scalang.sEnum;
+import com.aucklanduni.p4p.scalang.statement.sStatement;
 import com.aucklanduni.p4p.symtab.Type;
-
-import java.io.ObjectInput;
 
 /**
  * Created by Taz on 13/05/15.
  */
-public class sVal extends sMember {
+public class sVal extends sStatement implements sMember {
 
     public String b_val_name = null;
     public Type d_var_Type;

@@ -18,6 +18,7 @@ import com.aucklanduni.p4p.scalang.member.sVar;
 import com.aucklanduni.p4p.scalang.statement.control.sControl;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
+import com.aucklanduni.p4p.scalang.statement.sStatement;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
 import com.aucklanduni.p4p.symtab.GlobalScope;
 import com.aucklanduni.p4p.symtab.LocalScope;
@@ -104,13 +105,13 @@ public class Keypad {
         statements.add("Done");
         // ==== Control ====
         items.put("Control", sControl.class);
-        items.put("If", sIf.class);
+//        items.put("If", sIf.class);
 
 
         // == Expressions ===
-        expressions.put("Plus", sPlusExpr.class);
-        expressions.put("Value", sValueExpr.class);
-        expressions.put("Equals", sEqualsExpr.class);
+        expressions.put("+", sPlusExpr.class);
+        expressions.put("Variable/Literal", sValueExpr.class);
+        expressions.put("==", sEqualsExpr.class);
         expressions.put("True/False", sBooleanExpr.class);
         expressions.put("Continue",null);
 
@@ -156,8 +157,8 @@ public class Keypad {
             }
         }
 
-        if (value.equals("Control")){
-            String s = "f";
+        if(value.equals("Exception")){
+            return ScalaElement.getKeyboardItemsFromList(exceptions.keySet(), true);
         }
 
         if(items.containsKey(value)){
@@ -201,13 +202,40 @@ public class Keypad {
                     MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope);
                     pushOnSymbolStack(ms);
                     setCurrentScope(ms);
+                }else{
+
+                    ClassSymbol cs = null;
+
+                    if (currentScope instanceof ClassSymbol){
+                        cs = (ClassSymbol) currentScope;
+                    }else if (currentScope instanceof MethodSymbol){
+                        cs = (ClassSymbol)currentScope.getEnclosingScope();
+                    }
+
+                    VariableSymbol vs = new VariableSymbol("testVarSym", null, cs);
+                    pushOnSymbolStack(vs);
                 }
 
-                typeStack.push(member);
+                typeStack.push((ScalaElement)member);
                 addToList();
             }catch (Exception il){
                 il.printStackTrace();
             }
+        }else if (exceptions.containsKey(value)){
+
+            try {
+                sException exception = exceptions.get(value).newInstance();
+
+                typeStack.push(exception);
+                addToList();
+
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+
         }
 
         if (value.equals("Variables")){
@@ -386,7 +414,7 @@ public class Keypad {
             Field[] fields = cls.getFields();
             field = fields[fieldCount];
 
-            List<KeypadItem> keypadItems = element.doInteraction(field,element,this);
+            List<KeypadItem> keypadItems = element.doInteraction(field, element, this);
             if (keypadItems == null){
                 return keypadItems;
             }
@@ -427,44 +455,6 @@ public class Keypad {
         Log.d(TAG, "[setType] input = " + input);
 
         switch (input) {
-//            case "New Param":
-//                if (listCount > 0) {
-//                    kpFrag.printText();
-//                    kpFrag.addToStack(",");
-//                }
-//                listCount++;
-//
-//                if (!(currentScope instanceof MethodSymbol)) {
-//                    throw new RuntimeException("Can only add parameters to Method objects");
-//                }//else{
-////                    currentScope.define(vs);
-//                symbolStack.push(new VariableSymbol("", null, (ClassSymbol) currentScope.getEnclosingScope()));
-//                //}
-//                break;
-
-//            case "New Method":
-//
-//                if (!(currentScope instanceof ClassSymbol)) {
-//                    throw new RuntimeException("Method must be in a class");
-//                }
-//
-//                MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope);
-//                symbolStack.push(ms);
-////                currentScope.define(ms);
-//                currentScope = ms;
-//                break;
-
-//            case "Done":
-////                type = prevType;
-////                prevType = null;
-//
-//
-////                typeStack.pop();
-//                listCount = 0;
-////                kpFrag.printText(typeStack.peek().getItemAfterDone());
-////                typeStack.peek().incrementCount();
-//                typeStack.peek().incrementCount();
-//                return null;
 
             case "New Class":
                 input = "sClass";
@@ -474,15 +464,20 @@ public class Keypad {
                 currentScope = cs;
                 break;
 
-//            case "Control":
-//
-//                //currentScope = new LocalScope(currentScope);
-//
-//                break;
-
             case "Variables":
-                List<String> vars = currentScope.getByInstanceOf(VariableSymbol.class);
+
                 List<KeypadItem> ret = new ArrayList<>();
+
+                ScalaElement se = typeStack.peek();
+                if (!sExpression.class.isAssignableFrom(se.getClass())) {
+                    if (!sControl.class.isAssignableFrom(se.getClass())) {
+                        ret.add(new KeypadItem("Var", true));
+                        ret.add(new KeypadItem("Val", true));
+                    }
+                }
+
+                List<String> vars = currentScope.getByInstanceOf(VariableSymbol.class);
+
                 Collections.sort(vars);
                 for (String v : vars) {
                     ret.add(new KeypadItem(v));
@@ -546,6 +541,12 @@ public class Keypad {
 
             // thrown if class is abstract
             //TODO figure out which class and show subtypes
+
+//            Class absClass = items.get(input);
+//
+//            if (absClass == sException.class){
+//
+//            }
 
 
             e.printStackTrace();
@@ -611,6 +612,7 @@ public class Keypad {
             Class fieldType = field.getType();
 
             if (fieldType == String.class) {
+
                 field.set(typeStack.peek(), input);
                 value = input;
 
@@ -720,6 +722,8 @@ public class Keypad {
                     SEList.add(current);
                 }
                 String s = "";
+            }else{
+                Log.e(TAG, "listclass = " + classOfList.getSimpleName() + ", type = " + current.getClassName());
             }
         }
     }
