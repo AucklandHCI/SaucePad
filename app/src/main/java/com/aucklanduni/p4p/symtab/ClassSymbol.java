@@ -12,9 +12,6 @@ public class ClassSymbol extends ScopedSymbol implements Type {
 	private List<String> extMethods = new ArrayList<String>();
 	protected List<VariableSymbol> finalFields = new ArrayList<VariableSymbol>();
 
-//	public ClassSymbol(String name) {
-//		this(name, null);
-//	}
 
 	public ClassSymbol(String name, Scope enclosingScope) {
 		super(name, null, enclosingScope);
@@ -23,6 +20,9 @@ public class ClassSymbol extends ScopedSymbol implements Type {
 
 	@Override
 	public Symbol resolve(String name) {
+		if (name.equals("null")){
+			return symbols.get(name);
+		}
 		Symbol s = null;
 		if (parentClass != null) {
 			s = parentClass.resolveMember(name);

@@ -21,6 +21,7 @@ import com.aucklanduni.p4p.scalang.sParameter;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
+import com.aucklanduni.p4p.symtab.NullSymbol;
 import com.aucklanduni.p4p.symtab.Type;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class ScalaPrinter implements VoidVisitor{
 
     private sPrinter printer;
     private String TAG = "testing";
-    private String cursor = "»";
+    private String cursor = "|"; //…
     private boolean cursorPrinted = false;
 
     public ScalaPrinter(Keypad keypad){
@@ -128,6 +129,10 @@ public class ScalaPrinter implements VoidVisitor{
             return;
         }
 
+        if (fType instanceof NullSymbol){
+            return;
+        }
+
         printer.printString(" = ");
         fValue.accept(this);
 
@@ -150,6 +155,10 @@ public class ScalaPrinter implements VoidVisitor{
         Type fType = obj.get_var_Type();
         if(fType == null){
             printCursor();
+            return;
+        }
+
+        if (fType instanceof NullSymbol){
             return;
         }
         printer.printString(": ");

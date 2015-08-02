@@ -16,6 +16,7 @@ public class ScopedSymbol extends Symbol implements Scope {
 	public ScopedSymbol(String name, Type type, Scope scope) {
 		super(name, type);
 		this.enclosingScope = scope;
+		define(new NullSymbol());
 	}
 
 

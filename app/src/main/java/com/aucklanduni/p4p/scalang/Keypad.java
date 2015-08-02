@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
 import com.aucklanduni.p4p.scalang.annotations.NullableField;
+import com.aucklanduni.p4p.scalang.expression.NullExpr;
 import com.aucklanduni.p4p.scalang.statement.exception.sException;
 import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
@@ -154,6 +155,7 @@ public class Keypad {
             boolean found = false;
             for(KeypadItem ki : nullFieldNextItems) {
                 if (ki.getValue().equals(value)) {
+                    setField("null");
                     typeStack.peek().incrementCount();
                     found = true;
                     break;
@@ -704,7 +706,12 @@ public class Keypad {
 
                 try {
 
-                    sExpression expr = expressions.get(input).newInstance();
+                    sExpression expr;
+                    if(input.equals("null")){
+                        expr = new NullExpr();
+                    }else {
+                        expr = expressions.get(input).newInstance();
+                    }
                     field.set(typeStack.peek(), expr);
                     value = expr;
 
