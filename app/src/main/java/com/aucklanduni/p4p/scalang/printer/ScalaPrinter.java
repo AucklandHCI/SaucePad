@@ -119,14 +119,14 @@ public class ScalaPrinter implements VoidVisitor{
             return;
         }
 
-        if (fType instanceof NullSymbol){
-            return;
+        if (!(fType instanceof NullSymbol)){
+            printer.printString(": ");
+
+            printer.printScalaElement(fType.toString(), 2);
         }
 
 
-        printer.printString(": ");
 
-        printer.printScalaElement(fType.toString(), 2);
 
         sExpression fValue = obj.get_value();
         if(fValue == null){
@@ -158,14 +158,12 @@ public class ScalaPrinter implements VoidVisitor{
             return;
         }
 
-        if (fType instanceof NullSymbol){
-            return;
+        if (!(fType instanceof NullSymbol)){
+            printer.printString(": ");
+
+            printer.printScalaElement(fType.toString(), 2);
         }
 
-
-        printer.printString(": ");
-
-        printer.printScalaElement(fType.toString(), 2);
 
         sExpression fValue = obj.get_value();
         if(fValue == null){
