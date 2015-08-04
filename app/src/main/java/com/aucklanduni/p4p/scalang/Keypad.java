@@ -1,6 +1,6 @@
 package com.aucklanduni.p4p.scalang;
 
-import android.support.annotation.Nullable;
+import android.support.*;
 import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
@@ -621,6 +621,13 @@ public class Keypad {
     public Object setField(String input){
 
         Object value = null;
+
+        ScalaElement top = typeStack.peek();
+
+        Class cls = top.getClass();
+
+        field = cls.getFields()[top.getCount()];
+
 
         if(field == null){
             return null;

@@ -152,8 +152,6 @@ public class ScalaPrinter implements VoidVisitor{
         }
         printer.printScalaElement(fName, 1);
 
-
-
         Type fType = obj.get_var_Type();
         if(fType == null){
             printCursor();
@@ -163,8 +161,22 @@ public class ScalaPrinter implements VoidVisitor{
         if (fType instanceof NullSymbol){
             return;
         }
+
+
         printer.printString(": ");
+
         printer.printScalaElement(fType.toString(), 2);
+
+        sExpression fValue = obj.get_value();
+        if(fValue == null){
+            printCursor();
+            return;
+        }
+
+
+        printer.printString(" = ");
+        fValue.accept(this);
+
 
     }
 
