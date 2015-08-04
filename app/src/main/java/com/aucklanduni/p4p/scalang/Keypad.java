@@ -108,7 +108,7 @@ public class Keypad {
         statements.add("Done");
         // ==== Control ====
         items.put("Control", sControl.class);
-//        items.put("If", sIf.class);
+        items.put("If", sIf.class);
 
 
         // == Expressions ===
@@ -156,7 +156,7 @@ public class Keypad {
             for(KeypadItem ki : nullFieldNextItems) {
                 if (ki.getValue().equals(value)) {
                     setField("null");
-                    typeStack.peek().incrementCount();
+                    //typeStack.peek().incrementCount();
                     found = true;
                     break;
                 }

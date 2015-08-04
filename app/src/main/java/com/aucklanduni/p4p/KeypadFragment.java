@@ -332,9 +332,6 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             prev.incrementCount();
         }
 
-//        if (statClasses.containsKey(value)){
-//            stack.push(statClasses.get(value));
-//        }
 
         if(input.getValue() == "Back"){
             Object poped = stk_bckSpc.pop(); //gets the poped "object"

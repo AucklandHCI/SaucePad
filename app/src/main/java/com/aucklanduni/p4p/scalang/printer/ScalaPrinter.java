@@ -119,6 +119,11 @@ public class ScalaPrinter implements VoidVisitor{
             return;
         }
 
+        if (fType instanceof NullSymbol){
+            return;
+        }
+
+
         printer.printString(": ");
 
         printer.printScalaElement(fType.toString(), 2);
@@ -129,9 +134,6 @@ public class ScalaPrinter implements VoidVisitor{
             return;
         }
 
-        if (fType instanceof NullSymbol){
-            return;
-        }
 
         printer.printString(" = ");
         fValue.accept(this);
