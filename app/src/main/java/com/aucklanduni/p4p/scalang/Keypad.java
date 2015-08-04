@@ -158,6 +158,7 @@ public class Keypad {
                     setField("null");
                     //typeStack.peek().incrementCount();
                     found = true;
+                    isNullable = false;
                     break;
                 }
             }
