@@ -39,8 +39,8 @@ public class ClickableText extends ClickableSpan {
 
     @Override
     public void onClick(View widget) {
-        Toast.makeText(widget.getContext(), "SE = " + scalaElement.getClassName() + ", count = " + seCount, Toast.LENGTH_SHORT)
-                .show();
+//        Toast.makeText(widget.getContext(), "SE = " + scalaElement.getClassName() + ", count = " + seCount, Toast.LENGTH_SHORT)
+//                .show();
         clicked = true;
         widget.invalidate();
 
