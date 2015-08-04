@@ -108,7 +108,7 @@ public class Keypad {
         statements.add("Done");
         // ==== Control ====
         items.put("Control", sControl.class);
-        items.put("If", sIf.class);
+//        items.put("If", sIf.class);
 
 
         // == Expressions ===

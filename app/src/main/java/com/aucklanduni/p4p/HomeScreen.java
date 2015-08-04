@@ -62,13 +62,13 @@ public class HomeScreen extends ActionBarActivity
                 break;
             case 2:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, KeypadFragment.newInstance(this))
-                        .commit();
+                        .replace(R.id.container, TestFragment.newInstance(position + 1, this))
+                                .commit();
                 break;
 
             default:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, TestFragment.newInstance(position + 1, this))
+                        .replace(R.id.container, KeypadFragment.newInstance(this))
                         .commit();
 
                 break;
