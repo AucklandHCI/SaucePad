@@ -12,6 +12,7 @@ import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -230,11 +231,12 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
         builder.setTitle("Title");
 
         // Set up the input
         final EditText input = new EditText(this.getActivity());
+
         // Specify the type of input expected;
         if(type == Integer.class){
             input.setInputType(InputType.TYPE_CLASS_PHONE);
@@ -270,7 +272,26 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
         });
 
-        builder.show();
+        final AlertDialog dlg = builder.show();
+
+
+        input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                enteredText = input.getText().toString() + " ";
+//                printText(enteredText);
+                addToStack(enteredText);
+                keypad.setField(enteredText);
+                printText();
+                InputMethodManager imm = (InputMethodManager) ctx.getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                //txtName is a reference of an EditText Field
+                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                setItemAdapter(keypad.getNextItems(""));
+                dlg.dismiss();
+                return false;
+            }
+        });
 
         InputMethodManager inputMethodManager = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
         // only will trigger it if no physical keyboard is open
@@ -328,8 +349,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             stack.peek().setDoneWithStatements(true);
             keypad.setIsList(false);
 //            stack.peek().incrementCount();
-            ScalaElement prev = stack.get(stack.size() - 2);
-            prev.incrementCount();
+//            ScalaElement prev = stack.get(stack.size() - 2);
+//            prev.incrementCount();
         }
 
 
