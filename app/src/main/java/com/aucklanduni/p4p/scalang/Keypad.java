@@ -104,7 +104,7 @@ public class Keypad {
         statements.add("Control");
         statements.add("Exception");
         statements.add("Return");
-        statements.add("Method");
+        statements.add("Method Call");
         statements.add("Done");
         // ==== Control ====
         items.put("Control", sControl.class);
@@ -116,7 +116,7 @@ public class Keypad {
         expressions.put("Variable/Literal", sValueExpr.class);
         expressions.put("==", sEqualsExpr.class);
         expressions.put("True/False", sBooleanExpr.class);
-        expressions.put("Continue",null);
+        expressions.put("Next",null);
 
         //== Members ==
         members.put("Var", sVar.class);
@@ -196,7 +196,7 @@ public class Keypad {
 
 
         if (expressions.containsKey(value)){
-            if(value != "Continue") {
+            if(value != "Next") {
                 sExpression expr = (sExpression) setField(value);
                 typeStack.push(expr);
             }else{
@@ -247,8 +247,12 @@ public class Keypad {
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
+        }
 
-
+        if (value.equals("Method Call")){
+            List<KeypadItem> itemList = new ArrayList<>();
+            itemList.add(null);
+            return itemList;
         }
 
         if (value.equals("Variables")){
@@ -630,6 +634,7 @@ public class Keypad {
         field = cls.getFields()[top.getCount()];
 
 
+
         if(field == null){
             return null;
         }
@@ -652,8 +657,8 @@ public class Keypad {
                     if (currentSymbol.getType() == null){
                         needsNew = false;
                     }
-
                 }
+                
                 if(needsNew) {
                     if (currentScope instanceof MethodSymbol) {
                         symbolStack.push(new VariableSymbol("", null, (ClassSymbol) currentScope.getEnclosingScope()));
@@ -740,7 +745,6 @@ public class Keypad {
 
 //            }else if (fieldType == List.class){
 //                //TODO need to find a way to add to the correct list
-//
 //            }else{
 
             }

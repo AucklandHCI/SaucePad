@@ -14,7 +14,8 @@ public class sVar extends sStatement implements sMember {
     public String b_var_name = null;
     @NullableField(name = "Set Type")
     public Type d_var_Type;
-    public sExpression e_val_value = null;
+    public sExpression e_val_value = null ;
+
 
     @Override
     public String toPrintAfterDone() {

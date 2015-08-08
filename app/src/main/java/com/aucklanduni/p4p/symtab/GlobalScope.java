@@ -29,87 +29,23 @@ public class GlobalScope extends BaseScope {
 
 		
 		// ===============ClassSymbols===================
-		define(new ClassSymbol("String",this));
+		define(new ClassSymbol("String", this));
 		
 		ClassSymbol objSym = new ClassSymbol("Object",this);
-		objSym.define(new MethodSymbol("toString", (Type)resolve("String"), this));
-		objSym.define(new MethodSymbol("equals", (Type)resolve("boolean"), this));
+		objSym.define(new MethodSymbol("toString", (Type) resolve("String"), this));
+		objSym.define(new MethodSymbol("equals", (Type) resolve("boolean"), this));
 		
 		define(objSym);
-		
-//		ClassSymbol printStream = new ClassSymbol("PrintStream", null);
-//		define(printStream);
-		
-		// ClassSymbols => Primitive Array Types---------
-//		define(new ClassSymbol("int[]",this));
-//		define(new ClassSymbol("void[]",this));
-//		define(new ClassSymbol("double[]",this));
-//		define(new ClassSymbol("float[]",this));
-//
-//		define(new ClassSymbol("long[]",this));
-//		define(new ClassSymbol("short[]",this));
-//		define(new ClassSymbol("char[]",this));
-//		define(new ClassSymbol("boolean[]",this));
-//		define(new ClassSymbol("byte[]",this));
-//		define(new ClassSymbol("null[]",this));
-		
-		// ClassSymbols => Reference types for Primitives
-		
-//		ReferenceTypeSymbol rts = new ReferenceTypeSymbol("Integer", this);
-//		rts.setAllowedType((BuiltInTypeSymbol)resolve("int"));
-//		define(rts);
-//
-//		rts = new ReferenceTypeSymbol("Void", this);
-//		rts.setAllowedType((BuiltInTypeSymbol)resolve("void"));
-//		define(rts);
-//
-//		rts = new ReferenceTypeSymbol("Double", this);
-//		rts.setAllowedType((BuiltInTypeSymbol)resolve("double"));
-//		define(rts);
-//
-//		rts = new ReferenceTypeSymbol("Float", this);
-//		rts.setAllowedType((BuiltInTypeSymbol)resolve("double"));
-//		define(rts);
-//
-//		rts = new ReferenceTypeSymbol("Long", this);
-//		rts.setAllowedType((BuiltInTypeSymbol)resolve("long"));
-//		define(rts);
-//
-//		rts = new ReferenceTypeSymbol("Short", this);
-//		rts.setAllowedType((BuiltInTypeSymbol)resolve("short"));
-//		define(rts);
-//
-//		rts = new ReferenceTypeSymbol("Character", this);
-//		rts.setAllowedType((BuiltInTypeSymbol)resolve("char"));
-//		define(rts);
-//
-//		rts = new ReferenceTypeSymbol("Byte", this);
-//		rts.setAllowedType((BuiltInTypeSymbol)resolve("byte"));
-//		define(rts);
-//
-//		rts = new ReferenceTypeSymbol("Boolean", this);
-//		rts.setAllowedType((BuiltInTypeSymbol)resolve("boolean"));
-//		define(rts);
 
-		// ClassSymbols => ExpressionType----------------
-//		symbols.put("CharLiteralExpr", resolve("Character"));
-//		symbols.put("DoubleLiteralExpr", resolve("Double"));
-//		symbols.put("IntegerLiteralExpr", resolve("Integer"));
-//		symbols.put("LongLiteralExpr", resolve("Long"));
-//		symbols.put("StringLiteralExpr", resolve("String"));
-//		symbols.put("BooleanLiteralExpr", resolve("Boolean"));
-//		symbols.put("NullLiteralExpr", resolve("null"));
-//
-//		ClassSymbol system = new ClassSymbol("System", this);
-//		system.define(new VariableSymbol("out", (Type)resolve("PrintStream"), -1, -1, 49, true, system));
-//		printStream.define(new MethodSymbol("println", (Type)resolve("void"), (ClassSymbol)resolve("PrintStream")));
-//		define(system);
+		MethodSymbol sqrt = new MethodSymbol("sqrt", (Type)resolve("Double"), objSym);
+		define(sqrt);
+		sqrt = new MethodSymbol("sqrt1", (Type)resolve("Double"), objSym);
+		define(sqrt);
+		sqrt = new MethodSymbol("sqrt2", (Type)resolve("Double"), objSym);
+		define(sqrt);
+		sqrt = new MethodSymbol("sqrt3", (Type)resolve("Double"), objSym);
+		define(sqrt);
 		
-//		ClassSymbol thread = new ClassSymbol("Thread", this);
-//		thread.define(new MethodSymbol("sleep", (Type)resolve("void"), thread));
-//		define(thread);
-//
-//		define(new ClassSymbol("InterruptedException", this));
 	}
 	
 	public String getScopeName() {

@@ -24,30 +24,6 @@ public class sMethod extends ScalaElement implements sMember {
     public List<sParameter> c_parameters = new ArrayList<sParameter>();
     public List<sStatement> f_statements = new ArrayList<>();
 
-    //===== Private Fields =====
-
-
-    //==========================
-
-    //=== temporary, only for testing ===
-
-//    public List<sVariable> f_variables = new ArrayList<>();
-
-    //=== temporary, only for testing ===
-
-    public sMethod(){
-//        c_parameter_options.add(new KeypadItem("New Param", true));
-//        c_parameter_options.add(new KeypadItem("Done",true));
-
-//        f_statement_options.add(new KeypadItem("Variables", true));
-//        f_statement_options.add(new KeypadItem("Control", true));
-//        f_statement_options.add(new KeypadItem("Exception", true));
-//        f_statement_options.add(new KeypadItem("Return", true));
-//        f_statement_options.add(new KeypadItem("Method", true));
-//        f_statement_options.add(new KeypadItem("Done", true));
-
-    }
-
     public String getMethodName() {
         return a_method_name;
     }
@@ -78,5 +54,3 @@ public class sMethod extends ScalaElement implements sMember {
         v.visit(this);
     }
 }
-
-// def name( a : Int )

@@ -121,12 +121,8 @@ public class ScalaPrinter implements VoidVisitor{
 
         if (!(fType instanceof NullSymbol)){
             printer.printString(": ");
-
             printer.printScalaElement(fType.toString(), 2);
         }
-
-
-
 
         sExpression fValue = obj.get_value();
         if(fValue == null){

@@ -2,6 +2,7 @@ package com.aucklanduni.p4p;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -19,9 +20,12 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.KeypadItem;
@@ -30,9 +34,12 @@ import com.aucklanduni.p4p.scalang.printer.ClickableText;
 import com.aucklanduni.p4p.scalang.printer.NonClickableText;
 import com.aucklanduni.p4p.scalang.printer.ScalaPrinter;
 import com.aucklanduni.p4p.scalang.sClass;
+import com.aucklanduni.p4p.symtab.MethodSymbol;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
@@ -207,6 +214,14 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 //            setItemAdapter(keypad.getNextItems());
         }
 
+        if(items.size() == 1) {
+            KeypadItem first = items.get(0);
+            if (first == null){
+                showAvailableMethods();
+                return;
+            }
+        }
+
         if(items.size() == 2){
             KeypadItem first = items.get(0);
             KeypadItem second = items.get(1);
@@ -223,6 +238,63 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         gv_keyPad.setAdapter(adapter);
         gv_keyPad.invalidateViews();
         printText();
+
+
+    }
+
+    private void showAvailableMethods(){
+
+
+        final Dialog dialog = new Dialog(ctx);
+        dialog.setContentView(R.layout.dialog_methods);
+        dialog.setTitle("Method Lookup");
+
+        // set the custom dialog components - text, image and button
+        final EditText text = (EditText) dialog.findViewById(R.id.etMSearch);
+        Button search = (Button) dialog.findViewById(R.id.btnMSearch);
+        Button cancel = (Button) dialog.findViewById(R.id.btnCancel);
+        ListView lv_methods = (ListView) dialog.findViewById(R.id.lvMethods);
+
+        cancel.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+
+        final List<String> methods = keypad.getCurrentScope().getByInstanceOf(MethodSymbol.class);
+        Collections.sort(methods);
+
+        ArrayAdapter<String> a = new ArrayAdapter<String>(ctx,android.R.layout.simple_list_item_1,methods);
+        lv_methods.setAdapter(a);
+
+
+
+        // if button is clicked, close the custom dialog
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String mName = text.getText().toString();
+
+                if (mName.isEmpty()){
+                    return;
+                }
+                for(String s : methods){
+                    if (s.equals(mName)){
+                        Toast.makeText(ctx,"Selected: " + mName, Toast.LENGTH_LONG).show();
+                        dialog.dismiss();
+                        return;
+                    }
+                }
+
+                Toast.makeText(ctx, "Method does not exist", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        dialog.show();
 
 
     }
@@ -274,10 +346,12 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
         final AlertDialog dlg = builder.show();
 
-
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            public boolean onEditorAction(TextView v, int actionId,
+                                          KeyEvent event) {
+               
                 enteredText = input.getText().toString() + " ";
 //                printText(enteredText);
                 addToStack(enteredText);
@@ -288,6 +362,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 //txtName is a reference of an EditText Field
                 imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
                 setItemAdapter(keypad.getNextItems(""));
+                
                 dlg.dismiss();
                 return false;
             }
