@@ -212,7 +212,7 @@ public class Keypad {
                         throw new RuntimeException("Method must be in a class");
                     }
 
-                    MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope);
+                    MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope, (sMethod)member);
                     pushOnSymbolStack(ms);
                     setCurrentScope(ms);
                 }else{

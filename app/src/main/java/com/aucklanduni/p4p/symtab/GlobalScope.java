@@ -2,6 +2,9 @@ package com.aucklanduni.p4p.symtab;
 
 import android.util.Log;
 
+import com.aucklanduni.p4p.scalang.member.sMethod;
+import com.aucklanduni.p4p.scalang.sParameter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,18 +35,39 @@ public class GlobalScope extends BaseScope {
 		define(new ClassSymbol("String", this));
 		
 		ClassSymbol objSym = new ClassSymbol("Object",this);
-		objSym.define(new MethodSymbol("toString", (Type) resolve("String"), this));
-		objSym.define(new MethodSymbol("equals", (Type) resolve("boolean"), this));
+		objSym.define(new MethodSymbol("toString", (Type) resolve("String"), this, null));
+		objSym.define(new MethodSymbol("equals", (Type) resolve("boolean"), this, null));
 		
 		define(objSym);
 
-		MethodSymbol sqrt = new MethodSymbol("sqrt", (Type)resolve("Double"), objSym);
+
+		sMethod method = new sMethod();
+		method.setMethodName("sqrt");
+		sParameter parameter = new sParameter();
+		parameter.a_param_name = "value";
+		parameter.c_paramType = (Type)resolve("Double");
+
+		List<sParameter> parameters = new ArrayList<>();
+		parameters.add(parameter);
+		method.c_parameters = parameters;
+
+
+		MethodSymbol sqrt = new MethodSymbol("sqrt", (Type)resolve("Double"), this, method);
 		define(sqrt);
-		sqrt = new MethodSymbol("sqrt1", (Type)resolve("Double"), objSym);
+		method = new sMethod();
+		method.setMethodName("sqrt1");
+		method.c_parameters = parameters;
+		sqrt = new MethodSymbol("sqrt1", (Type)resolve("Double"), this, method);
 		define(sqrt);
-		sqrt = new MethodSymbol("sqrt2", (Type)resolve("Double"), objSym);
+		method = new sMethod();
+		method.setMethodName("sqrt2");
+		method.c_parameters = parameters;
+		sqrt = new MethodSymbol("sqrt2", (Type)resolve("Double"), this, method);
 		define(sqrt);
-		sqrt = new MethodSymbol("sqrt3", (Type)resolve("Double"), objSym);
+		method = new sMethod();
+		method.setMethodName("sqrt3");
+		method.c_parameters = parameters;
+		sqrt = new MethodSymbol("sqrt3", (Type)resolve("Double"), this, method);
 		define(sqrt);
 		
 	}

@@ -47,6 +47,41 @@ public class ScalaPrinter implements VoidVisitor{
         }
     }
 
+    public List<ClickableSpan> getClickables(){
+        return printer.getClickables();
+    }
+
+    public static String printMethodSignature(sMethod method){
+        if (method == null){
+            return "method was null";
+        }
+        sPrinter sPrinter = new sPrinter(null);
+
+        sPrinter.printString(method.get_method_name());
+        sPrinter.printString("(");
+
+        List<sParameter> params = method.get_parameters();
+
+
+        for (int i = 0; i < params.size(); i++){
+
+            if(i != 0 && i != params.size()-2) {
+                sPrinter.printString(", ");
+            }
+
+            sParameter p = params.get(i);
+
+            sPrinter.printString(p.get_param_name());
+            sPrinter.printString(" : ");
+            sPrinter.printString(p.get_paramType().toString());
+        }
+
+        sPrinter.printString(")");
+
+        return sPrinter.getSource();
+
+    }
+
 
     @Override
     public void visit(ScalaElement obj) {
@@ -352,7 +387,7 @@ public class ScalaPrinter implements VoidVisitor{
         }
 
 
-        printer.printScalaElement(val,0);
+        printer.printScalaElement(val, 0);
     }
 
     @Override
@@ -431,10 +466,6 @@ public class ScalaPrinter implements VoidVisitor{
             printCursor();
         }
         return printer.getSource();
-    }
-
-    public List<ClickableSpan> getClickables(){
-        return printer.getClickables();
     }
 
     @Override

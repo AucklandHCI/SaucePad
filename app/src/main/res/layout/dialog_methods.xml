@@ -13,20 +13,11 @@
         android:layout_height="wrap_content">
 
         <EditText
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.8"
-            android:hint="Enter Method Name..."
+            android:hint="Search for method..."
             android:layout_gravity="center_vertical"
             android:id="@+id/etMSearch" />
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Go"
-            android:id="@+id/btnMSearch"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0.2" />
     </LinearLayout>
 
     <ListView

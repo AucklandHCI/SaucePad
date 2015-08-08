@@ -303,7 +303,7 @@ public abstract class ScalaElement {
                 throw new RuntimeException("Method must be in a class");
             }
 
-            MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope);
+            MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope, (sMethod)sCls);
             keypad.pushOnSymbolStack(ms);
             keypad.setCurrentScope(ms);
 

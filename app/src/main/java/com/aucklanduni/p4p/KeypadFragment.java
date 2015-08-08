@@ -8,8 +8,10 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.Spannable;
+import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
@@ -30,11 +32,13 @@ import android.widget.Toast;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.KeypadItem;
 import com.aucklanduni.p4p.scalang.ScalaElement;
+import com.aucklanduni.p4p.scalang.member.sMethod;
 import com.aucklanduni.p4p.scalang.printer.ClickableText;
 import com.aucklanduni.p4p.scalang.printer.NonClickableText;
 import com.aucklanduni.p4p.scalang.printer.ScalaPrinter;
 import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.symtab.MethodSymbol;
+import com.aucklanduni.p4p.symtab.Scope;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;
@@ -251,11 +255,10 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
         // set the custom dialog components - text, image and button
         final EditText text = (EditText) dialog.findViewById(R.id.etMSearch);
-        Button search = (Button) dialog.findViewById(R.id.btnMSearch);
         Button cancel = (Button) dialog.findViewById(R.id.btnCancel);
-        ListView lv_methods = (ListView) dialog.findViewById(R.id.lvMethods);
+        final ListView lv_methods = (ListView) dialog.findViewById(R.id.lvMethods);
 
-        cancel.setOnClickListener(new View.OnClickListener(){
+        cancel.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -263,34 +266,56 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
         });
 
+        Scope scope = keypad.getCurrentScope();
+        List<String> methodNames = scope.getByInstanceOf(MethodSymbol.class);
+        Collections.sort(methodNames);
 
-        final List<String> methods = keypad.getCurrentScope().getByInstanceOf(MethodSymbol.class);
-        Collections.sort(methods);
+        MethodSymbol mSym = null;
+        sMethod sm = null;
+        final List<String> methods = new ArrayList<>();
 
-        ArrayAdapter<String> a = new ArrayAdapter<String>(ctx,android.R.layout.simple_list_item_1,methods);
+        for(String m : methodNames){
+            mSym = (MethodSymbol)scope.resolve(m);
+            sm = mSym.getMethod();
+            methods.add(ScalaPrinter.printMethodSignature(sm));
+        }
+
+
+        final ArrayAdapter<String> a = new ArrayAdapter<String>(ctx,android.R.layout.simple_list_item_1,methods);
         lv_methods.setAdapter(a);
 
 
-
-        // if button is clicked, close the custom dialog
-        search.setOnClickListener(new View.OnClickListener() {
+        text.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                String mName = text.getText().toString();
+            }
 
-                if (mName.isEmpty()){
-                    return;
-                }
-                for(String s : methods){
-                    if (s.equals(mName)){
-                        Toast.makeText(ctx,"Selected: " + mName, Toast.LENGTH_LONG).show();
-                        dialog.dismiss();
-                        return;
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                List<String> m = new ArrayList<String>();
+                for (String mn : methods) {
+                    if (mn.contains(s)) {
+                        m.add(mn);
                     }
                 }
 
-                Toast.makeText(ctx, "Method does not exist", Toast.LENGTH_LONG).show();
+                lv_methods.setAdapter(new ArrayAdapter<String>(ctx, android.R.layout.simple_list_item_1, m));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        lv_methods.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                printText();
+
+//                setItemAdapter(keypad.getNextItems(input.getValue()));
             }
         });
 
