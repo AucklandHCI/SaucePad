@@ -1,13 +1,11 @@
 package com.aucklanduni.p4p.scalang;
 
-import android.support.*;
 import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
 import com.aucklanduni.p4p.scalang.annotations.NullableField;
 import com.aucklanduni.p4p.scalang.expression.NullExpr;
-import com.aucklanduni.p4p.scalang.statement.exception.sException;
-import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
+import com.aucklanduni.p4p.scalang.expression.sAssignExpr;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
 import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
@@ -20,7 +18,9 @@ import com.aucklanduni.p4p.scalang.member.sVar;
 import com.aucklanduni.p4p.scalang.statement.control.sControl;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
-import com.aucklanduni.p4p.scalang.statement.sStatement;
+import com.aucklanduni.p4p.scalang.statement.exception.sException;
+import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
+import com.aucklanduni.p4p.scalang.statement.sMethodCall;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
 import com.aucklanduni.p4p.symtab.GlobalScope;
 import com.aucklanduni.p4p.symtab.LocalScope;
@@ -32,6 +32,7 @@ import com.aucklanduni.p4p.symtab.Type;
 import com.aucklanduni.p4p.symtab.VariableSymbol;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,6 +86,7 @@ public class Keypad {
     private String TAG = "testing";
     private boolean editing;
     private boolean prevChanged =false;
+    private boolean newVariable = false;
 
     public Keypad(KeypadFragment keypadFragment){
         this.kpFrag = keypadFragment;
@@ -117,6 +119,7 @@ public class Keypad {
         expressions.put("==", sEqualsExpr.class);
         expressions.put("True/False", sBooleanExpr.class);
         expressions.put("Next",null);
+        expressions.put("=", sAssignExpr.class);
 
         //== Members ==
         members.put("Var", sVar.class);
@@ -194,10 +197,45 @@ public class Keypad {
             }
         }
 
+        if (newVariable || value.equals("New Val") || value.equals("New Var")){
 
-        if (expressions.containsKey(value)){
+            if (newVariable){
+                ScalaElement se = typeStack.pop();
+                if (se instanceof sVal){
+                    sVal v = (sVal)se;
+                    v.d_var_Type = new NullSymbol();
+                    v.e_val_value = new NullExpr();
+                    v.incrementCount();
+                    v.incrementCount();
+                }else if (se instanceof sVar){
+                    sVar v = (sVar)se;
+                    v.d_var_Type = new NullSymbol();
+                    v.e_val_value = new NullExpr();
+                    v.incrementCount();
+                    v.incrementCount();
+                }
+
+                newVariable = false;
+                isList = true;
+            }else {
+                try {
+
+                    isList = false;
+                    sAssignExpr aExpr = new sAssignExpr();
+                    typeStack.push(aExpr);
+                    addToList();
+                    sMember m = addMember(value.replace("New ", ""));
+                    aExpr.a_lhs = (sExpression) m;
+                    aExpr.incrementCount();
+                    newVariable = true;
+
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }else if (expressions.containsKey(value)){
             if(value != "Next") {
-                sExpression expr = (sExpression) setField(value);
+                ScalaElement expr = (ScalaElement) setField(value);
                 typeStack.push(expr);
             }else{
                 typeStack.pop();
@@ -205,32 +243,9 @@ public class Keypad {
         }else if(members.containsKey(value)){
             try {
 
-                sMember member = members.get(value).newInstance();
-
-                if(member instanceof sMethod) {
-                    if (!(currentScope instanceof ClassSymbol)) {
-                        throw new RuntimeException("Method must be in a class");
-                    }
-
-                    MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope, (sMethod)member);
-                    pushOnSymbolStack(ms);
-                    setCurrentScope(ms);
-                }else{
-
-                    ClassSymbol cs = null;
-
-                    if (currentScope instanceof ClassSymbol){
-                        cs = (ClassSymbol) currentScope;
-                    }else if (currentScope instanceof MethodSymbol){
-                        cs = (ClassSymbol)currentScope.getEnclosingScope();
-                    }
-
-                    VariableSymbol vs = new VariableSymbol("testVarSym", null, cs);
-                    pushOnSymbolStack(vs);
-                }
-
-                typeStack.push((ScalaElement)member);
+                addMember(value);
                 addToList();
+
             }catch (Exception il){
                 il.printStackTrace();
             }
@@ -469,6 +484,44 @@ public class Keypad {
         return keyPad;
     }
 
+    private sMember addMember(String value){
+        sMember member = null;
+        try {
+            member = members.get(value).newInstance();
+
+
+            if(member instanceof sMethod) {
+                if (!(currentScope instanceof ClassSymbol)) {
+                    throw new RuntimeException("Method must be in a class");
+                }
+
+                MethodSymbol ms = new MethodSymbol("testMethodScope", null, currentScope, (sMethod)member);
+                pushOnSymbolStack(ms);
+                setCurrentScope(ms);
+            }else{
+
+                ClassSymbol cs = null;
+
+                if (currentScope instanceof ClassSymbol){
+                    cs = (ClassSymbol) currentScope;
+                }else if (currentScope instanceof MethodSymbol){
+                    cs = (ClassSymbol)currentScope.getEnclosingScope();
+                }
+
+                VariableSymbol vs = new VariableSymbol("testVarSym", null, cs);
+                pushOnSymbolStack(vs);
+            }
+
+            typeStack.push((ScalaElement)member);
+
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return member;
+    }
+
     public List<KeypadItem> editItem(ScalaElement element, int fieldCount){
         Class cls = element.getClass();
         if(cls.toString().contains("sField")){
@@ -539,8 +592,8 @@ public class Keypad {
                 ScalaElement se = typeStack.peek();
                 if (!sExpression.class.isAssignableFrom(se.getClass())) {
                     if (!sControl.class.isAssignableFrom(se.getClass())) {
-                        ret.add(new KeypadItem("Var", true));
-                        ret.add(new KeypadItem("Val", true));
+                        ret.add(new KeypadItem("New Var", true));
+                        ret.add(new KeypadItem("New Val", true));
                     }
                 }
 
@@ -674,13 +727,31 @@ public class Keypad {
                         needsNew = false;
                     }
                 }
-                
+
                 if(needsNew) {
                     if (currentScope instanceof MethodSymbol) {
                         symbolStack.push(new VariableSymbol("", null, (ClassSymbol) currentScope.getEnclosingScope()));
                     } else{
                         throw new RuntimeException("Parameters must be in Methods!");
                     }
+                }
+
+            }
+
+            if(typeStack.peek().getClass() == sMethodCall.class){
+                if(typeStack.peek().getCount() == 0) {
+                    int l_brack_pos = input.indexOf("(");
+//                int r_brack_pos = input.indexOf(")");
+//                int colon_pos = input.indexOf(":") + 2;
+                    String mName = input.substring(0, l_brack_pos);
+                    MethodSymbol mSym = (MethodSymbol) currentScope.resolve(mName);
+                    sMethod method = mSym.getMethod();
+
+                    List<sParameter> params = method.get_parameters();
+                    sMethodCall mCall = (sMethodCall) typeStack.peek();
+                    mCall.b_values = new String[params.size()];
+
+                    input = input.substring(0, l_brack_pos);
                 }
 
             }
@@ -763,6 +834,20 @@ public class Keypad {
 //                //TODO need to find a way to add to the correct list
 //            }else{
 
+            }else if(fieldType.isArray()){
+                Object val = field.get(typeStack.peek());
+                if (val instanceof String[]){
+                    String[] args = (String[])val;
+                    for(int i = 0; i < args.length; i++){
+
+                        if(args[i] == null){
+                            args[i] = input;
+                            break;
+                        }
+                    }
+
+                    field.set(typeStack.peek(), args);
+                }
             }
 
             if (isList){

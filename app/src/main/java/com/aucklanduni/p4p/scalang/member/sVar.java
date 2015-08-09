@@ -9,7 +9,7 @@ import com.aucklanduni.p4p.symtab.Type;
 /**
  * Created by Taz on 13/05/15.
  */
-public class sVar extends sStatement implements sMember {
+public class sVar extends sStatement implements sMember, sExpression {
 
     public String b_var_name = null;
     @NullableField(name = "Set Type")

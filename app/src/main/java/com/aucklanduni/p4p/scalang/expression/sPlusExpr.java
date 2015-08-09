@@ -1,11 +1,12 @@
 package com.aucklanduni.p4p.scalang.expression;
 
+import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 /**
  * Created by Taz on 14/07/15.
  */
-public class sPlusExpr extends sExpression {
+public class sPlusExpr extends ScalaElement implements sExpression{
 
 
     public sExpression a_summand1 = null;

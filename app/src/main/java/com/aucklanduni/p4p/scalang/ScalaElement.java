@@ -14,6 +14,7 @@ import com.aucklanduni.p4p.symtab.Scope;
 import com.aucklanduni.p4p.symtab.Type;
 import com.aucklanduni.p4p.symtab.VariableSymbol;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -171,6 +172,9 @@ public abstract class ScalaElement {
             }else if (fieldType == List.class){
                 items = doListInteraction((List) field.get(obj));
                 isList = true;
+            }else if (fieldType.isArray()){
+                items = doArrayInteraction((Object[])field.get(obj));
+                isList = false;
             }else if (Enum.class.isAssignableFrom(fieldType)){
                 items = doEnumInteraction((Enum) field.get(obj));
                 isList = false;
@@ -197,6 +201,24 @@ public abstract class ScalaElement {
         }
 
         return items;
+    }
+
+    private List<KeypadItem> doArrayInteraction(Object[] obj) {
+        List<KeypadItem> items = new ArrayList<>();
+
+        //TODO change this to the actual type
+        String[] args = (String[])obj;
+        for (String a : args){
+            if(a == null){
+                return null;
+            }
+        }
+
+
+
+
+        return items;
+
     }
 
     private List<KeypadItem> doObjectInteraction(Object o) {

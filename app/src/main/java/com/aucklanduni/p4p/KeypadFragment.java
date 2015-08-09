@@ -37,6 +37,7 @@ import com.aucklanduni.p4p.scalang.printer.ClickableText;
 import com.aucklanduni.p4p.scalang.printer.NonClickableText;
 import com.aucklanduni.p4p.scalang.printer.ScalaPrinter;
 import com.aucklanduni.p4p.scalang.sClass;
+import com.aucklanduni.p4p.scalang.statement.sMethodCall;
 import com.aucklanduni.p4p.symtab.MethodSymbol;
 import com.aucklanduni.p4p.symtab.Scope;
 
@@ -313,9 +314,18 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         lv_methods.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String selected = methods.get(position);
+
+                Toast.makeText(ctx, selected, Toast.LENGTH_LONG).show();
+                dialog.dismiss();
+
+                keypad.pushOnTypeStack(new sMethodCall());
+                keypad.setField(selected);
+
                 printText();
 
-//                setItemAdapter(keypad.getNextItems(input.getValue()));
+                setItemAdapter(keypad.getNextItems(selected));
             }
         });
 

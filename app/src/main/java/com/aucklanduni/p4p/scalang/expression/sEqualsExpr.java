@@ -1,11 +1,12 @@
 package com.aucklanduni.p4p.scalang.expression;
 
+import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 /**
  * Created by Taz on 14/07/15.
  */
-public class sEqualsExpr extends sExpression{
+public class sEqualsExpr extends ScalaElement implements sExpression{
 
     public sExpression a_left = null;
     public sExpression b_right = null;

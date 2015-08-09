@@ -1,6 +1,8 @@
 package com.aucklanduni.p4p.scalang.printer;
 
 import com.aucklanduni.p4p.scalang.ScalaElement;
+import com.aucklanduni.p4p.scalang.expression.NullExpr;
+import com.aucklanduni.p4p.scalang.expression.sAssignExpr;
 import com.aucklanduni.p4p.scalang.statement.exception.sException;
 import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
@@ -15,6 +17,7 @@ import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.scalang.sParameter;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
+import com.aucklanduni.p4p.scalang.statement.sMethodCall;
 
 /**
  * Created by Taz on 13/07/15.
@@ -32,14 +35,17 @@ public interface VoidVisitor {
     void visit(sIf obj);
     void visit(sFor obj);
     
-    
+
+    // sStatement -------------
+    void visit(sMethodCall obj);
     
     // sExpression ------------
-    void visit(sExpression obj);
+    void visit(NullExpr obj);
     void visit(sValueExpr obj);
     void visit(sPlusExpr obj);
     void visit(sEqualsExpr obj);
     void visit(sBooleanExpr obj);
+    void visit(sAssignExpr obj);
 
     // sException -------------
     void visit(sException obj);

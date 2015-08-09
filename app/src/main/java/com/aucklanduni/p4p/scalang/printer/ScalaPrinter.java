@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
+import com.aucklanduni.p4p.scalang.expression.NullExpr;
+import com.aucklanduni.p4p.scalang.expression.sAssignExpr;
 import com.aucklanduni.p4p.scalang.statement.exception.sException;
 import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
@@ -20,6 +22,7 @@ import com.aucklanduni.p4p.scalang.sClass;
 import com.aucklanduni.p4p.scalang.sParameter;
 import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
+import com.aucklanduni.p4p.scalang.statement.sMethodCall;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
 import com.aucklanduni.p4p.symtab.NullSymbol;
 import com.aucklanduni.p4p.symtab.Type;
@@ -33,7 +36,7 @@ public class ScalaPrinter implements VoidVisitor{
 
     private sPrinter printer;
     private String TAG = "testing";
-    private String cursor = "|"; //…
+    public static String cursor = "_"; //…
     private boolean cursorPrinted = false;
 
     public ScalaPrinter(Keypad keypad){
@@ -165,10 +168,10 @@ public class ScalaPrinter implements VoidVisitor{
             return;
         }
 
-
-        printer.printString(" = ");
-        fValue.accept(this);
-
+        if (!(fValue instanceof NullExpr )) {
+            printer.printString(" = ");
+            fValue.accept(this);
+        }
     }
 
     @Override
@@ -202,9 +205,10 @@ public class ScalaPrinter implements VoidVisitor{
             return;
         }
 
-
-        printer.printString(" = ");
-        fValue.accept(this);
+        if (!(fValue instanceof NullExpr )) {
+            printer.printString(" = ");
+            fValue.accept(this);
+        }
 
 
     }
@@ -365,6 +369,39 @@ public class ScalaPrinter implements VoidVisitor{
         printer.printString("}");
         printer.printLn();
 
+    }
+
+    @Override
+    public void visit(sMethodCall obj) {
+        printer.setScalaElement(obj);
+
+        printer.printString(obj.getMethodName());
+        printer.printString("(");
+
+        String[] args = obj.getArguments();
+
+        String arg_x = "";
+        boolean printArg = true;
+        for(int i = 0; i < args.length; i++){
+
+            printArg = true;
+            arg_x = args[i];
+
+            if(arg_x == null){
+                printCursor();
+                printArg = false;
+            }
+
+            if(i != 0 && i != args.length-2) {
+                printer.printString(", ");
+            }
+
+            if(printArg) {
+                printer.printString(arg_x);
+            }
+        }
+
+        printer.printString(")");
 
 
     }
@@ -443,6 +480,36 @@ public class ScalaPrinter implements VoidVisitor{
         }
 
         printer.printString(")");
+    }
+
+    @Override
+    public void visit(NullExpr obj) {
+
+    }
+
+    @Override
+    public void visit(sAssignExpr obj) {
+        printer.setScalaElement(obj);
+
+        sExpression lhs = obj.getLHS();
+        sExpression rhs = obj.getRHS();
+
+        if (lhs == null){
+            printCursor();
+            return;
+        }
+
+        lhs.accept(this);
+
+        printer.printString(" = ");
+
+        if(rhs == null){
+            printCursor();
+            return;
+        }
+
+        rhs.accept(this);
+
     }
 
     @Override

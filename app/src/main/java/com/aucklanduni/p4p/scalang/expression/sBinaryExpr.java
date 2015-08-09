@@ -1,12 +1,13 @@
 package com.aucklanduni.p4p.scalang.expression;
 
+import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.sEnum;
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 /**
  * Created by Taz on 13/07/15.
  */
-public class sBinaryExpr extends sExpression {
+public class sBinaryExpr extends ScalaElement implements sExpression{
 
 //    public sEnum.en_Expression_Types aa_option = sEnum.en_Expression_Types.dp_Operand;
 
