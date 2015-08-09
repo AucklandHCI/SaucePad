@@ -279,9 +279,25 @@ public class Keypad {
         }
 
         if (value.equals("Back")){
-            typeStack.peek().setCount(type.getClass().getFields().length);
-            typeStack.pop();
-            return new ArrayList<>();
+
+            if (typeStack.size() == 1){
+                int classCount = typeStack.peek().getCount();
+                Field[] mainClassFields = typeStack.get(0).getClass().getFields();
+
+                if(type instanceof sClass){
+                    sClass temp = (sClass) type;
+                    List<sMember> classMembers = temp.get_members();
+                }
+
+            }
+            int countOfCurrent = typeStack.peek().getCount();
+            Field[] currentFields = type.getClass().getFields();
+            currentFields[countOfCurrent] = null;
+            typeStack.peek().setCount(countOfCurrent - 1);
+
+//            typeStack.peek().setCount(type.getClass().getFields().length);
+//            typeStack.pop();
+//            return new ArrayList<>();
         }
 
 

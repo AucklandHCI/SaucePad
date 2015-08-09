@@ -237,8 +237,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         }
 
         adapter = new ArrayAdapter<KeypadItem>(ctx, R.layout.keypad_items /*android.R.layout.simple_list_item_1*/, items);
-//        KeypadItem bckSpace = new KeypadItem("Back", true);
-//        adapter.add(bckSpace);
+        KeypadItem bckSpace = new KeypadItem("Back", true);
+        adapter.add(bckSpace);
         gv_keyPad.setAdapter(adapter);
         gv_keyPad.invalidateViews();
         printText();
@@ -454,27 +454,27 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         }
 
 
-        if(input.getValue() == "Back"){
-            Object poped = stk_bckSpc.pop(); //gets the poped "object"
-            String popedStr = poped.toString();
-            if(popedStr == "("){
-                for(int i = 0 ; i <= 1 ; i++){
-                    popedStr = stk_bckSpc.pop().toString() + " " + popedStr;
-                }
-            }
-//            if(popedStr.contains("mand")){
-//                popedStr = popedStr.replace("mand" , "");
-//                popedStr = stk_bckSpc.pop().toString() + " " + popedStr ;
+//        if(input.getValue() == "Back"){
+//            Object poped = stk_bckSpc.pop(); //gets the poped "object"
+//            String popedStr = poped.toString();
+//            if(popedStr == "("){
+//                for(int i = 0 ; i <= 1 ; i++){
+//                    popedStr = stk_bckSpc.pop().toString() + " " + popedStr;
+//                }
 //            }
-            Log.d(TAG, "BACKSPACE ITEM: " + poped.toString());
-            String editStr = editor.getText().toString();
-            String x = editStr.replace(popedStr,""); // Removes unwanted string
-            editor.getText().clear();
-//            printText(x);
-//            keypad.getPrevItems();
-            setItemAdapter(stk_prevKeyPadItems.pop());
-            return;
-        }
+////            if(popedStr.contains("mand")){
+////                popedStr = popedStr.replace("mand" , "");
+////                popedStr = stk_bckSpc.pop().toString() + " " + popedStr ;
+////            }
+//            Log.d(TAG, "BACKSPACE ITEM: " + poped.toString());
+//            String editStr = editor.getText().toString();
+//            String x = editStr.replace(popedStr,""); // Removes unwanted string
+//            editor.getText().clear();
+////            printText(x);
+////            keypad.getPrevItems();
+//            setItemAdapter(stk_prevKeyPadItems.pop());
+//            return;
+//        }
 
         if (keypad.getType() == null) {
             List<KeypadItem> list = keypad.setType(input.getValue()); //set it to whatever is clicked from keypad
