@@ -295,6 +295,8 @@ public class Keypad {
 
         if (value.equals("Back")){
 
+            ScalaElement element = typeStack.peek();
+
             if (typeStack.size() == 1){
                 int classCount = typeStack.peek().getCount();
                 Field[] mainClassFields = typeStack.get(0).getClass().getFields();
@@ -302,13 +304,17 @@ public class Keypad {
                 if(type instanceof sClass){
                     sClass temp = (sClass) type;
                     List<sMember> classMembers = temp.get_members();
+                    int numberOfMembers = classMembers.size();
+                    element = (ScalaElement) classMembers.get(numberOfMembers - 1);
                 }
 
             }
-            int countOfCurrent = typeStack.peek().getCount();
-            Field[] currentFields = type.getClass().getFields();
-            currentFields[countOfCurrent] = null;
-            typeStack.peek().setCount(countOfCurrent - 1);
+
+            // int countOfCurrent = element.getCount(); // element is sVal but the count is zero therefore get the MAX number of fields and don't forget to set the count otherwise it won't work
+            Field[] currentFields = element.getClass().getFields();
+            int numberOfFields = currentFields.length;
+            currentFields[numberOfFields] = null;
+//            typeStack.peek().setCount(countOfCurrent - 1);
 
 //            typeStack.peek().setCount(type.getClass().getFields().length);
 //            typeStack.pop();
