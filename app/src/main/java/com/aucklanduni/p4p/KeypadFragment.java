@@ -237,6 +237,16 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
         }
 
+        if(items.size() == 3){
+            KeypadItem first = items.get(0);
+            KeypadItem second = items.get(1);
+            KeypadItem third = items.get(2);
+
+            if(first == null && second == null && third == null){
+                setItemAdapter(keypad.getPrevItems(stk_prevKeyPadItems));
+            }
+        }
+
         adapter = new ArrayAdapter<KeypadItem>(ctx, R.layout.keypad_items /*android.R.layout.simple_list_item_1*/, items);
         KeypadItem bckSpace = new KeypadItem("Back", true);
         adapter.add(bckSpace);

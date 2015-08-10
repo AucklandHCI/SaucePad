@@ -331,7 +331,11 @@ public class Keypad {
 
 //            typeStack.peek().setCount(type.getClass().getFields().length);
 //            typeStack.pop();
-            return null;
+            List<KeypadItem> bckSpaceMarker = new ArrayList<>();
+            bckSpaceMarker.add(null);
+            bckSpaceMarker.add(null);
+            bckSpaceMarker.add(null);
+            return bckSpaceMarker; //null;
         }
 
 
@@ -501,6 +505,11 @@ public class Keypad {
         }
 
         return keyPad;
+    }
+
+    public List<KeypadItem> getPrevItems(Stack<List<KeypadItem>> prevItems){
+        
+        return null;
     }
 
     private sMember addMember(String value){
