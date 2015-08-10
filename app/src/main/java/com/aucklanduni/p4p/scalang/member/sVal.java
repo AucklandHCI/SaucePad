@@ -6,6 +6,8 @@ import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
 import com.aucklanduni.p4p.symtab.Type;
 
+import java.util.ArrayList;
+
 /**
  * Created by Taz on 13/05/15.
  */
@@ -33,6 +35,7 @@ public class sVal extends sStatement implements sMember, sExpression{
     public sExpression get_value(){
         return e_val_value;
     }
+
 
     @Override
     public void accept(VoidVisitor v) {

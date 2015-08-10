@@ -154,6 +154,10 @@ public class Keypad {
      */
     public List<KeypadItem> getNextItems(String value) throws RuntimeException {
 
+        if(value == "Back"){
+            isNullable = false;
+        }
+
         if(isNullable && !value.isEmpty()){
             boolean found = false;
             for(KeypadItem ki : nullFieldNextItems) {
@@ -310,15 +314,25 @@ public class Keypad {
 
             }
 
-            // int countOfCurrent = element.getCount(); // element is sVal but the count is zero therefore get the MAX number of fields and don't forget to set the count otherwise it won't work
-            Field[] currentFields = element.getClass().getFields();
-            int numberOfFields = currentFields.length;
-            currentFields[numberOfFields] = null;
+            int countOfCurrent = element.getCount() - 1; // element is sVal but the count is zero therefore get the MAX number of fields and don't forget to set the count otherwise it won't work
+            Field[] currentFields = element.getClass().getDeclaredFields();
+            Field f = currentFields[countOfCurrent];
+            element.setCount(countOfCurrent);
+
+            try {
+                f.set(element,null);
+            }catch (Exception e){
+
+            }
+
+
+
+
 //            typeStack.peek().setCount(countOfCurrent - 1);
 
 //            typeStack.peek().setCount(type.getClass().getFields().length);
 //            typeStack.pop();
-//            return new ArrayList<>();
+            return new ArrayList<>();
         }
 
 
