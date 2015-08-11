@@ -508,8 +508,10 @@ public class Keypad {
     }
 
     public List<KeypadItem> getPrevItems(Stack<List<KeypadItem>> prevItems){
-        
-        return null;
+        prevItems.pop();
+        List<KeypadItem> temp = prevItems.pop();
+
+        return temp;
     }
 
     private sMember addMember(String value){

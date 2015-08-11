@@ -190,10 +190,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
     public void setItemAdapter(List<KeypadItem> items){
 
-        if(items != null){
-            if(items.size() != 0){
+        if(items != null && items.size() != 0){
                 stk_prevKeyPadItems.push(items);
-            }
         }
 
         if (items == null){ // get input form user
