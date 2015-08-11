@@ -297,46 +297,73 @@ public class Keypad {
             return kpFrag.getInitialList();
         }
 
-        if (value.equals("Back")){
-
-            ScalaElement element = typeStack.peek();
-            int countOfCurrent = element.getCount();
-
-            if (typeStack.size() == 1){
-                if(element instanceof sClass){
-                    sClass temp = (sClass) element;
-                    List<sMember> classMembers = temp.get_members();
-                    int numberOfMembers = classMembers.size();
-                    element = (ScalaElement) classMembers.get(numberOfMembers - 1); //gets the last member
-                    countOfCurrent = element.getClass().getFields().length;
-                }
-            }
-
-
-
-            Field[] currentFields = element.getClass().getDeclaredFields();
-            Field f = currentFields[countOfCurrent - 1];
-            element.setCount(countOfCurrent - 1);
-
-            try {
-                f.set(element,null);
-            }catch (Exception e){
-
-            }
-
-
-
-
-//            typeStack.peek().setCount(countOfCurrent - 1);
-
-//            typeStack.peek().setCount(type.getClass().getFields().length);
-//            typeStack.pop();
-            List<KeypadItem> bckSpaceMarker = new ArrayList<>();
-            bckSpaceMarker.add(null);
-            bckSpaceMarker.add(null);
-            bckSpaceMarker.add(null);
-            return bckSpaceMarker; //null;
-        }
+//        if (value.equals("Back")){
+//
+//            ScalaElement element = typeStack.peek();
+//            int countOfCurrent = element.getCount();
+//
+//            if (typeStack.size() == 1){
+//                if(element instanceof sClass){
+//                    sClass temp = (sClass) element;
+//                    List<sMember> classMembers = temp.get_members();
+//                    int numberOfMembers = classMembers.size();
+//                    element = (ScalaElement) classMembers.get(numberOfMembers - 1); //gets the last member
+//                    typeStack.push(element);
+//                    countOfCurrent = element.getClass().getFields().length;
+//                }
+//            }
+//
+//            if(countOfCurrent == 0){
+//                ScalaElement popped = typeStack.pop();
+//                ScalaElement prev = typeStack.peek();
+//                int previousCount = prev.getCount();
+//
+//                Field[] prevFields = prev.getClass().getDeclaredFields();
+//                Field f = prevFields[previousCount];
+//
+//                if(f.getType() == List.class) {
+//
+//                    try {
+//                        List listfield = (List) f.get(prev);
+//                        listfield.remove(popped);
+//                    } catch (IllegalAccessException e) {
+//                        e.printStackTrace();
+//                    }
+//                }else{
+//
+//                    try {
+//                        f.set(prev,null);
+//                    } catch (IllegalAccessException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }else {
+//
+//                Field[] currentFields = element.getClass().getDeclaredFields();
+//                Field f = currentFields[countOfCurrent - 1];
+//                element.setCount(countOfCurrent - 1);
+//
+//
+//                Log.e(TAG, "Class: " + element.getClassName() + "  COC: " + countOfCurrent);
+//
+//
+//                try {
+//                    f.set(element, null);
+//                } catch (IllegalAccessException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+////            typeStack.peek().setCount(countOfCurrent - 1);
+//
+////            typeStack.peek().setCount(type.getClass().getFields().length);
+////            typeStack.pop();
+//            List<KeypadItem> bckSpaceMarker = new ArrayList<>();
+//            bckSpaceMarker.add(null);
+//            bckSpaceMarker.add(null);
+//            bckSpaceMarker.add(null);
+//            return bckSpaceMarker; //null;
+//        }
 
 
         List<KeypadItem> keyPad = new ArrayList<>(); // whats displayed on the keyboard
@@ -508,10 +535,68 @@ public class Keypad {
     }
 
     public List<KeypadItem> getPrevItems(Stack<List<KeypadItem>> prevItems){
-        prevItems.pop();
-        List<KeypadItem> temp = prevItems.pop();
 
-        return temp;
+            ScalaElement element = typeStack.peek();
+            int countOfCurrent = element.getCount();
+
+            if (typeStack.size() == 1){
+                if(element instanceof sClass){
+                    sClass temp = (sClass) element;
+                    List<sMember> classMembers = temp.get_members();
+                    int numberOfMembers = classMembers.size();
+                    element = (ScalaElement) classMembers.get(numberOfMembers - 1); //gets the last member
+                    typeStack.push(element);
+                    countOfCurrent = element.getClass().getFields().length;
+                }
+            }
+
+            if(countOfCurrent == 0){
+                ScalaElement popped = typeStack.pop();
+                ScalaElement prev = typeStack.peek();
+                int previousCount = prev.getCount();
+
+                Field[] prevFields = prev.getClass().getDeclaredFields();
+                Field f = prevFields[previousCount];
+
+                if(f.getType() == List.class) {
+
+                    try {
+                        List listfield = (List) f.get(prev);
+                        listfield.remove(popped);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+
+                    try {
+                        f.set(prev,null);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else {
+
+                Field[] currentFields = element.getClass().getDeclaredFields();
+                Field f = currentFields[countOfCurrent - 1];
+                element.setCount(countOfCurrent - 1);
+
+
+                Log.e(TAG, "Class: " + element.getClassName() + "  COC: " + countOfCurrent);
+
+
+                try {
+                    f.set(element, null);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+            }
+//            typeStack.peek().setCount(countOfCurrent - 1);
+
+//            typeStack.peek().setCount(type.getClass().getFields().length);
+//            typeStack.pop();
+        prevItems.pop(); //pop of marker  nullnullnull
+        return prevItems.pop(); //pop last valid keypadItems
     }
 
     private sMember addMember(String value){

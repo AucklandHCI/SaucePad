@@ -235,19 +235,33 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
         }
 
-        if(items.size() == 3){
-            KeypadItem first = items.get(0);
-            KeypadItem second = items.get(1);
-            KeypadItem third = items.get(2);
+//        if(items.size() == 3){
+//            KeypadItem first = items.get(0);
+//            KeypadItem second = items.get(1);
+//            KeypadItem third = items.get(2);
+//
+//            if(first == null && second == null && third == null){
+//                items = keypad.getPrevItems(stk_prevKeyPadItems);
+//                stk_prevKeyPadItems.push(items);
+//            }
+//        }
 
-            if(first == null && second == null && third == null){
-                setItemAdapter(keypad.getPrevItems(stk_prevKeyPadItems));
+
+
+        adapter = new ArrayAdapter<KeypadItem>(ctx, R.layout.keypad_items, items);
+
+        boolean hasBack = false;
+        for(KeypadItem item : items) {
+            if(item.getValue().equals("Back")){
+                hasBack=true;
+                break;
             }
         }
+        if(!hasBack){
+            KeypadItem bckSpace = new KeypadItem("Back", true);
+            adapter.add(bckSpace);
+        }
 
-        adapter = new ArrayAdapter<KeypadItem>(ctx, R.layout.keypad_items /*android.R.layout.simple_list_item_1*/, items);
-        KeypadItem bckSpace = new KeypadItem("Back", true);
-        adapter.add(bckSpace);
         gv_keyPad.setAdapter(adapter);
         gv_keyPad.invalidateViews();
         printText();
@@ -472,7 +486,17 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         }
 
 
-//        if(input.getValue() == "Back"){
+        if(input.getValue() == "Back"){
+            /*
+                Decr count(somehow possibly pass this to Keypad.java) , set Value to default value (x = f.get(newInstance) then
+                MAKE SURE X is not a list, f.set(obj,x), IF IT IS A LIST, remove the last element?? <- Maybe.
+             */
+            List<KeypadItem> items = keypad.getPrevItems(stk_prevKeyPadItems);
+            stk_prevKeyPadItems.push(items);
+            setItemAdapter(items);
+            printText();
+            return;
+        }
 //            Object poped = stk_bckSpc.pop(); //gets the poped "object"
 //            String popedStr = poped.toString();
 //            if(popedStr == "("){
