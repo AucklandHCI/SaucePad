@@ -1,5 +1,6 @@
 package com.aucklanduni.p4p.scalang.statement;
 
+import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 import java.util.ArrayList;
@@ -9,11 +10,11 @@ import java.util.List;
 /**
  * Created by Taz on 8/08/15.
  */
-public class sMethodCall extends sStatement{
+public class sMethodCall extends sStatement implements sExpression {
 
 
     public String a_method = "g";
-    public String[] b_values = null;
+    public String[] b_values = new String[0];
 //    public List<String> b_values = new ArrayList<>();
 
 

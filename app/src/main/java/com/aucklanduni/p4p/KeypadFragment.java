@@ -342,7 +342,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 Toast.makeText(ctx, selected, Toast.LENGTH_LONG).show();
                 dialog.dismiss();
 
-                keypad.pushOnTypeStack(new sMethodCall());
+//                keypad.pushOnTypeStack(new sMethodCall());
                 keypad.setField(selected);
 
                 printText();

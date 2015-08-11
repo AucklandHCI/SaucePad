@@ -47,6 +47,7 @@ public abstract class ScalaElement {
      * instance
      */
     private int count = 0;
+    private int editingCount = 0;
 
     public String getClassName(){
         return getClass().getSimpleName();
@@ -66,6 +67,15 @@ public abstract class ScalaElement {
 
     public void setCount(int value){
         count = value;
+    }
+
+    public int getEditingCount() {
+        return editingCount;
+    }
+
+    public ScalaElement setEditingCount(int editingCount) {
+        this.editingCount = editingCount;
+        return this;
     }
 
     public void resetCount(){

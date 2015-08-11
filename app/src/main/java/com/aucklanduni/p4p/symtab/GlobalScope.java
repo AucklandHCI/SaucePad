@@ -46,7 +46,6 @@ public class GlobalScope extends BaseScope {
 		sParameter parameter = new sParameter();
 		parameter.a_param_name = "value";
 		parameter.c_paramType = (Type)resolve("Double");
-
 		List<sParameter> parameters = new ArrayList<>();
 		parameters.add(parameter);
 		method.c_parameters = parameters;
@@ -59,15 +58,37 @@ public class GlobalScope extends BaseScope {
 		method.c_parameters = parameters;
 		sqrt = new MethodSymbol("sqrt1", (Type)resolve("Double"), this, method);
 		define(sqrt);
+
 		method = new sMethod();
-		method.setMethodName("sqrt2");
+		method.setMethodName("velocity");
+		sParameter distance = new sParameter();
+		distance.a_param_name = "distance";
+		distance.c_paramType = (Type)resolve("Double");
+		sParameter time = new sParameter();
+		time.a_param_name = "time";
+		time.c_paramType = (Type)resolve("Double");
+		parameters = new ArrayList<>();
+		parameters.add(distance);
+		parameters.add(time);
 		method.c_parameters = parameters;
-		sqrt = new MethodSymbol("sqrt2", (Type)resolve("Double"), this, method);
+
+		sqrt = new MethodSymbol(method.getMethodName(), (Type)resolve("Double"), this, method);
 		define(sqrt);
+
 		method = new sMethod();
-		method.setMethodName("sqrt3");
+		method.setMethodName("acceleration");
+		sParameter velocity = new sParameter();
+		velocity.a_param_name = "velocity";
+		velocity.c_paramType = (Type)resolve("Double");
+		time = new sParameter();
+		time.a_param_name = "time";
+		time.c_paramType = (Type)resolve("Double");
+		parameters = new ArrayList<>();
+		parameters.add(velocity);
+		parameters.add(time);
 		method.c_parameters = parameters;
-		sqrt = new MethodSymbol("sqrt3", (Type)resolve("Double"), this, method);
+
+		sqrt = new MethodSymbol(method.getMethodName(), (Type)resolve("Double"), this, method);
 		define(sqrt);
 		
 	}
