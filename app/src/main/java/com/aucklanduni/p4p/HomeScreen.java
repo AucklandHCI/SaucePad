@@ -55,22 +55,15 @@ public class HomeScreen extends ActionBarActivity
         Log.d(TAG, "pos: " + position);
         FragmentManager fragmentManager = getSupportFragmentManager();
         switch (position) {
-            case 1:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container,PlaceholderFragment.newInstance(position + 1))
-                        .commit();
-                break;
-            case 2:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, TestFragment.newInstance(position + 1, this))
-                                .commit();
-                break;
-
-            default:
+            case 0:
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, KeypadFragment.newInstance(this))
                         .commit();
-
+                break;
+            default:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                                .commit();
                 break;
         }
     }
