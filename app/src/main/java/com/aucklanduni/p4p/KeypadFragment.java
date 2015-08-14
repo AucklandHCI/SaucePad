@@ -42,6 +42,7 @@ import com.aucklanduni.p4p.scalang.statement.sMethodCall;
 import com.aucklanduni.p4p.symtab.MethodSymbol;
 import com.aucklanduni.p4p.symtab.Scope;
 
+import java.lang.reflect.Field;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -192,7 +193,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     public void setItemAdapter(List<KeypadItem> items){
 
         if(items != null && items.size() != 0){
-                stk_prevKeyPadItems.push(items);
+            stk_prevKeyPadItems.push(items);
         }
 
         if (items == null){ // get input form user
@@ -360,28 +361,30 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     private void getLiteralInput(Class type){
 
 
+        AlertDialog.Builder inputDialog = new AlertDialog.Builder(this.getActivity());
+        LayoutInflater li = getActivity().getLayoutInflater();
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
-        builder.setTitle("Title");
+        View v = li.inflate(R.layout.dialog_literal_input, null);
+        TextView tvtitle = (TextView)v.findViewById(R.id.tvTitle);
+        final EditText etValue = (EditText)v.findViewById(R.id.etValue);
+        Button cancel = (Button) v.findViewById(R.id.btnCancel);
+        Button ok = (Button) v.findViewById(R.id.btnOk);
 
-        // Set up the input
-        final EditText input = new EditText(this.getActivity());
+        tvtitle.setText(getTitleName());
 
-        // Specify the type of input expected;
         if(type == Integer.class){
-            input.setInputType(InputType.TYPE_CLASS_PHONE);
+            etValue.setInputType(InputType.TYPE_CLASS_PHONE);
         }else{
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            etValue.setInputType(InputType.TYPE_CLASS_TEXT);
         }
 
-        input.requestFocus();
-        builder.setView(input);
+        inputDialog.setView(v);
+        final AlertDialog dlg = inputDialog.show();
+        ok.setOnClickListener(new View.OnClickListener() {
 
-        // Set up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                enteredText = input.getText().toString() + " ";
+            public void onClick(View v) {
+                enteredText = etValue.getText().toString() + " ";
 //                printText(enteredText);
                 addToStack(enteredText);
                 keypad.setField(enteredText);
@@ -389,28 +392,65 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 InputMethodManager imm = (InputMethodManager) ctx.getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 //txtName is a reference of an EditText Field
-                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(etValue.getWindowToken(), 0);
                 setItemAdapter(keypad.getNextItems(""));
-
+                dlg.dismiss();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
                 setItemAdapter(keypad.getNextItems(""));
-                dialog.cancel();
+                dlg.cancel();
             }
         });
 
-        final AlertDialog dlg = builder.show();
+//        final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+//        builder.setTitle( getTitleName());
 
-        input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        // Set up the input
+//        final EditText input = new EditText(this.getActivity());
+
+        // Specify the type of input expected;
+
+
+//        input.requestFocus();
+//        builder.setView(input);
+
+        // Set up the buttons
+//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                enteredText = input.getText().toString() + " ";
+////                printText(enteredText);
+//                addToStack(enteredText);
+//                keypad.setField(enteredText);
+//                printText();
+//                InputMethodManager imm = (InputMethodManager) ctx.getSystemService(
+//                        Context.INPUT_METHOD_SERVICE);
+//                //txtName is a reference of an EditText Field
+//                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+//                setItemAdapter(keypad.getNextItems(""));
+
+//            }
+//        });
+//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                setItemAdapter(keypad.getNextItems(""));
+//                dialog.cancel();
+//            }
+//        });
+
+        etValue.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
             @Override
             public boolean onEditorAction(TextView v, int actionId,
                                           KeyEvent event) {
-               
-                enteredText = input.getText().toString() + " ";
+
+                enteredText = etValue.getText().toString() + " ";
 //                printText(enteredText);
                 addToStack(enteredText);
                 keypad.setField(enteredText);
@@ -418,9 +458,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 InputMethodManager imm = (InputMethodManager) ctx.getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 //txtName is a reference of an EditText Field
-                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(etValue.getWindowToken(), 0);
                 setItemAdapter(keypad.getNextItems(""));
-                
+
                 dlg.dismiss();
                 return false;
             }
@@ -428,7 +468,28 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
         InputMethodManager inputMethodManager = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
         // only will trigger it if no physical keyboard is open
-        inputMethodManager.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+        inputMethodManager.showSoftInput(etValue, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private String getTitleName(){
+
+        ScalaElement se = keypad.getTypeStack().peek();
+
+        Field f = se.getClass().getFields()[se.getCount()];
+        String name = f.getName();
+        String[] words = name.split("_");
+        StringBuilder sb = new StringBuilder();
+        for(int i = 1; i < words.length; i++){
+            String x = words[i];
+            sb.append(x.substring(0,1).toUpperCase());
+            sb.append(x.substring(1, x.length()));
+
+            if(i != words.length-1){
+                sb.append(" ");
+            }
+        }
+
+        return sb.toString();
     }
 
 

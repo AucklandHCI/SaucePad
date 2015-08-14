@@ -9,7 +9,7 @@ import com.aucklanduni.p4p.symtab.Type;
 public class sParameter extends ScalaElement {//} extends sVariable{
 
 
-    public String a_param_name = null;
+    public String a_parameter_name = null;
     public Type c_paramType = null;
 
     @Override
@@ -18,7 +18,7 @@ public class sParameter extends ScalaElement {//} extends sVariable{
     }
 
     public String get_param_name() {
-        return a_param_name;
+        return a_parameter_name;
     }
 
     public Type get_paramType() {
@@ -31,7 +31,7 @@ public class sParameter extends ScalaElement {//} extends sVariable{
     }
 
     public String getName() {
-        return a_param_name;
+        return a_parameter_name;
     }
 
     public Type getType() {

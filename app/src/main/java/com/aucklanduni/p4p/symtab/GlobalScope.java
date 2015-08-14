@@ -44,7 +44,7 @@ public class GlobalScope extends BaseScope {
 		sMethod method = new sMethod();
 		method.setMethodName("sqrt");
 		sParameter parameter = new sParameter();
-		parameter.a_param_name = "value";
+		parameter.a_parameter_name = "value";
 		parameter.c_paramType = (Type)resolve("Double");
 		List<sParameter> parameters = new ArrayList<>();
 		parameters.add(parameter);
@@ -62,10 +62,10 @@ public class GlobalScope extends BaseScope {
 		method = new sMethod();
 		method.setMethodName("velocity");
 		sParameter distance = new sParameter();
-		distance.a_param_name = "distance";
+		distance.a_parameter_name = "distance";
 		distance.c_paramType = (Type)resolve("Double");
 		sParameter time = new sParameter();
-		time.a_param_name = "time";
+		time.a_parameter_name = "time";
 		time.c_paramType = (Type)resolve("Double");
 		parameters = new ArrayList<>();
 		parameters.add(distance);
@@ -78,10 +78,10 @@ public class GlobalScope extends BaseScope {
 		method = new sMethod();
 		method.setMethodName("acceleration");
 		sParameter velocity = new sParameter();
-		velocity.a_param_name = "velocity";
+		velocity.a_parameter_name = "velocity";
 		velocity.c_paramType = (Type)resolve("Double");
 		time = new sParameter();
-		time.a_param_name = "time";
+		time.a_parameter_name = "time";
 		time.c_paramType = (Type)resolve("Double");
 		parameters = new ArrayList<>();
 		parameters.add(velocity);
