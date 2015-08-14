@@ -36,7 +36,7 @@ public class NonClickableText extends ClickableSpan {
         if (word.equals("_")) {
             ds.setColor(Color.BLUE);
         }else{
-            ds.setColor(Color.BLACK);
+            ds.setColor(Color.WHITE);
         }
     }
 

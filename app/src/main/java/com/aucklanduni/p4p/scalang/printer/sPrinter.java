@@ -22,7 +22,7 @@ public class sPrinter{
     private List<ClickableSpan> clickables= new ArrayList<>();
     private ScalaElement scalaElement;
     private Keypad keypad;
-    private int color = Color.BLACK;
+    private int color = Color.WHITE;
     private int topElemCount = -1;
 
     private String TAG = "testing";

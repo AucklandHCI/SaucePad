@@ -3,6 +3,8 @@
 
     <color name="royal_blue">#41b9e1</color>
     <color name="dark_blue">#4169e1</color>
-    <color name="analogous_green">#e16941</color>
+    <color name="white">#FFF</color>
+    <color name="black">#333</color>
+    <color name="analogous_orange">#e16941</color>
 
 </resources>
