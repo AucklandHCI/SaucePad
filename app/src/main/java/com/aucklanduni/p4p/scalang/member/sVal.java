@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class sVal extends sStatement implements sMember, sExpression{
 
     public String b_val_name = null;
-    @NullableField(name = "Set Type")
+    @NullableField(name = ":")
     public Type d_var_Type;
     public sExpression e_val_value = null ;
 

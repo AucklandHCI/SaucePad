@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.KeypadItem;
+import com.aucklanduni.p4p.scalang.KeypadItemAdapter;
 import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.member.sMethod;
 import com.aucklanduni.p4p.scalang.printer.ClickableText;
@@ -101,7 +102,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         KeypadFragment fragment = new KeypadFragment();
         ctx = context;
         initalList.clear();
-        initalList.add(new KeypadItem("New Class", true));
+        initalList.add(new KeypadItem("New Class", true, sClass.class));
 
         return fragment;
     }
@@ -248,7 +249,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
 
 
-        adapter = new ArrayAdapter<KeypadItem>(ctx, R.layout.keypad_items, items);
+        adapter = new KeypadItemAdapter(ctx, R.layout.keypad_items, items);
 
         boolean hasBack = false;
         for(KeypadItem item : items) {
@@ -258,7 +259,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
         }
         if(!hasBack){
-            KeypadItem bckSpace = new KeypadItem("Back", true);
+            KeypadItem bckSpace = new KeypadItem("Back", true, null);
             adapter.add(bckSpace);
         }
 

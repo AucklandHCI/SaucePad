@@ -118,7 +118,7 @@ public class Keypad {
         expressions.put("Variable/Literal", sValueExpr.class);
         expressions.put("==", sEqualsExpr.class);
         expressions.put("True/False", sBooleanExpr.class);
-        expressions.put("Next",null);
+        expressions.put("Next",null);//should not be HERE
         expressions.put("=", sAssignExpr.class);
         expressions.put("Method Call", sMethodCall.class);
 
@@ -412,10 +412,10 @@ public class Keypad {
                         if(ScalaElement.class.isAssignableFrom(classOfList)){
 
                             ScalaElement elem = (ScalaElement) classOfList.newInstance();
-                            optionalItems.add(new KeypadItem(elem.getClassName(), true));
+                            optionalItems.add(new KeypadItem(elem.getClassName(), true, classOfList));
                         }
                     }else{
-                        optionalItems.add(new KeypadItem( nf.name(), true));
+                        optionalItems.add(new KeypadItem( nf.name(), true, current.getClass()));
                     }
 
                     current.incrementCount();
@@ -712,8 +712,8 @@ public class Keypad {
                 ScalaElement se = typeStack.peek();
                 if (!sExpression.class.isAssignableFrom(se.getClass())) {
                     if (!sControl.class.isAssignableFrom(se.getClass())) {
-                        ret.add(new KeypadItem("New Var", true));
-                        ret.add(new KeypadItem("New Val", true));
+                        ret.add(new KeypadItem("New Var", true, sVar.class));
+                        ret.add(new KeypadItem("New Val", true, sVal.class));
                     }
                 }
 

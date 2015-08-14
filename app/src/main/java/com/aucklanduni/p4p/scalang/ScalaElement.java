@@ -433,7 +433,7 @@ public abstract class ScalaElement {
 
 //            enumValue = Enum.valueOf(en.getClass(), enumValue).toString();
 
-            items.add(new KeypadItem(s, dontPrint));
+            items.add(new KeypadItem(s, dontPrint, null));
         }
 
         return items;
