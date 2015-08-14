@@ -30,7 +30,9 @@
         android:paddingBottom="20dp"
         android:paddingLeft="20dp"
         android:paddingTop="20dp"
-        android:textSize="20sp" />
+        android:textSize="20sp">
+
+    </EditText>
 
     <LinearLayout
         style="?android:attr/buttonBarStyle"

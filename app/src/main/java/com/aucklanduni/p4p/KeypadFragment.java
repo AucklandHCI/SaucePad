@@ -19,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -49,6 +50,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.Stack;
 
 
@@ -86,7 +88,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
     static final List<KeypadItem> initalList = new ArrayList<KeypadItem>();
     static final List<String> numbers = new ArrayList<String>();
-
+    static final List<String> defaultValues = new ArrayList<>();
 
 //    static final List<String>
 
@@ -104,6 +106,19 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         ctx = context;
         initalList.clear();
         initalList.add(new KeypadItem("New Class", true, sClass.class));
+        defaultValues.clear();
+        defaultValues.add("banana");
+        defaultValues.add("apple");
+        defaultValues.add("hippopotamus");
+        defaultValues.add("pizza");
+        defaultValues.add("hat");
+        defaultValues.add("dinosaur");
+        defaultValues.add("paintball");
+        defaultValues.add("princess");
+        defaultValues.add("fishAndChips");
+        defaultValues.add("aeroplane");
+        defaultValues.add("rollerCoaster");
+
 
         return fragment;
     }
@@ -312,9 +327,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
         text.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -330,9 +343,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
         lv_methods.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -376,10 +387,19 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             etValue.setInputType(InputType.TYPE_CLASS_PHONE);
         }else{
             etValue.setInputType(InputType.TYPE_CLASS_TEXT);
+            Random r = new Random();
+            int pos = r.nextInt(defaultValues.size());
+            String val = defaultValues.get(pos);
+            etValue.setText(val);
+            etValue.selectAll();
         }
 
         inputDialog.setView(v);
-        final AlertDialog dlg = inputDialog.show();
+        final AlertDialog dlg = inputDialog.create();
+//        etValue.requestFocus();
+
+        dlg.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
         ok.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -406,6 +426,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 dlg.cancel();
             }
         });
+
+        dlg.show();
 
 //        final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 //        builder.setTitle( getTitleName());
@@ -466,9 +488,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
         });
 
-        InputMethodManager inputMethodManager = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
-        // only will trigger it if no physical keyboard is open
-        inputMethodManager.showSoftInput(etValue, InputMethodManager.SHOW_IMPLICIT);
+//        InputMethodManager inputMethodManager = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
+//        // only will trigger it if no physical keyboard is open
+//        inputMethodManager.showSoftInput(etValue, InputMethodManager.SHOW_IMPLICIT);
     }
 
     private String getTitleName(){
