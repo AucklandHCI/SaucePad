@@ -105,29 +105,22 @@ public class ScalaPrinter implements VoidVisitor{
         printer.printLn();
         printer.indent();
 
-//        List<sField> fields = obj.get_fields();
-//
-//        for (sField f : fields){
-//           f.accept(this);
-//            printer.printLn();
-//        }
-//
-//        List<sMethod> methods = obj.get_methods();
-//        if (fields.isEmpty() || methods.isEmpty()){
-//            printCursor();
-//        }
-//
-//        for (sMethod m : methods){
-//            printer.printLn();
-//            m.accept(this);
-//        }
-
         List<sMember> members = obj.get_members();
 
+        if(members.size() == 0) {
+            printCursor();
+        }
+
         for (sMember m : members){
+            if(cursorPrinted){
+                cursorPrinted = false;
+            }
             m.accept(this);
             printer.printLn();
         }
+
+        printCursor();
+
 
 
 
@@ -231,6 +224,10 @@ public class ScalaPrinter implements VoidVisitor{
         List<sParameter> params = obj.get_parameters();
 
 //        int pLength = params.size() - 1; //use this to help determine where the comma goes maybe...
+
+        if(params.size() == 0){
+            printCursor();
+        }
 
         for (int i = 0; i < params.size(); i++){
 

@@ -17,6 +17,8 @@
             android:textColor="@color/white"
             android:layout_gravity="top|center_horizontal"
             android:focusable="false"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
             android:focusableInTouchMode="false" />
 
         <View android:id="@+id/separator"

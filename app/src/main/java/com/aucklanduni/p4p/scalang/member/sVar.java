@@ -12,7 +12,7 @@ import com.aucklanduni.p4p.symtab.Type;
 public class sVar extends sStatement implements sMember, sExpression {
 
     public String b_var_name = null;
-    @NullableField(name = "Set Type")
+    @NullableField(name = ":")
     public Type d_var_Type;
     public sExpression e_val_value = null ;
 
