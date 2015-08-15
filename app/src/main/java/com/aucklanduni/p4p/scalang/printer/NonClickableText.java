@@ -32,14 +32,6 @@ public class NonClickableText extends ClickableSpan {
 
     }
 
-    public void updateDrawState(TextPaint ds) {
-        if (word.equals("_")) {
-            ds.setColor(Color.BLUE);
-        }else{
-            ds.setColor(Color.WHITE);
-        }
-    }
-
     @Override
     public String toString() {
         return word;

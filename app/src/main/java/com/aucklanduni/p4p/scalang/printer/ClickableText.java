@@ -41,6 +41,11 @@ public class ClickableText extends ClickableSpan {
     public void onClick(View widget) {
 //        Toast.makeText(widget.getContext(), "SE = " + scalaElement.getClassName() + ", count = " + seCount, Toast.LENGTH_SHORT)
 //                .show();
+
+        if(word.equals(ScalaPrinter.cursor)){
+            return;
+        }
+
         clicked = true;
         widget.invalidate();
 

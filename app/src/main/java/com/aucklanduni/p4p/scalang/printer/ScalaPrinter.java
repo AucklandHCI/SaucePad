@@ -399,6 +399,7 @@ public class ScalaPrinter implements VoidVisitor{
         }
 
         printer.printString(")");
+        printer.printLn();
 
 
     }
@@ -428,7 +429,7 @@ public class ScalaPrinter implements VoidVisitor{
     public void visit(sPlusExpr obj) {
         printer.setScalaElement(obj);
 
-        printer.printString("(");
+//        printer.printString("(");
 
         sExpression left = obj.get_summand1();
         if (left != null){
@@ -448,7 +449,7 @@ public class ScalaPrinter implements VoidVisitor{
             printCursor();
         }
 
-        printer.printString(")");
+//        printer.printString(")");
 
     }
 
