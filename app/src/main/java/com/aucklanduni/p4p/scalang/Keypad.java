@@ -538,75 +538,114 @@ public class Keypad {
         return keyPad;
     }
 
-//    public List<KeypadItem> getPrevItems(Stack<String> prevItems){
-      public List<KeypadItem> getPrevItems(){
+    //    public List<KeypadItem> getPrevItems(Stack<String> prevItems){
+    public List<KeypadItem> getPrevItems(){
 
-            ScalaElement element = typeStack.peek();
-            int countOfCurrent = element.getCount() - 1;
+        ScalaElement element = typeStack.peek();
+        int countOfCurrent = element.getCount();
+    //three checks if it is a list, if the list is empty && else
 
-            if (typeStack.size() == 1){
-                if(element instanceof sClass){
-                    sClass temp = (sClass) element;
-                    List<sMember> classMembers = temp.get_members();
-                    int numberOfMembers = classMembers.size();
-                    element = (ScalaElement) classMembers.get(numberOfMembers - 1); //gets the last member
-                    typeStack.push(element);
-                    countOfCurrent = element.getClass().getFields().length - 1;
-                }
-            }
+//            if (typeStack.size() == 1){
+//                if(element instanceof sClass){
+//                    sClass temp = (sClass) element;
+//                    List<sMember> classMembers = temp.get_members();
+//                    int numberOfMembers = classMembers.size();
+//                    element = (ScalaElement) classMembers.get(numberOfMembers - 1); //gets the last member
+//                    typeStack.push(element);
+//                    countOfCurrent = element.getClass().getFields().length - 1;
+//                }
+//            }
 
-            Field[] currentFields = element.getClass().getDeclaredFields();
-            Field f = currentFields[countOfCurrent];
+        Field[] currentFields = element.getClass().getDeclaredFields();
+        Field f = currentFields[countOfCurrent];
 
-            try {
-                Object x = f.get(element);
+        try {
 
-                if(x instanceof NullSymbol){
+            if(f.getType() == List.class) {
+
+                List temp = (List) f.get(element);
+
+                if (temp.isEmpty()) {
+
                     countOfCurrent = countOfCurrent - 1;
                     f = currentFields[countOfCurrent];
+
+                } else { //if it is a list but not empty
+
+                    int numberOfMembers = temp.size();
+                    element = (ScalaElement) temp.get(numberOfMembers - 1); //gets the last member
+                    typeStack.push(element);
+                    countOfCurrent = element.getClass().getFields().length - 1; //Count of Last Element in the list.
+
+                    currentFields = element.getClass().getDeclaredFields();
+                    f = currentFields[countOfCurrent];
+
                 }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+
+            }else {
+
+                countOfCurrent = countOfCurrent - 1; //decrCount
+                f = currentFields[countOfCurrent];
+
             }
 
-            element.setCount(countOfCurrent);
+            /*
+                class hello{
+                    val taz
+                }
+                 */
 
 
-            Log.e(TAG, "Class: " + element.getClassName() + "  COC: " + countOfCurrent);
+            Object x = f.get(element);  //val taz = true  type: null val taz : boolean
+
+            if(x instanceof NullSymbol){
+                countOfCurrent = countOfCurrent - 1;
+                f = currentFields[countOfCurrent];
+            }
+
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        element.setCount(countOfCurrent);
 
 
-            try {
-                f.set(element, null);
-                if(countOfCurrent == 0){
-                    ScalaElement popped = typeStack.pop();
-                    ScalaElement prev = typeStack.peek();
-                    int previousCount = prev.getCount();
+        Log.e(TAG, "Class: " + element.getClassName() + "  COC: " + countOfCurrent);
 
-                    Field[] prevFields = prev.getClass().getDeclaredFields();
-                    Field field = prevFields[previousCount];
 
-                    if(field.getType() == List.class) {
+        try {
+            f.set(element, null);
 
-                        try {
-                            List listfield = (List) field.get(prev);
-                            listfield.remove(popped);
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    }else{
+            if(countOfCurrent == 0 && typeStack.size() > 1){
+                ScalaElement popped = typeStack.pop();
+                ScalaElement prev = typeStack.peek();
+                int previousCount = prev.getCount();
 
-                        try {
-                            field.set(prev,null);
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
+                Field[] prevFields = prev.getClass().getDeclaredFields();
+                Field field = prevFields[previousCount];
+
+                if(field.getType() == List.class) {
+
+                    try {
+                        List listfield = (List) field.get(prev);
+                        listfield.remove(popped);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+
+                    try {
+                        field.set(prev,null);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
                     }
                 }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
             }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
 
-          return getNextItems("");
+        return getNextItems("");
 //        prevItems.pop(); //pop of marker  nullnullnull
 //        return getNextItems(prevItems.pop()); //pop last valid keypadItems
 
