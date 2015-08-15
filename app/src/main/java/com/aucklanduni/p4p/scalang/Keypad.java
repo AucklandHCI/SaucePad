@@ -538,7 +538,8 @@ public class Keypad {
         return keyPad;
     }
 
-    public List<KeypadItem> getPrevItems(Stack<List<KeypadItem>> prevItems){
+//    public List<KeypadItem> getPrevItems(Stack<String> prevItems){
+      public List<KeypadItem> getPrevItems(){
 
             ScalaElement element = typeStack.peek();
             int countOfCurrent = element.getCount() - 1;
@@ -605,8 +606,9 @@ public class Keypad {
                 e.printStackTrace();
             }
 
-        prevItems.pop(); //pop of marker  nullnullnull
-        return prevItems.pop(); //pop last valid keypadItems
+          return getNextItems("");
+//        prevItems.pop(); //pop of marker  nullnullnull
+//        return getNextItems(prevItems.pop()); //pop last valid keypadItems
 
     }
 //            typeStack.peek().setCount(countOfCurrent - 1);

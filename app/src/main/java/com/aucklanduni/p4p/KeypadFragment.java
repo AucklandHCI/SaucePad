@@ -85,7 +85,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     private Keypad keypad;
     private String enteredText;
     private Stack<Object> stk_bckSpc = new Stack<>(); //Stack holding all the items that are printed onto the screen
-    private Stack<List<KeypadItem>> stk_prevKeyPadItems = new Stack<>(); //Keeps track of all the lists that are displayed on the keypad.
+    private Stack<String> stk_prevKeyPadPresses = new Stack<>(); //Keeps track of all the values the user presses.
 
     static final List<KeypadItem> initalList = new ArrayList<KeypadItem>();
     static final List<String> numbers = new ArrayList<String>();
@@ -215,9 +215,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
     public void setItemAdapter(List<KeypadItem> items){
 
-        if(items != null && items.size() != 0){
-            stk_prevKeyPadItems.push(items);
-        }
+//        if(items != null && items.size() != 0){
+//            stk_prevKeyPadItems.push(items);
+//        }
 
         if (items == null){ // get input form user
             getLiteralInput(String.class);
@@ -553,6 +553,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         KeypadItem input = (KeypadItem) parent.getAdapter().getItem(position);
         String value = input.getValue();
+        stk_prevKeyPadPresses.push(value);
 
 
 
@@ -583,7 +584,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 Decr count(somehow possibly pass this to Keypad.java) , set Value to default value (x = f.get(newInstance) then
                 MAKE SURE X is not a list, f.set(obj,x), IF IT IS A LIST, remove the last element?? <- Maybe.
              */
-            List<KeypadItem> items = keypad.getPrevItems(stk_prevKeyPadItems);
+            List<KeypadItem> items = keypad.getPrevItems();
 //            stk_prevKeyPadItems.push(items);
             setItemAdapter(items);
 //            printText();
