@@ -541,7 +541,7 @@ public class Keypad {
     public List<KeypadItem> getPrevItems(Stack<List<KeypadItem>> prevItems){
 
             ScalaElement element = typeStack.peek();
-            int countOfCurrent = element.getCount();
+            int countOfCurrent = element.getCount() - 1;
 
             if (typeStack.size() == 1){
                 if(element instanceof sClass){
@@ -550,58 +550,71 @@ public class Keypad {
                     int numberOfMembers = classMembers.size();
                     element = (ScalaElement) classMembers.get(numberOfMembers - 1); //gets the last member
                     typeStack.push(element);
-                    countOfCurrent = element.getClass().getFields().length;
+                    countOfCurrent = element.getClass().getFields().length - 1;
                 }
             }
 
-            if(countOfCurrent == 0){
-                ScalaElement popped = typeStack.pop();
-                ScalaElement prev = typeStack.peek();
-                int previousCount = prev.getCount();
+            Field[] currentFields = element.getClass().getDeclaredFields();
+            Field f = currentFields[countOfCurrent];
 
-                Field[] prevFields = prev.getClass().getDeclaredFields();
-                Field f = prevFields[previousCount];
+            try {
+                Object x = f.get(element);
 
-                if(f.getType() == List.class) {
-
-                    try {
-                        List listfield = (List) f.get(prev);
-                        listfield.remove(popped);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }else{
-
-                    try {
-                        f.set(prev,null);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
+                if(x instanceof NullSymbol){
+                    countOfCurrent = countOfCurrent - 1;
+                    f = currentFields[countOfCurrent];
                 }
-            }else {
-
-                Field[] currentFields = element.getClass().getDeclaredFields();
-                Field f = currentFields[countOfCurrent - 1];
-                element.setCount(countOfCurrent - 1);
-
-
-                Log.e(TAG, "Class: " + element.getClassName() + "  COC: " + countOfCurrent);
-
-
-                try {
-                    f.set(element, null);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
+
+            element.setCount(countOfCurrent);
+
+
+            Log.e(TAG, "Class: " + element.getClassName() + "  COC: " + countOfCurrent);
+
+
+            try {
+                f.set(element, null);
+                if(countOfCurrent == 0){
+                    ScalaElement popped = typeStack.pop();
+                    ScalaElement prev = typeStack.peek();
+                    int previousCount = prev.getCount();
+
+                    Field[] prevFields = prev.getClass().getDeclaredFields();
+                    Field field = prevFields[previousCount];
+
+                    if(field.getType() == List.class) {
+
+                        try {
+                            List listfield = (List) field.get(prev);
+                            listfield.remove(popped);
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+
+                        try {
+                            field.set(prev,null);
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+        prevItems.pop(); //pop of marker  nullnullnull
+        return prevItems.pop(); //pop last valid keypadItems
+
+    }
 //            typeStack.peek().setCount(countOfCurrent - 1);
 
 //            typeStack.peek().setCount(type.getClass().getFields().length);
 //            typeStack.pop();
-        prevItems.pop(); //pop of marker  nullnullnull
-        return prevItems.pop(); //pop last valid keypadItems
-    }
+
+
 
     private sMember addMember(String value){
         sMember member = null;

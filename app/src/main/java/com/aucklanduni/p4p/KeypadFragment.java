@@ -584,31 +584,11 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 MAKE SURE X is not a list, f.set(obj,x), IF IT IS A LIST, remove the last element?? <- Maybe.
              */
             List<KeypadItem> items = keypad.getPrevItems(stk_prevKeyPadItems);
-            stk_prevKeyPadItems.push(items);
+//            stk_prevKeyPadItems.push(items);
             setItemAdapter(items);
-            printText();
+//            printText();
             return;
         }
-//            Object poped = stk_bckSpc.pop(); //gets the poped "object"
-//            String popedStr = poped.toString();
-//            if(popedStr == "("){
-//                for(int i = 0 ; i <= 1 ; i++){
-//                    popedStr = stk_bckSpc.pop().toString() + " " + popedStr;
-//                }
-//            }
-////            if(popedStr.contains("mand")){
-////                popedStr = popedStr.replace("mand" , "");
-////                popedStr = stk_bckSpc.pop().toString() + " " + popedStr ;
-////            }
-//            Log.d(TAG, "BACKSPACE ITEM: " + poped.toString());
-//            String editStr = editor.getText().toString();
-//            String x = editStr.replace(popedStr,""); // Removes unwanted string
-//            editor.getText().clear();
-////            printText(x);
-////            keypad.getPrevItems();
-//            setItemAdapter(stk_prevKeyPadItems.pop());
-//            return;
-//        }
 
         if (keypad.getType() == null) {
             List<KeypadItem> list = keypad.setType(input.getValue()); //set it to whatever is clicked from keypad
