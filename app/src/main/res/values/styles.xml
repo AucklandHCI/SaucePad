@@ -21,7 +21,7 @@
         <!--<item name="android:background">@color/dark_grey</item>-->
         <item name="android:textColor">@color/white</item>
 
-        <item name="colorControlNormal">#c5c5c5</item>
+        <item name="colorControlNormal">@color/dark_blue</item>
         <item name="colorControlActivated">@color/dark_blue</item>
         <item name="colorControlHighlight">@color/dark_blue</item>
     </style>
@@ -60,7 +60,7 @@
 
     <style name="V_Divider">
         <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_width">2dp</item>
+        <item name="android:layout_width">3dp</item>
         <item name="android:background">@color/dark_blue</item>
     </style>
 

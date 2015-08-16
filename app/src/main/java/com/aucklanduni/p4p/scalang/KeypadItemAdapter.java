@@ -46,10 +46,10 @@ public class KeypadItemAdapter extends ArrayAdapter<KeypadItem> {
         String value = item.getValue();
         tvVal.setText(value);
 
-        if (value.equals("Back")){
-            tvVal.setBackgroundColor(context.getResources().getColor(R.color.dark_blue));
-//            tvVal.setTextColor(Color.BLACK);
-        }
+//        if (value.equals("Back")){
+//            tvVal.setBackgroundColor(context.getResources().getColor(R.color.dark_blue));
+////            tvVal.setTextColor(Color.BLACK);
+//        }
 
         return row;
     }
