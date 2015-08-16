@@ -79,7 +79,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
     private GridView gv_keyPad;
     private EditText editor;
-    private ArrayAdapter<KeypadItem> adapter;
+    private GridView gv_right_col;
+
+    private ArrayAdapter<KeypadItem> keypad_adapter, col_adapter;
     private int count = 0;
     private static Context ctx;
     private Keypad keypad;
@@ -146,6 +148,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         View view = inflater.inflate(R.layout.fragment_keypad, container, false);
 
         gv_keyPad = (GridView) view.findViewById(R.id.gv_KeyPad);
+        gv_right_col = (GridView) view.findViewById(R.id.gv_KeyPad_right);
         editor = (EditText) view.findViewById(R.id.et_edit);
         editor.setMovementMethod(LinkMovementMethod.getInstance());
         keypad = new Keypad(this);
@@ -153,6 +156,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
 
         gv_keyPad.setOnItemClickListener(this);
+        gv_right_col.setOnItemClickListener(this);
 
         return view;
     }
@@ -275,7 +279,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
 
 
-        adapter = new KeypadItemAdapter(ctx, R.layout.keypad_items, items);
+        keypad_adapter = new KeypadItemAdapter(ctx, R.layout.keypad_items, items);
+        col_adapter = new KeypadItemAdapter(ctx, R.layout.keypad_items, new ArrayList<KeypadItem>());
 
         boolean hasBack = false;
         for(KeypadItem item : items) {
@@ -286,11 +291,13 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         }
         if(!hasBack){
             KeypadItem bckSpace = new KeypadItem("Back", true, null);
-            adapter.add(bckSpace);
+            col_adapter.add(bckSpace);
         }
 
-        gv_keyPad.setAdapter(adapter);
+        gv_keyPad.setAdapter(keypad_adapter);
+        gv_right_col.setAdapter(col_adapter);
         gv_keyPad.invalidateViews();
+        gv_right_col.invalidateViews();
         printText();
 
 

@@ -23,22 +23,45 @@
 
         <View style="@style/H_Divider"/>
 
-        <GridView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.3"
-            android:id="@+id/gv_KeyPad"
-            android:numColumns="auto_fit"
-            android:gravity="center_vertical|center_horizontal"
-            android:verticalSpacing="5dp"
-            android:horizontalSpacing="5dp"
-            android:layout_gravity="center"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:columnWidth="110dp"
-            >
+            android:layout_weight="0.3">
 
-        </GridView>
+            <GridView
+                android:layout_width="0dp"
+                android:layout_weight=".66"
+                android:layout_height="match_parent"
+                android:id="@+id/gv_KeyPad"
+                android:numColumns="auto_fit"
+                android:gravity="center_vertical|center_horizontal"
+                android:verticalSpacing="5dp"
+                android:horizontalSpacing="7dp"
+                android:layout_gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:columnWidth="110dp"
+                />
+
+            <View style="@style/V_Divider"/>
+            <GridView
+                android:layout_width="0dp"
+                android:layout_weight=".33"
+                android:layout_height="match_parent"
+                android:id="@+id/gv_KeyPad_right"
+                android:numColumns="auto_fit"
+                android:gravity="center_vertical|center_horizontal"
+                android:verticalSpacing="5dp"
+                android:horizontalSpacing="5dp"
+                android:layout_gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:columnWidth="110dp"
+                />
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
