@@ -1060,7 +1060,7 @@ public class Keypad {
                 }
             }
 
-            if (isList){
+            if (isList && !isNullable){
                 addToList();
             }
 
