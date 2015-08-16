@@ -242,11 +242,13 @@ public class Keypad {
         }else if (expressions.containsKey(value)){
             if(value.equals("Method Call")){
 
-            }else if(value != "Next") {
+            }else {
                 ScalaElement expr = (ScalaElement) setField(value);
-                typeStack.push(expr);
-            }else{
+                if(value != "Next") {
+                    typeStack.push(expr);
+                }
                 typeStack.pop();
+
             }
         }else if(members.containsKey(value)){
             try {
@@ -544,7 +546,7 @@ public class Keypad {
 
         ScalaElement element = typeStack.peek();
         int countOfCurrent = element.getCount();
-    //three checks if it is a list, if the list is empty && else
+        //three checks if it is a list, if the list is empty && else
 
 //            if (typeStack.size() == 1){
 //                if(element instanceof sClass){
@@ -984,7 +986,7 @@ public class Keypad {
                 try {
 
                     sExpression expr;
-                    if(input.equals("null")){
+                    if(input.equals("Next")){
                         expr = new NullExpr();
                     }else {
                         expr = expressions.get(input).newInstance();
