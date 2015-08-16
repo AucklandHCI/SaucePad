@@ -164,7 +164,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         editor.setText("");
         ScalaPrinter printer = new ScalaPrinter(keypad);
 
+
         String source = printer.getSource(mainClass);
+
         editor.setText(source, TextView.BufferType.SPANNABLE);
         Spannable spans = (Spannable) editor.getText();
 
@@ -556,6 +558,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         stk_prevKeyPadPresses.push(value);
 
 
+        boolean inEditMode = keypad.isEditing();
 
         if (!input.dontPrint()){ // if not dummy print it
 //            editor.setText(editor.getText() + " " + value);
@@ -601,7 +604,10 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
         printText();
 
-        setItemAdapter(keypad.getNextItems(input.getValue()));
+        if (inEditMode){
+            value = "";
+        }
+        setItemAdapter(keypad.getNextItems(value));
 
 
 //

@@ -192,7 +192,7 @@ public abstract class ScalaElement {
                 items = doExpressionInteraction((sExpression) field.get(obj));
                 isList = false;
             }else if(fieldType == Object.class){
-                items = doObjectInteraction((Object) field.get(obj));
+                items = doObjectInteraction( field.get(obj));
                 isList = false;
             }
 
@@ -206,8 +206,8 @@ public abstract class ScalaElement {
             this.currentScope = null;
 
 
-        }catch (IllegalAccessException e){
-
+        }catch (IllegalAccessException | IllegalArgumentException e){
+            e.printStackTrace();
         }
 
         return items;

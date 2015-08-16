@@ -34,13 +34,20 @@ import java.util.List;
  */
 public class ScalaPrinter implements VoidVisitor{
 
-    private sPrinter printer;
+    private static sPrinter printer;
     private String TAG = "testing";
     public static String cursor = "_"; //…
+    private Keypad keypad;
     private boolean cursorPrinted = false;
 
     public ScalaPrinter(Keypad keypad){
-        printer = new sPrinter(keypad);
+
+        this.keypad = keypad;
+        if(!keypad.isEditing()) {
+
+
+            printer = new sPrinter(keypad);
+        }
     }
 
     private void printCursor() {
@@ -142,7 +149,7 @@ public class ScalaPrinter implements VoidVisitor{
             printCursor();
             return;
         }
-        printer.printScalaElement(fName, 1);
+        printer.printScalaElement(fName, 0);
 
         Type fType = obj.get_var_Type();
         if(fType == null){
@@ -152,7 +159,7 @@ public class ScalaPrinter implements VoidVisitor{
 
         if (!(fType instanceof NullSymbol)){
             printer.printString(": ");
-            printer.printScalaElement(fType.toString(), 2);
+            printer.printScalaElement(fType.toString(), 1);
         }
 
         sExpression fValue = obj.get_value();
@@ -177,7 +184,7 @@ public class ScalaPrinter implements VoidVisitor{
             printCursor();
             return;
         }
-        printer.printScalaElement(fName, 1);
+        printer.printScalaElement(fName, 0);
 
         Type fType = obj.get_var_Type();
         if(fType == null){
@@ -188,7 +195,7 @@ public class ScalaPrinter implements VoidVisitor{
         if (!(fType instanceof NullSymbol)){
             printer.printString(": ");
 
-            printer.printScalaElement(fType.toString(), 2);
+            printer.printScalaElement(fType.toString(), 1);
         }
 
 
@@ -222,10 +229,11 @@ public class ScalaPrinter implements VoidVisitor{
         printer.printString("(");
         //TODO add in parameters
         List<sParameter> params = obj.get_parameters();
+        List<sStatement> states = obj.get_statements();
 
 //        int pLength = params.size() - 1; //use this to help determine where the comma goes maybe...
 
-        if(params.size() == 0){
+        if(params.size() == 0 && states.size() == 0 && !obj.isDoneWithStatements()){
             printCursor();
         }
 
@@ -243,7 +251,7 @@ public class ScalaPrinter implements VoidVisitor{
         //TODO figure out how to do return
         printer.printString("{");
         printer.printLn();
-        List<sStatement> states = obj.get_statements();
+
         printer.printLn();
 
         Log.e(TAG, "states size: " + states.size());
@@ -525,10 +533,12 @@ public class ScalaPrinter implements VoidVisitor{
     }
 
     public String getSource(sClass obj) {
-        if (obj != null) {
-            visit(obj);
-        }else {
-            printCursor();
+        if(!keypad.isEditing()) {
+            if (obj != null) {
+                visit(obj);
+            } else {
+                printCursor();
+            }
         }
         return printer.getSource();
     }

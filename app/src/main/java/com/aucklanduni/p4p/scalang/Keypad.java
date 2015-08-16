@@ -1,5 +1,6 @@
 package com.aucklanduni.p4p.scalang;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.aucklanduni.p4p.KeypadFragment;
@@ -707,9 +708,9 @@ public class Keypad {
             element = (ScalaElement) cls.newInstance();
 
             Field[] fields = cls.getFields();
-            field = fields[fieldCount];
+            Field f = fields[fieldCount];
 
-            List<KeypadItem> keypadItems = element.doInteraction(field, element, this);
+            List<KeypadItem> keypadItems = element.doInteraction(f, element, this);
             if (keypadItems == null){
                 return null;
             }
@@ -1116,5 +1117,13 @@ public class Keypad {
 
     public Set<String> getStatementTypes() {
         return statements;
+    }
+
+    public Context getContext(){
+        return kpFrag.getActivity();
+    }
+
+    public boolean isEditing() {
+        return editing;
     }
 }
