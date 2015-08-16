@@ -383,26 +383,26 @@ public class ScalaPrinter implements VoidVisitor{
         printer.printString(obj.getMethodName());
         printer.printString("(");
 
-        String[] args = obj.getArguments();
+        List<sExpression> args = obj.getArguments();
 
-        String arg_x = "";
+        sExpression arg_x = null;
         boolean printArg = true;
-        for(int i = 0; i < args.length; i++){
+        for(int i = 0; i < args.size(); i++){
 
             printArg = true;
-            arg_x = args[i];
+            arg_x = args.get(i);
 
             if(arg_x == null){
                 printCursor();
                 printArg = false;
             }
 
-            if(i != 0 && i != args.length-2) {
+            if(i != 0 && i != args.size()-2) {
                 printer.printString(", ");
             }
 
             if(printArg) {
-                printer.printString(arg_x);
+                arg_x.accept(this);
             }
         }
 

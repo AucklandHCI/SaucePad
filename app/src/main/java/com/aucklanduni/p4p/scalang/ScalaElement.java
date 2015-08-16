@@ -6,6 +6,7 @@ import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.member.sMember;
 import com.aucklanduni.p4p.scalang.member.sMethod;
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
+import com.aucklanduni.p4p.scalang.statement.sMethodCall;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
 import com.aucklanduni.p4p.symtab.LocalScope;
@@ -217,15 +218,12 @@ public abstract class ScalaElement {
         List<KeypadItem> items = new ArrayList<>();
 
         //TODO change this to the actual type
-        String[] args = (String[])obj;
-        for (String a : args){
+        sExpression[] args = (sExpression[])obj;
+        for (sExpression a : args){
             if(a == null){
-                return null;
+                return doExpressionInteraction(null);
             }
         }
-
-
-
 
         return items;
 
@@ -328,6 +326,20 @@ public abstract class ScalaElement {
 
         keypad.setIsList(true);
         keypad.setListClass(sCls);
+
+        if(sCls instanceof sMethodCall){
+
+            //TODO change this to the actual type
+            List<sExpression> args = ((sMethodCall) sCls).getArguments();
+            for (sExpression a : args){
+                if(a == null){
+                    return doExpressionInteraction(null);
+                }
+            }
+            keypad.getTypeStack().pop();
+
+            return items;
+        }
 
         if(listClass == sMethod.class) {
             Scope scope = keypad.getCurrentScope();

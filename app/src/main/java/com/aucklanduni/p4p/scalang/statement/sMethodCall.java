@@ -14,15 +14,15 @@ public class sMethodCall extends sStatement implements sExpression {
 
 
     public String a_method = "g";
-    public String[] b_values = new String[0];
-//    public List<String> b_values = new ArrayList<>();
+//    public sExpression[] b_values = new sExpression[0];
+    public List<sExpression> b_values = new ArrayList<>();
 
 
     public String getMethodName(){
         return a_method;
     }
 
-    public String[] getArguments(){
+    public List<sExpression> getArguments(){
         return b_values;
     }
 

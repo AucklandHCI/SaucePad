@@ -261,12 +261,17 @@ public class Keypad {
                 }
             }
         }else if (expressions.containsKey(value)){
-            if(!value.equals("Method Call")){
-
-                ScalaElement expr = (ScalaElement) setField(value);
-                typeStack.push(expr);
-
+            if(value.equals("Method Call")) {
+                List<KeypadItem> itemList = new ArrayList<>();
+                itemList.add(null);
+                typeStack.push(new sMethodCall());
+                return itemList;
             }
+
+            ScalaElement expr = (ScalaElement) setField(value);
+            typeStack.push(expr);
+
+
         }else if(members.containsKey(value)){
             try {
 
@@ -291,12 +296,12 @@ public class Keypad {
             }
         }
 
-        if (value.equals("Method Call")){
-            List<KeypadItem> itemList = new ArrayList<>();
-            itemList.add(null);
-            typeStack.push(new sMethodCall());
-            return itemList;
-        }
+//        if (value.equals("Method Call")){
+//            List<KeypadItem> itemList = new ArrayList<>();
+//            itemList.add(null);
+//            typeStack.push(new sMethodCall());
+//            return itemList;
+//        }
 
         if (value.equals("Variables")){
             return setType(value);
@@ -934,6 +939,7 @@ public class Keypad {
 
         Log.e(TAG, "[setField] value= " + input + ", field = " + field.getName() + ", Class = " + typeStack.peek().getClassName());
 
+        boolean isArgs = false;
         try{
 
             if (typeStack.peek().getClass() == sParameter.class) {
@@ -967,7 +973,13 @@ public class Keypad {
 
                     List<sParameter> params = method.get_parameters();
                     sMethodCall mCall = (sMethodCall) typeStack.peek();
-                    mCall.b_values = new String[params.size()];
+                    List<sExpression> exprs = new ArrayList<>();
+
+                    for(sParameter p : params){
+                        exprs.add(null);
+                    }
+
+                    mCall.b_values = exprs;
 
                     input = input.substring(0, l_brack_pos);
                 }
@@ -1052,30 +1064,37 @@ public class Keypad {
 //                //TODO need to find a way to add to the correct list
 //            }else{
 
-            }else if(fieldType.isArray()){
-                Object val = field.get(typeStack.peek());
-                if (val instanceof String[]){
-                    String[] args = (String[])val;
-                    boolean foundNull = false;
-                    for(int i = 0; i < args.length; i++){
+            }else if(fieldType == List.class && typeStack.peek().getClass() == sMethodCall.class){
 
-                        if(args[i] == null){
-                            args[i] = input;
-                            if(i != args.length-1) {
-                                foundNull = true;
-                            }
+                sMethodCall smc = (sMethodCall) typeStack.peek();
+                ParameterizedType listType = (ParameterizedType) field.getGenericType();
+                Class<?> classOfList = (Class<?>) listType.getActualTypeArguments()[0];
+                if (sExpression.class.isAssignableFrom(classOfList)){
+                    List<sExpression> args = (List) field.get(typeStack.peek());;
+                    boolean foundNull = false;
+                    sExpression expr = null;
+                    for(int i = 0; i < args.size(); i++){
+
+                        if(args.get(i) == null){
+                            expr = expressions.get(input).newInstance();
+//                            typeStack.push((ScalaElement) expr);
+                            args.remove(i);
+                            args.add(i, expr) ;
+                            foundNull = true;
+
                             break;
                         }
                     }
 
-                    field.set(typeStack.peek(), args);
+                    field.set(smc, args);
                     if(foundNull){
-                        return args;
+                        return expr;
                     }
+                    return null;
                 }
             }
 
-            if (isList && !isNullable){
+            if (isList && !isNullable /*&& typeStack.peek().getClass() != sMethodCall.class*/){
                 addToList();
             }
 
@@ -1088,6 +1107,8 @@ public class Keypad {
             }
 
         }catch (IllegalAccessException e){
+            e.printStackTrace();
+        } catch (InstantiationException e) {
             e.printStackTrace();
         }
 
