@@ -44,7 +44,8 @@
                 android:columnWidth="110dp"
                 />
 
-            <View style="@style/V_Divider"/>
+            <View style="@style/V_Divider"
+                android:background="@color/black"/>
             <GridView
                 android:layout_width="0dp"
                 android:layout_weight=".33"
@@ -58,6 +59,7 @@
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:columnWidth="110dp"
+                android:stackFromBottom="true"
                 />
 
         </LinearLayout>

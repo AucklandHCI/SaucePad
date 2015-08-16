@@ -76,6 +76,7 @@ public class Keypad {
     private int count = 0;
     private int listCount = 0;
     private boolean isList = false, isNullable = false;
+    private int nullableCount = -1;
     private KeypadFragment kpFrag;
     private Field field;
     private ScalaElement temporaryElement, listClass;
@@ -119,7 +120,7 @@ public class Keypad {
         expressions.put("Variable/Literal", sValueExpr.class);
         expressions.put("==", sEqualsExpr.class);
         expressions.put("True/False", sBooleanExpr.class);
-        expressions.put("Next",null);//should not be HERE
+//        expressions.put("Next",null);//should not be HERE
         expressions.put("=", sAssignExpr.class);
         expressions.put("Method Call", sMethodCall.class);
 
@@ -162,19 +163,39 @@ public class Keypad {
 
         if(isNullable && !value.isEmpty()){
             boolean found = false;
-            for(KeypadItem ki : nullFieldNextItems) {
+//            for(KeypadItem ki : nullFieldNextItems) {
+            for(int i = nullableCount+1; i < nullFieldNextItems.size(); i++){
+                KeypadItem ki = nullFieldNextItems.get(i);
                 if (ki.getValue().equals(value)) {
-                    setField("null");
+                    for(int j = 0; j <= nullableCount; j++){
+                        setField("null");
+                    }
                     //typeStack.peek().incrementCount();
                     found = true;
                     isNullable = false;
+                    nullableCount = -1;
+                    nullFieldNextItems.clear();
                     break;
                 }
             }
 
             if (!found){
-                List<KeypadItem> itemList = typeStack.peek().doInteraction(field, typeStack.peek(),this);
+                for(int i = 0; i <= nullableCount; i++){
+                    KeypadItem ki = nullFieldNextItems.get(i);
+                    if (ki.getValue().equals(value)) {
+                        for(int j = 0; j < i; j++){
+                            setField("null");
+                        }
+                        break;
+                    }
+                }
+
+                Field[] fields = typeStack.peek().getClass().getFields();
+                Field f = fields[typeStack.peek().getCount()];
+                List<KeypadItem> itemList = typeStack.peek().doInteraction(f, typeStack.peek(),this);
                 isNullable = false;
+                nullableCount = -1;
+                nullFieldNextItems.clear();
                 return itemList;
             }
         }
@@ -240,14 +261,10 @@ public class Keypad {
                 }
             }
         }else if (expressions.containsKey(value)){
-            if(value.equals("Method Call")){
+            if(!value.equals("Method Call")){
 
-            }else {
                 ScalaElement expr = (ScalaElement) setField(value);
-                if(value != "Next") {
-                    typeStack.push(expr);
-                }
-                typeStack.pop();
+                typeStack.push(expr);
 
             }
         }else if(members.containsKey(value)){
@@ -406,7 +423,7 @@ public class Keypad {
                 isNullable = ( nf != null);
 
                 if (isNullable){
-                    List<KeypadItem> optionalItems = new ArrayList<>();
+                    nullableCount++;
                     ScalaElement current = typeStack.peek();
 
                     if(field.getType() == List.class){
@@ -415,10 +432,10 @@ public class Keypad {
                         if(ScalaElement.class.isAssignableFrom(classOfList)){
 
                             ScalaElement elem = (ScalaElement) classOfList.newInstance();
-                            optionalItems.add(new KeypadItem(elem.getClassName(), true, classOfList));
+                            nullFieldNextItems.add(new KeypadItem(elem.getClassName(), true, classOfList));
                         }
                     }else{
-                        optionalItems.add(new KeypadItem( nf.name(), true, current.getClass()));
+                        nullFieldNextItems.add(new KeypadItem( nf.name(), true, current.getClass()));
                     }
 
                     current.incrementCount();
@@ -444,9 +461,16 @@ public class Keypad {
                     typeStack = s;
 
                     isNullable = true;
-                    nullFieldNextItems.clear();
-                    nullFieldNextItems.addAll(nextItems);
-                    optionalItems.addAll(nextItems);
+//                    nullFieldNextItems.clear();
+
+                    for(KeypadItem ki : nextItems){
+                        if (!nullFieldNextItems.contains(ki)){
+                            nullFieldNextItems.add(ki);
+                        }
+                    }
+
+//                    nullFieldNextItems.addAll(nextItems);
+//                    optionalItems.addAll(nextItems);
                     current.decrementCount();
 
                     if (prevChanged && !value.isEmpty()){
@@ -460,7 +484,7 @@ public class Keypad {
 
 
 
-                    return optionalItems;
+                    return nullFieldNextItems;
                 }
 
 
@@ -986,7 +1010,7 @@ public class Keypad {
                 try {
 
                     sExpression expr;
-                    if(input.equals("Next")){
+                    if(input.equals("null")){
                         expr = new NullExpr();
                     }else {
                         expr = expressions.get(input).newInstance();

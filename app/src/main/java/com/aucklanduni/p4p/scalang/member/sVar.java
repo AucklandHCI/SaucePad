@@ -14,6 +14,7 @@ public class sVar extends sStatement implements sMember, sExpression {
     public String b_var_name = null;
     @NullableField(name = ":")
     public Type d_var_Type;
+    @NullableField(name = "Expr")
     public sExpression e_val_value = null ;
 
 
