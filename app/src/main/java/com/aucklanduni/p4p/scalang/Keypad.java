@@ -665,6 +665,9 @@ public class Keypad {
 
             if(countOfCurrent == 0 && typeStack.size() > 1){
                 ScalaElement popped = typeStack.pop();
+                if(popped instanceof sMethod){
+                    this.currentScope = this.currentScope.getEnclosingScope();
+                }
                 ScalaElement prev = typeStack.peek();
                 int previousCount = prev.getCount();
 
