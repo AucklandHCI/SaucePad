@@ -597,6 +597,26 @@ public class Keypad {
                     countOfCurrent = countOfCurrent - 1;
                     f = currentFields[countOfCurrent];
 
+                    if(f.getType() == List.class){
+                        temp = (List) f.get(element);
+
+                        if(temp.isEmpty()){
+                            countOfCurrent = countOfCurrent - 1;
+                            f = currentFields[countOfCurrent];
+
+                        } else {
+
+                        int numberOfMembers = temp.size();
+                        element = (ScalaElement) temp.get(numberOfMembers - 1); //gets the last member
+                        typeStack.push(element);
+                        countOfCurrent = element.getClass().getFields().length - 1; //Count of Last Element in the list.
+
+                        currentFields = element.getClass().getDeclaredFields();
+                        f = currentFields[countOfCurrent];
+
+                        }
+                    }
+
                 } else { //if it is a list but not empty
 
                     int numberOfMembers = temp.size();
@@ -615,13 +635,6 @@ public class Keypad {
                 f = currentFields[countOfCurrent];
 
             }
-
-            /*
-                class hello{
-                    val taz
-                }
-                 */
-
 
             Object x = f.get(element);  //val taz = true  type: null val taz : boolean
 
