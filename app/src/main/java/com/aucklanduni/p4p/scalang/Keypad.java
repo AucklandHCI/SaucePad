@@ -590,12 +590,14 @@ public class Keypad {
 
             if(f.getType() == List.class) {
 
-                List temp = (List) f.get(element);
+                List temp = (List) f.get(element); //list of statements
 
                 if (temp.isEmpty()) {
 
                     countOfCurrent = countOfCurrent - 1;
+                    element.setCount(countOfCurrent);
                     f = currentFields[countOfCurrent];
+
 
                     if(f.getType() == List.class){
                         temp = (List) f.get(element);
