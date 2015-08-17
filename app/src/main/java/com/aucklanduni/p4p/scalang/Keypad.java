@@ -1079,7 +1079,7 @@ public class Keypad {
                 sMethodCall smc = (sMethodCall) typeStack.peek();
                 ParameterizedType listType = (ParameterizedType) field.getGenericType();
                 Class<?> classOfList = (Class<?>) listType.getActualTypeArguments()[0];
-                if (sExpression.class.isAssignableFrom(classOfList)){
+                if (sExpression.class.isAssignableFrom(classOfList)){ //checks its expression
                     List<sExpression> args = (List) field.get(typeStack.peek());;
                     boolean foundNull = false;
                     sExpression expr = null;
