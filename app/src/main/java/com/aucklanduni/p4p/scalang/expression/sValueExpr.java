@@ -10,8 +10,8 @@ import com.aucklanduni.p4p.scalang.sEnum;
 public class sValueExpr extends ScalaElement implements sExpression{
 
 
-    public sEnum.en_Input_Types a_value = sEnum.en_Input_Types.dp_Variables;
-    private String value = null;
+//    public sEnum.en_Input_Types a_value = sEnum.en_Input_Types.dp_Variables;
+    public String value = null;
 
     @Override
     public void accept(VoidVisitor v) {
@@ -23,14 +23,14 @@ public class sValueExpr extends ScalaElement implements sExpression{
         return "";
     }
 
-    @Override
-    public Enum setEnum(String val) {
-//        sEnum.en_Expression_Types temp = sEnum.en_Expression_Types.getEnum(val);
-
-//        a_value = (temp == null ) ? a_value : temp;
-        value = val;
-        return a_value;
-    }
+//    @Override
+//    public Enum setEnum(String val) {
+////        sEnum.en_Expression_Types temp = sEnum.en_Expression_Types.getEnum(val);
+//
+////        a_value = (temp == null ) ? a_value : temp;
+//        value = val;
+//        return a_value;
+//    }
 
     public String getValue() {
         return value;

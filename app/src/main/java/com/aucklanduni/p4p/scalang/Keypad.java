@@ -92,6 +92,7 @@ public class Keypad {
     private boolean editing;
     private boolean prevChanged =false;
     private boolean newVariable = false;
+    private boolean isArgs = false;
 
     public Keypad(KeypadFragment keypadFragment){
         this.kpFrag = keypadFragment;
@@ -142,11 +143,11 @@ public class Keypad {
 
         // Options
         options.put("If", sIf.class);
-        options.put("For", sFor.class);
+//        options.put("For", sFor.class);
 
         // Temp
         listItem.add("If");
-        listItem.add("For");
+//        listItem.add("For");
 
 
 
@@ -277,6 +278,14 @@ public class Keypad {
 
             ScalaElement expr = (ScalaElement) setField(value);
             typeStack.push(expr);
+
+            if (expr instanceof sValueExpr){
+                List<KeypadItem> itemList = new ArrayList<>();
+                itemList.add(new KeypadItem("Variables", true, null));
+                itemList.add(new KeypadItem("abc...", true, null));
+                itemList.add(new KeypadItem("123...", true, null));
+                return itemList;
+            }
 
 
         }else if(members.containsKey(value)){
@@ -949,7 +958,7 @@ public class Keypad {
 
         Log.e(TAG, "[setField] value= " + input + ", field = " + field.getName() + ", Class = " + typeStack.peek().getClassName());
 
-        boolean isArgs = false;
+
         try{
 
             if (typeStack.peek().getClass() == sParameter.class) {
@@ -1083,6 +1092,7 @@ public class Keypad {
                     List<sExpression> args = (List) field.get(typeStack.peek());;
                     boolean foundNull = false;
                     sExpression expr = null;
+                    isArgs = true;
                     for(int i = 0; i < args.size(); i++){
 
                         if(args.get(i) == null){
@@ -1100,11 +1110,12 @@ public class Keypad {
                     if(foundNull){
                         return expr;
                     }
+                    isArgs = false;
                     return null;
                 }
             }
 
-            if (isList && !isNullable /*&& typeStack.peek().getClass() != sMethodCall.class*/){
+            if (isList && !isNullable && !isArgs){
                 addToList();
             }
 
