@@ -222,6 +222,7 @@ public class Keypad {
         if (options.containsKey(value)){
             try {
                 ScalaElement elem = options.get(value).newInstance();
+                typeStack.pop();
                 typeStack.push(elem);
                 if (listItem.contains(value)){
                     addToList(); //Adds the statement to the current method/classes statement list.
@@ -591,22 +592,20 @@ public class Keypad {
     public List<KeypadItem> getPrevItems(){
 
         ScalaElement element = typeStack.peek();
-        int countOfCurrent = element.getCount();
-        //three checks if it is a list, if the list is empty && else
 
-//            if (typeStack.size() == 1){
-//                if(element instanceof sClass){
-//                    sClass temp = (sClass) element;
-//                    List<sMember> classMembers = temp.get_members();
-//                    int numberOfMembers = classMembers.size();
-//                    element = (ScalaElement) classMembers.get(numberOfMembers - 1); //gets the last member
-//                    typeStack.push(element);
-//                    countOfCurrent = element.getClass().getFields().length - 1;
-//                }
-//            }
+//        if(sExpression.class.isAssignableFrom(element.){
+//            typeStack.pop();
+//            return getNextItems("");
+//        }
+
+        int countOfCurrent = element.getCount();
 
         Field[] currentFields = element.getClass().getDeclaredFields();
         Field f = currentFields[countOfCurrent];
+
+
+
+
 
         try {
 
@@ -639,6 +638,17 @@ public class Keypad {
                         f = currentFields[countOfCurrent];
 
                         }
+                    }else if(sExpression.class.isAssignableFrom(f.getType())){
+
+                        element = (ScalaElement) f.get(element);
+                        typeStack.push(element);
+
+                        currentFields = element.getClass().getFields();
+
+                        countOfCurrent = currentFields.length - 1;
+
+                        f = currentFields[countOfCurrent];
+
                     }
 
                 } else { //if it is a list but not empty
@@ -654,9 +664,10 @@ public class Keypad {
                 }
 
             }else {
-
-                countOfCurrent = countOfCurrent - 1; //decrCount
-                f = currentFields[countOfCurrent];
+                if (!(element instanceof sIf)) {
+                    countOfCurrent = countOfCurrent - 1; //decrCount
+                    f = currentFields[countOfCurrent];
+                }
 
             }
 
@@ -682,7 +693,7 @@ public class Keypad {
 
             if(countOfCurrent == 0 && typeStack.size() > 1){
                 ScalaElement popped = typeStack.pop();
-                if(popped instanceof sMethod){
+                if((popped instanceof sMethod)){
                     this.currentScope = this.currentScope.getEnclosingScope();
                 }
                 ScalaElement prev = typeStack.peek();

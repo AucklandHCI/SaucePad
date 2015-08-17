@@ -11,5 +11,9 @@ public interface sExpression{
     public void accept(VoidVisitor v);
 
     String getClassName();
+
+    void setCount(int x);
+
+    int getCount();
 }
 
