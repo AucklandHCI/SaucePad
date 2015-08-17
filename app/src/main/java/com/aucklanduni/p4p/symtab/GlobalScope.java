@@ -53,11 +53,12 @@ public class GlobalScope extends BaseScope {
 
 		MethodSymbol sqrt = new MethodSymbol("sqrt", (Type)resolve("Double"), this, method);
 		define(sqrt);
-		method = new sMethod();
-		method.setMethodName("sqrt1");
-		method.c_parameters = parameters;
-		sqrt = new MethodSymbol("sqrt1", (Type)resolve("Double"), this, method);
-		define(sqrt);
+
+//		method = new sMethod();
+//		method.setMethodName("sqrt1");
+//		method.c_parameters = parameters;
+//		sqrt = new MethodSymbol("sqrt1", (Type)resolve("Double"), this, method);
+//		define(sqrt);
 
 		method = new sMethod();
 		method.setMethodName("velocity");

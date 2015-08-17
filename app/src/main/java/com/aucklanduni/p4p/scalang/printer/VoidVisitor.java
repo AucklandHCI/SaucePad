@@ -6,6 +6,7 @@ import com.aucklanduni.p4p.scalang.expression.sAssignExpr;
 import com.aucklanduni.p4p.scalang.expression.sDivideExpr;
 import com.aucklanduni.p4p.scalang.expression.sProductExpr;
 import com.aucklanduni.p4p.scalang.expression.sSubtractExpr;
+import com.aucklanduni.p4p.scalang.sReturn;
 import com.aucklanduni.p4p.scalang.statement.exception.sException;
 import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
@@ -41,6 +42,7 @@ public interface VoidVisitor {
 
     // sStatement -------------
     void visit(sMethodCall obj);
+    void visit(sReturn obj);
     
     // sExpression ------------
     void visit(NullExpr obj);

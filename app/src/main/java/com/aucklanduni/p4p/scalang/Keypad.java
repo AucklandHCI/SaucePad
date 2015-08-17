@@ -104,6 +104,7 @@ public class Keypad {
         items.put("sParameter", sParameter.class);
         items.put("Parameter", items.get("sParameter"));
         items.put("sVariable", sVariable.class);
+        items.put("Return", sReturn.class);
 //        items.put("sField", new sField());
 //        items.put("New Field", new sField());
 
@@ -121,14 +122,14 @@ public class Keypad {
 
         // == Expressions ===
         expressions.put("+", sPlusExpr.class);
-        expressions.put("Variable/Literal", sValueExpr.class);
         expressions.put("==", sEqualsExpr.class);
         expressions.put("True/False", sBooleanExpr.class);
         expressions.put("=", sAssignExpr.class);
-        expressions.put("Method Call", sMethodCall.class);
         expressions.put("*" , sProductExpr.class);
         expressions.put("/" , sDivideExpr.class);
         expressions.put("-" , sSubtractExpr.class);
+        expressions.put("Variable/Literal", sValueExpr.class);
+        expressions.put("Method Call", sMethodCall.class);
 
 
 

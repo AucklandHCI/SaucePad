@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:layout_marginRight="@dimen/activity_vertical_margin"
-    android:layout_marginBottom="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="@dimen/activity_horizontal_margin"
     android:background="@color/dark_grey"
-    android:layout_marginLeft="@dimen/activity_vertical_margin"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="20dp"
+        android:scaleType="center"
+        android:text="testing"
+        android:textSize="20sp" />
+
+    <View
+        style="@style/H_Divider"/>
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -18,6 +27,7 @@
             android:layout_height="wrap_content"
             android:hint="Search for method..."
             android:layout_gravity="center_vertical"
+            android:textColorHint="@color/medium_grey"
             android:id="@+id/etMSearch" />
     </LinearLayout>
 
@@ -26,10 +36,21 @@
         android:layout_height="wrap_content"
         android:id="@+id/lvMethods" />
 
-    <Button
+    <View style="@style/H_Divider"/>
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Cancel"
-        android:id="@+id/btnCancel"
-        android:layout_gravity="center_horizontal" />
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/btnCancel"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/dark_blue"
+            android:textSize="15sp" />
+    </LinearLayout>
 </LinearLayout>

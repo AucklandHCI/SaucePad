@@ -306,22 +306,25 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     private void showAvailableMethods(){
 
 
-        final Dialog dialog = new Dialog(ctx);
-        dialog.setContentView(R.layout.dialog_methods);
-        dialog.setTitle("Method Lookup");
 
-        // set the custom dialog components - text, image and button
-        final EditText text = (EditText) dialog.findViewById(R.id.etMSearch);
-        Button cancel = (Button) dialog.findViewById(R.id.btnCancel);
-        final ListView lv_methods = (ListView) dialog.findViewById(R.id.lvMethods);
+        AlertDialog.Builder inputDialog = new AlertDialog.Builder(this.getActivity());
+        LayoutInflater li = this.getActivity().getLayoutInflater();
 
-        cancel.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+
+        View v = li.inflate(R.layout.dialog_methods, null);
+
+        inputDialog.setView(v);
+
+        TextView title = (TextView) v.findViewById(R.id.tvTitle);
+        final EditText text = (EditText) v.findViewById(R.id.etMSearch);
+        Button cancel = (Button) v.findViewById(R.id.btnCancel);
+        final ListView lv_methods = (ListView) v.findViewById(R.id.lvMethods);
+
+
+        title.setText("Method Lookup");
+
+
 
         Scope scope = keypad.getCurrentScope();
         List<String> methodNames = scope.getByInstanceOf(MethodSymbol.class);
@@ -344,7 +347,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
         text.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -360,7 +364,20 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        final AlertDialog dialog = inputDialog.create();
+        dialog.show();
+
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
         });
 
         lv_methods.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -369,7 +386,6 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
                 String selected = methods.get(position);
 
-                Toast.makeText(ctx, selected, Toast.LENGTH_LONG).show();
                 dialog.dismiss();
 
 //                keypad.pushOnTypeStack(new sMethodCall());
@@ -381,7 +397,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
         });
 
-        dialog.show();
+
+
 
 
     }

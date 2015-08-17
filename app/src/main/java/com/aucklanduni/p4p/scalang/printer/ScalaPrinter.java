@@ -10,6 +10,7 @@ import com.aucklanduni.p4p.scalang.expression.sAssignExpr;
 import com.aucklanduni.p4p.scalang.expression.sDivideExpr;
 import com.aucklanduni.p4p.scalang.expression.sProductExpr;
 import com.aucklanduni.p4p.scalang.expression.sSubtractExpr;
+import com.aucklanduni.p4p.scalang.sReturn;
 import com.aucklanduni.p4p.scalang.statement.exception.sException;
 import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
@@ -655,5 +656,21 @@ public class ScalaPrinter implements VoidVisitor{
 
         printer.printString(")");
         printer.printLn();
+    }
+
+    @Override
+    public void visit(sReturn obj) {
+        printer.setScalaElement(obj);
+
+        printer.printString("return ");
+
+        sExpression value = obj.get_return_value();
+
+        if(value == null){
+            printCursor();
+            return;
+        }
+
+        value.accept(this);
     }
 }
