@@ -231,13 +231,13 @@ public abstract class ScalaElement {
 
     private List<KeypadItem> doObjectInteraction(Object o) {
 
-        return getKeyboardItemsFromList(keypad.getExpressionTyps(),true);
+        return getKeyboardItemsFromList(keypad.getExpressionTypes(),true);
 
     }
 
     private List<KeypadItem> doExpressionInteraction(sExpression expr) {
 
-        return getKeyboardItemsFromList(keypad.getExpressionTyps(), true);
+        return getKeyboardItemsFromList(keypad.getExpressionTypes(), true);
     }
 
     protected List<KeypadItem> doValueInteraction(Object o){
@@ -357,6 +357,8 @@ public abstract class ScalaElement {
 
         }else if (listClass == sStatement.class){
             return getKeyboardItemsFromList(keypad.getStatementTypes(), true);
+        }else if (listClass == sExpression.class){
+            return getKeyboardItemsFromList(keypad.getExpressionTypes(), true);
         }
 
 

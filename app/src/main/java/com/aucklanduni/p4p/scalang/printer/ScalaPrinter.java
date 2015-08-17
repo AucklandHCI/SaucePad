@@ -6,6 +6,7 @@ import android.util.Log;
 import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.expression.NullExpr;
+import com.aucklanduni.p4p.scalang.expression.sArrayExpr;
 import com.aucklanduni.p4p.scalang.expression.sAssignExpr;
 import com.aucklanduni.p4p.scalang.expression.sDivideExpr;
 import com.aucklanduni.p4p.scalang.expression.sProductExpr;
@@ -656,6 +657,39 @@ public class ScalaPrinter implements VoidVisitor{
 
         printer.printString(")");
         printer.printLn();
+    }
+
+    @Override
+    public void visit(sArrayExpr obj) {
+        printer.setScalaElement(obj);
+
+        printer.printString("Array(");
+
+        List<sExpression> elems = obj.get_elements();
+
+        if (elems.isEmpty()){
+            printCursor();
+        }else{
+
+            for (int i = 0; i < elems.size(); i++){
+
+                sExpression e = elems.get(i);
+                e.accept(this);
+
+                if(i+1 != elems.size()) {
+                    printer.printString(", ");
+                }
+            }
+
+        }
+
+        if(!obj.isDoneWithArray()){
+            printCursor();
+        }
+        printer.printString(")");
+
+
+
     }
 
     @Override

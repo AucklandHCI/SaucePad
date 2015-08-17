@@ -21,7 +21,8 @@
             android:paddingLeft="5dp"
             android:focusableInTouchMode="false" />
 
-        <View style="@style/H_Divider"/>
+        <View style="@style/H_Divider"
+            android:background="@color/black"/>
 
         <LinearLayout
             android:orientation="horizontal"

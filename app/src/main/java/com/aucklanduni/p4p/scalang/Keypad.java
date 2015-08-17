@@ -6,6 +6,7 @@ import android.util.Log;
 import com.aucklanduni.p4p.KeypadFragment;
 import com.aucklanduni.p4p.scalang.annotations.NullableField;
 import com.aucklanduni.p4p.scalang.expression.NullExpr;
+import com.aucklanduni.p4p.scalang.expression.sArrayExpr;
 import com.aucklanduni.p4p.scalang.expression.sAssignExpr;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
 import com.aucklanduni.p4p.scalang.expression.sDivideExpr;
@@ -20,7 +21,6 @@ import com.aucklanduni.p4p.scalang.member.sMethod;
 import com.aucklanduni.p4p.scalang.member.sVal;
 import com.aucklanduni.p4p.scalang.member.sVar;
 import com.aucklanduni.p4p.scalang.statement.control.sControl;
-import com.aucklanduni.p4p.scalang.statement.control.sFor;
 import com.aucklanduni.p4p.scalang.statement.control.sIf;
 import com.aucklanduni.p4p.scalang.statement.exception.sException;
 import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
@@ -36,7 +36,6 @@ import com.aucklanduni.p4p.symtab.Type;
 import com.aucklanduni.p4p.symtab.VariableSymbol;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Member;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -92,6 +91,7 @@ public class Keypad {
     private boolean editing;
     private boolean prevChanged =false;
     private boolean newVariable = false;
+    private boolean isArray = false;
     private boolean isArgs = false;
 
     public Keypad(KeypadFragment keypadFragment){
@@ -130,6 +130,7 @@ public class Keypad {
         expressions.put("-" , sSubtractExpr.class);
         expressions.put("Variable/Literal", sValueExpr.class);
         expressions.put("Method Call", sMethodCall.class);
+        expressions.put("Array", sArrayExpr.class);
 
 
 
@@ -270,7 +271,7 @@ public class Keypad {
                     e.printStackTrace();
                 }
             }
-        }else if (expressions.containsKey(value)){
+        }else if (expressions.containsKey(value) || value.equals("End Array")){
             if(value.equals("Method Call")) {
                 List<KeypadItem> itemList = new ArrayList<>();
                 itemList.add(null);
@@ -279,6 +280,10 @@ public class Keypad {
             }
 
             ScalaElement expr = (ScalaElement) setField(value);
+            if(expr == null){
+                typeStack.pop().incrementCount();
+                return new ArrayList<>();
+            }
             typeStack.push(expr);
 
             if (expr instanceof sValueExpr){
@@ -585,6 +590,9 @@ public class Keypad {
             e.printStackTrace();
         }
 
+        if(isArray && sExpression.class.isAssignableFrom(typeStack.peek().getClass()) && !keyPad.isEmpty()){
+            keyPad.add(0, new KeypadItem("End Array", true, null));
+        }
         return keyPad;
     }
 
@@ -1072,6 +1080,9 @@ public class Keypad {
                         expr = new NullExpr();
                     }else {
                         expr = expressions.get(input).newInstance();
+                        if(expr instanceof sArrayExpr){
+                            isArray = true;
+                        }
                     }
                     field.set(typeStack.peek(), expr);
                     value = expr;
@@ -1095,36 +1106,58 @@ public class Keypad {
 //                //TODO need to find a way to add to the correct list
 //            }else{
 
-            }else if(fieldType == List.class && typeStack.peek().getClass() == sMethodCall.class){
+            }else if(fieldType == List.class) {
+                List l = (List) field.get(typeStack.peek());
 
-                sMethodCall smc = (sMethodCall) typeStack.peek();
-                ParameterizedType listType = (ParameterizedType) field.getGenericType();
-                Class<?> classOfList = (Class<?>) listType.getActualTypeArguments()[0];
-                if (sExpression.class.isAssignableFrom(classOfList)){ //checks its expression
-                    List<sExpression> args = (List) field.get(typeStack.peek());;
-                    boolean foundNull = false;
-                    sExpression expr = null;
-                    isArgs = true;
-                    for(int i = 0; i < args.size(); i++){
+                if (typeStack.peek().getClass() == sMethodCall.class) {
 
-                        if(args.get(i) == null){
-                            expr = expressions.get(input).newInstance();
+                    sMethodCall smc = (sMethodCall) typeStack.peek();
+                    ParameterizedType listType = (ParameterizedType) field.getGenericType();
+                    Class<?> classOfList = (Class<?>) listType.getActualTypeArguments()[0];
+                    if (sExpression.class.isAssignableFrom(classOfList)) { //checks its expression
+                        List<sExpression> args = l
+                        ;
+                        boolean foundNull = false;
+                        sExpression expr = null;
+                        isArgs = true;
+                        for (int i = 0; i < args.size(); i++) {
+
+                            if (args.get(i) == null) {
+                                expr = expressions.get(input).newInstance();
 //                            typeStack.push((ScalaElement) expr);
-                            args.remove(i);
-                            args.add(i, expr) ;
-                            foundNull = true;
+                                args.remove(i);
+                                args.add(i, expr);
+                                foundNull = true;
 
-                            break;
+                                break;
+                            }
                         }
-                    }
 
-                    field.set(smc, args);
-                    if(foundNull){
-                        return expr;
+                        field.set(smc, args);
+                        if (foundNull) {
+                            return expr;
+                        }
+                        isArgs = false;
+                        return null;
                     }
-                    isArgs = false;
-                    return null;
+                }else {
+                    ParameterizedType listType = (ParameterizedType) field.getGenericType();
+                    Class<?> classOfList = (Class<?>) listType.getActualTypeArguments()[0];
+                    if (sExpression.class.isAssignableFrom(classOfList)) {
+                        List<sExpression> exprs = l;
+                        if(input.equals("End Array")){
+                            isArray = false;
+                            ((sArrayExpr)typeStack.peek()).setDoneWithArray(true);
+                            return null;
+                        }
+                        sExpression expr = expressions.get(input).newInstance();
+                        l.add(expr);
+                        return expr;
+
+                    }
                 }
+
+
             }
 
             if (isList && !isNullable && !isArgs){
@@ -1206,7 +1239,7 @@ public class Keypad {
         return members.keySet();
     }
 
-    public Set<String> getExpressionTyps(){
+    public Set<String> getExpressionTypes(){
         return expressions.keySet();
     }
 

@@ -1,14 +1,10 @@
 package com.aucklanduni.p4p.scalang.member;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.annotations.NullableField;
-import com.aucklanduni.p4p.scalang.sEnum;
+import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 import com.aucklanduni.p4p.scalang.sParameter;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
-import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 import java.util.ArrayList;
 import java.util.List;

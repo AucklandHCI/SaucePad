@@ -2,6 +2,7 @@ package com.aucklanduni.p4p.scalang.printer;
 
 import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.expression.NullExpr;
+import com.aucklanduni.p4p.scalang.expression.sArrayExpr;
 import com.aucklanduni.p4p.scalang.expression.sAssignExpr;
 import com.aucklanduni.p4p.scalang.expression.sDivideExpr;
 import com.aucklanduni.p4p.scalang.expression.sProductExpr;
@@ -54,6 +55,7 @@ public interface VoidVisitor {
     void visit(sDivideExpr obj);
     void visit(sSubtractExpr obj);
     void visit(sProductExpr obj);
+    void visit(sArrayExpr obj);
 
 
     // sException -------------
