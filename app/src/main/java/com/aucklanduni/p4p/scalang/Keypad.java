@@ -8,9 +8,12 @@ import com.aucklanduni.p4p.scalang.annotations.NullableField;
 import com.aucklanduni.p4p.scalang.expression.NullExpr;
 import com.aucklanduni.p4p.scalang.expression.sAssignExpr;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
+import com.aucklanduni.p4p.scalang.expression.sDivideExpr;
 import com.aucklanduni.p4p.scalang.expression.sEqualsExpr;
 import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.expression.sPlusExpr;
+import com.aucklanduni.p4p.scalang.expression.sProductExpr;
+import com.aucklanduni.p4p.scalang.expression.sSubtractExpr;
 import com.aucklanduni.p4p.scalang.expression.sValueExpr;
 import com.aucklanduni.p4p.scalang.member.sMember;
 import com.aucklanduni.p4p.scalang.member.sMethod;
@@ -120,9 +123,13 @@ public class Keypad {
         expressions.put("Variable/Literal", sValueExpr.class);
         expressions.put("==", sEqualsExpr.class);
         expressions.put("True/False", sBooleanExpr.class);
-//        expressions.put("Next",null);//should not be HERE
         expressions.put("=", sAssignExpr.class);
         expressions.put("Method Call", sMethodCall.class);
+        expressions.put("*" , sProductExpr.class);
+        expressions.put("/" , sDivideExpr.class);
+        expressions.put("-" , sSubtractExpr.class);
+
+
 
         //== Members ==
         members.put("Var", sVar.class);
