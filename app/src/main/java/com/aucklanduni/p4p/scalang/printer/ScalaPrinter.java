@@ -7,6 +7,8 @@ import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.expression.NullExpr;
 import com.aucklanduni.p4p.scalang.expression.sAssignExpr;
+import com.aucklanduni.p4p.scalang.expression.sDivideExpr;
+import com.aucklanduni.p4p.scalang.expression.sSubtractExpr;
 import com.aucklanduni.p4p.scalang.statement.exception.sException;
 import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
@@ -458,6 +460,61 @@ public class ScalaPrinter implements VoidVisitor{
         }
 
 //        printer.printString(")");
+
+    }
+
+    @Override
+    public void visit(sSubtractExpr obj) {
+        printer.setScalaElement(obj);
+
+        printer.printString("(");
+
+        sExpression left = obj.get_summand1();
+        if (left != null){
+            left.accept(this);
+        }else{
+            printCursor();
+        }
+
+        printer.printSpace();
+        printer.printString("+");
+        printer.printSpace();
+
+        sExpression right = obj.get_summand2();
+        if (right != null){
+            right.accept(this);
+        }else{
+            printCursor();
+        }
+
+        printer.printString(")");
+
+    }
+
+    public void visit(sDivideExpr obj) {
+        printer.setScalaElement(obj);
+
+        printer.printString("(");
+
+        sExpression left = obj.get_summand1();
+        if (left != null){
+            left.accept(this);
+        }else{
+            printCursor();
+        }
+
+        printer.printSpace();
+        printer.printString("+");
+        printer.printSpace();
+
+        sExpression right = obj.get_summand2();
+        if (right != null){
+            right.accept(this);
+        }else{
+            printCursor();
+        }
+
+        printer.printString(")");
 
     }
 

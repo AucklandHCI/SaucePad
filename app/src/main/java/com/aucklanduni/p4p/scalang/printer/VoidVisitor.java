@@ -3,6 +3,9 @@ package com.aucklanduni.p4p.scalang.printer;
 import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.expression.NullExpr;
 import com.aucklanduni.p4p.scalang.expression.sAssignExpr;
+import com.aucklanduni.p4p.scalang.expression.sDivideExpr;
+import com.aucklanduni.p4p.scalang.expression.sProductExpr;
+import com.aucklanduni.p4p.scalang.expression.sSubtractExpr;
 import com.aucklanduni.p4p.scalang.statement.exception.sException;
 import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
 import com.aucklanduni.p4p.scalang.expression.sBooleanExpr;
@@ -46,6 +49,10 @@ public interface VoidVisitor {
     void visit(sEqualsExpr obj);
     void visit(sBooleanExpr obj);
     void visit(sAssignExpr obj);
+    void visit(sDivideExpr obj);
+    void visit(sSubtractExpr obj);
+    void visit(sProductExpr obj);
+
 
     // sException -------------
     void visit(sException obj);
