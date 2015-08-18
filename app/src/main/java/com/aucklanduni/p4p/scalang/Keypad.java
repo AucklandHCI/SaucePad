@@ -665,7 +665,7 @@ public class Keypad {
     //    public List<KeypadItem> getPrevItems(Stack<String> prevItems){
     public List<KeypadItem> getPrevItems(){
 
-        ScalaElement element = typeStack.peek();
+        ScalaElement element = typeStack.peek(); //( + )
 
 //        if(sExpression.class.isAssignableFrom(element.){
 //            typeStack.pop();
@@ -676,10 +676,6 @@ public class Keypad {
 
         Field[] currentFields = element.getClass().getDeclaredFields();
         Field f = currentFields[countOfCurrent];
-
-
-
-
 
         try {
 
@@ -784,7 +780,30 @@ public class Keypad {
                 }
 
             }else {
-                if (!(element instanceof sIf)) {
+
+                if(sExpression.class.isAssignableFrom(f.getType())){
+
+                    countOfCurrent = countOfCurrent - 1;
+
+                    if(countOfCurrent < 0){
+                        ScalaElement temp1 = typeStack.pop();
+                        typeStack.peek().decrementCount();
+                        typeStack.push(temp1);
+                        resetField();
+                        return getNextItems("");
+                    }
+
+                    f = currentFields[countOfCurrent];
+                    element.decrementCount();
+                    f.set(element,null);
+                    return getNextItems("");
+
+
+//                    f = currentFields[countOfCurrent];
+
+
+
+                }else if (!(element instanceof sIf)) {
                     countOfCurrent = countOfCurrent - 1; //decrCount
                     f = currentFields[countOfCurrent];
                 }
