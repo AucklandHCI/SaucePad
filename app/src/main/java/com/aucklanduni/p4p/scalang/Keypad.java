@@ -92,7 +92,6 @@ public class Keypad {
     private boolean prevChanged =false;
     private boolean newVariable = false;
     private boolean isArray = false;
-    private boolean isArgs = false;
 
     public Keypad(KeypadFragment keypadFragment){
         this.kpFrag = keypadFragment;
@@ -318,14 +317,6 @@ public class Keypad {
                 e.printStackTrace();
             }
         }
-
-//        if (value.equals("Method Call")){
-//            List<KeypadItem> itemList = new ArrayList<>();
-//            itemList.add(null);
-//            typeStack.push(new sMethodCall());
-//            return itemList;
-//        }
-
         if (value.equals("Variables")){
             return setType(value);
         }else if (value.equals("abc...")){
@@ -520,23 +511,29 @@ public class Keypad {
 //                    nullFieldNextItems.clear();
                     boolean contains = false;
 
-                    for(KeypadItem ki : nextItems){
+                    for(int j = 0; j < nextItems.size(); j++ ){
 
+                        KeypadItem ki = nextItems.get(j);
                         contains = false;
                         String val = ki.getValue();
 
-                        for (KeypadItem ki1 : nullFieldNextItems){
+                        int i = 0;
+                        for (i = 0; i < nullFieldNextItems.size(); i++){
+                            KeypadItem ki1 = nullFieldNextItems.get(i);
                             String val1 = ki1.getValue();
                             if (val1.equals(val)){
 //                                contains = true;
-                                nullFieldNextItems.remove(ki1);
+//                                nullFieldNextItems.remove(ki1);
                                 break;
 
                             }
                         }
+                        if (i != nullFieldNextItems.size()){
+                            nullFieldNextItems.remove(i);
+                        }
 
 //                        if (!contains){
-                            nullFieldNextItems.add(ki);
+                        nullFieldNextItems.add(ki);
 
 //                        }
                     }
@@ -582,7 +579,7 @@ public class Keypad {
                         typeStack.peek().incrementCount();
 //                        kpFrag.printText(toPrint);
                         return new ArrayList<>();
-                    }else if (first == null && second == null){
+                    }else if (first == null){
                         return keyPad;
                     }
                 }
@@ -622,6 +619,12 @@ public class Keypad {
                 if (toDefine) {
                     currentScope.define(symbolStack.pop());
                 }
+
+//                if(isArgs){
+//                    if(smcTemp.isCompleted()) {
+//                        isArgs = false;
+//                    }
+//                }
 
                 Log.d(TAG, "== Printing all symbols for "+ currentScope.getScopeName());
                 currentScope.printAll();
@@ -668,6 +671,11 @@ public class Keypad {
                 if (temp.isEmpty()) {
 
                     countOfCurrent = countOfCurrent - 1;
+//                   if (countOfCurrent < 0){
+//                        countOfCurrent = 0;
+//                        resetField();
+//                        return getNextItems("");
+//                    }
                     element.setCount(countOfCurrent);
                     f = currentFields[countOfCurrent];
 
@@ -681,13 +689,13 @@ public class Keypad {
 
                         } else {
 
-                        int numberOfMembers = temp.size();
-                        element = (ScalaElement) temp.get(numberOfMembers - 1); //gets the last member
-                        typeStack.push(element);
-                        countOfCurrent = element.getClass().getFields().length - 1; //Count of Last Element in the list.
+                            int numberOfMembers = temp.size();
+                            element = (ScalaElement) temp.get(numberOfMembers - 1); //gets the last member
+                            typeStack.push(element);
+                            countOfCurrent = element.getClass().getFields().length - 1; //Count of Last Element in the list.
 
-                        currentFields = element.getClass().getDeclaredFields();
-                        f = currentFields[countOfCurrent];
+                            currentFields = element.getClass().getDeclaredFields();
+                            f = currentFields[countOfCurrent];
 
                         }
                     }else if(sExpression.class.isAssignableFrom(f.getType())){
@@ -705,14 +713,55 @@ public class Keypad {
 
                 } else { //if it is a list but not empty
 
-                    int numberOfMembers = temp.size();
-                    element = (ScalaElement) temp.get(numberOfMembers - 1); //gets the last member
-                    typeStack.push(element);
-                    countOfCurrent = element.getClass().getFields().length - 1; //Count of Last Element in the list.
+                    if(element instanceof sMethodCall){
 
-                    currentFields = element.getClass().getDeclaredFields();
-                    f = currentFields[countOfCurrent];
+                        /*
+                        sdf([n],[n],[n])
+                        sdf(x,[n],[n])
+                        sdf(x,y,[n])
+                         */
+//                        for for
+                        boolean nonNullPresent = false;
+                        int i = temp.size()-1;
 
+                        for (i = temp.size()-1; i >= 0 ; i--) {
+                            Object x = temp.get(i);
+
+                            if(x != null){
+                                nonNullPresent = true;
+                                countOfCurrent = i;
+                                break;
+                            }
+                        }
+
+
+                        if(nonNullPresent){
+                            temp.set(i,null);
+                            return getNextItems("");
+                        }else{
+                            resetField();
+                            return getNextItems("");
+                        }
+
+
+                    }else {
+
+                        int numberOfMembers = temp.size();
+                        element = (ScalaElement) temp.get(numberOfMembers - 1); //gets the last member
+                        typeStack.push(element);
+
+                        countOfCurrent = element.getClass().getFields().length - 1; //Count of Last Element in the list.
+
+
+                        currentFields = element.getClass().getDeclaredFields();
+                        f = currentFields[countOfCurrent];
+
+                        if(element instanceof sMethodCall){
+                            temp = (List) f.get(element);
+                            temp.set(temp.size()-1, null);
+                            return getNextItems("");
+                        }
+                    }
                 }
 
             }else {
@@ -744,32 +793,7 @@ public class Keypad {
             f.set(element, null);
 
             if(countOfCurrent == 0 && typeStack.size() > 1){
-                ScalaElement popped = typeStack.pop();
-                if((popped instanceof sMethod)){
-                    this.currentScope = this.currentScope.getEnclosingScope();
-                }
-                ScalaElement prev = typeStack.peek();
-                int previousCount = prev.getCount();
-
-                Field[] prevFields = prev.getClass().getDeclaredFields();
-                Field field = prevFields[previousCount];
-
-                if(field.getType() == List.class) {
-
-                    try {
-                        List listfield = (List) field.get(prev);
-                        listfield.remove(popped);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }else{
-
-                    try {
-                        field.set(prev,null);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
+                resetField();
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -779,6 +803,35 @@ public class Keypad {
 //        prevItems.pop(); //pop of marker  nullnullnull
 //        return getNextItems(prevItems.pop()); //pop last valid keypadItems
 
+    }
+
+    private void resetField() {
+        ScalaElement popped = typeStack.pop();
+        if((popped instanceof sMethod)){
+            this.currentScope = this.currentScope.getEnclosingScope();
+        }
+        ScalaElement prev = typeStack.peek();
+        int previousCount = prev.getCount();
+
+        Field[] prevFields = prev.getClass().getDeclaredFields();
+        Field field = prevFields[previousCount];
+
+        if(field.getType() == List.class) {
+
+            try {
+                List listfield = (List) field.get(prev);
+                listfield.remove(popped);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }else{
+
+            try {
+                field.set(prev,null);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 //            typeStack.peek().setCount(countOfCurrent - 1);
 
@@ -1001,6 +1054,7 @@ public class Keypad {
         Object value = null;
 
         ScalaElement top = typeStack.peek();
+        boolean listAdd = true;
 
         Class cls = top.getClass();
 
@@ -1064,6 +1118,14 @@ public class Keypad {
 
                     mCall.b_values = exprs;
 
+                    ScalaElement prev = typeStack.get(typeStack.size() - 2);
+                    Field prevField = prev.getClass().getFields()[prev.getCount()];
+
+                    if (sExpression.class.isAssignableFrom(prevField.getType())){
+                        prevField.set(prev,mCall);
+                        prev.incrementCount();
+                        listAdd = false;
+                    }
                     input = input.substring(0, l_brack_pos);
                 }
 
@@ -1159,29 +1221,38 @@ public class Keypad {
                     ParameterizedType listType = (ParameterizedType) field.getGenericType();
                     Class<?> classOfList = (Class<?>) listType.getActualTypeArguments()[0];
                     if (sExpression.class.isAssignableFrom(classOfList)) { //checks its expression
-                        List<sExpression> args = l
-                        ;
+                        List<sExpression> args = l;
                         boolean foundNull = false;
                         sExpression expr = null;
-                        isArgs = true;
-                        for (int i = 0; i < args.size(); i++) {
+                        for (int i = 0; i < args.size(); i++) {  //3
+
 
                             if (args.get(i) == null) {
                                 expr = expressions.get(input).newInstance();
 //                            typeStack.push((ScalaElement) expr);
                                 args.remove(i);
                                 args.add(i, expr);
+
+
                                 foundNull = true;
 
                                 break;
                             }
                         }
 
+
                         field.set(smc, args);
+
+//                        ScalaElement prev = typeStack.get(typeStack.size() - 2);
+//                        Field prevField = prev.getClass().getFields()[prev.getCount()];
+//
+//                        if (sExpression.class.isAssignableFrom(prevField.getType())){
+//                            prevField.set(prev,smc);
+//                        }
+
                         if (foundNull) {
                             return expr;
                         }
-                        isArgs = false;
                         return null;
                     }
                 }else {
@@ -1204,7 +1275,7 @@ public class Keypad {
 
             }
 
-            if (isList && !isNullable && !isArgs){
+            if (isList && listAdd && !isNullable){
                 addToList();
             }
 
@@ -1227,6 +1298,11 @@ public class Keypad {
 
     private void addToList() throws IllegalAccessException {
         ScalaElement current = typeStack.peek();
+
+        if(listClass instanceof sMethodCall){
+            return;
+        }
+
         int prevCount = listClass.getCount();
         Field[] fields = listClass.getClass().getFields();
         Field f = fields[prevCount];

@@ -17,6 +17,16 @@ public class sMethodCall extends sStatement implements sExpression {
 //    public sExpression[] b_values = new sExpression[0];
     public List<sExpression> b_values = new ArrayList<>();
 
+    private boolean completed = false;
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public sMethodCall setCompleted(boolean completed) {
+        this.completed = completed;
+        return this;
+    }
 
     public String getMethodName(){
         return a_method;
