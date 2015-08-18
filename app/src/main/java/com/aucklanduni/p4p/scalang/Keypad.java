@@ -460,10 +460,38 @@ public class Keypad {
                         if(ScalaElement.class.isAssignableFrom(classOfList)){
 
                             ScalaElement elem = (ScalaElement) classOfList.newInstance();
-                            nullFieldNextItems.add(new KeypadItem(elem.getClassName(), true, classOfList));
+                            KeypadItem k = new KeypadItem(elem.getClassName(), true, classOfList);
+
+                            boolean contains = false;
+
+                            for (KeypadItem ki : nullFieldNextItems){
+                                String val = ki.getValue();
+                                if (val.equals(k.getValue())){
+                                    contains = true;
+                                    break;
+                                }
+                            }
+
+                            if(!contains){
+                                nullFieldNextItems.add(k);
+                            }
                         }
                     }else{
-                        nullFieldNextItems.add(new KeypadItem( nf.name(), true, current.getClass()));
+                        KeypadItem k = new KeypadItem( nf.name(), true, current.getClass());
+
+                        boolean contains = false;
+
+                        for (KeypadItem ki : nullFieldNextItems){
+                            String val = ki.getValue();
+                            if (val.equals(k.getValue())){
+                                contains = true;
+                                break;
+                            }
+                        }
+
+                        if(!contains){
+                            nullFieldNextItems.add(k);
+                        }
                     }
 
                     current.incrementCount();
@@ -490,11 +518,27 @@ public class Keypad {
 
                     isNullable = true;
 //                    nullFieldNextItems.clear();
+                    boolean contains = false;
 
                     for(KeypadItem ki : nextItems){
-                        if (!nullFieldNextItems.contains(ki)){
-                            nullFieldNextItems.add(ki);
+
+                        contains = false;
+                        String val = ki.getValue();
+
+                        for (KeypadItem ki1 : nullFieldNextItems){
+                            String val1 = ki1.getValue();
+                            if (val1.equals(val)){
+//                                contains = true;
+                                nullFieldNextItems.remove(ki1);
+                                break;
+
+                            }
                         }
+
+//                        if (!contains){
+                            nullFieldNextItems.add(ki);
+
+//                        }
                     }
 
 //                    nullFieldNextItems.addAll(nextItems);
