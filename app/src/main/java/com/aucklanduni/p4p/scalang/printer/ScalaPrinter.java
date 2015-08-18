@@ -243,13 +243,13 @@ public class ScalaPrinter implements VoidVisitor{
         }
 
         for (int i = 0; i < params.size(); i++){
+            sParameter p = params.get(i);
+            p.accept(this);
 
-            if(i != 0 && i != params.size()-2) {
+            if(i+1 != params.size()) {
                 printer.printString(", ");
             }
 
-            sParameter p = params.get(i);
-            p.accept(this);
         }
 
         printer.printString(")");

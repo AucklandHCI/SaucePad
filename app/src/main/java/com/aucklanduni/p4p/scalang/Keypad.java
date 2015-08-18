@@ -179,6 +179,25 @@ public class Keypad {
                     for(int j = 0; j <= nullableCount; j++){
                         setField("null");
                     }
+
+                    if (ki.getValue().equals("Val")|| ki.getValue().equals("Var")){
+                        typeStack.pop();
+                        boolean toDefine = true;
+                        Symbol symbol = symbolStack.peek();
+
+                        Log.e(TAG, "sym = " + symbol + ", scope = " + currentScope.getScopeName());
+                        if ( symbol instanceof  Scope){
+                            Scope symScope = (Scope)symbol;
+                            if (currentScope.equals(symScope)){
+                                toDefine = false;
+                            }
+                        }
+
+                        if (toDefine) {
+                            currentScope.define(symbolStack.pop());
+                        }
+                    }
+
                     //typeStack.peek().incrementCount();
                     found = true;
                     isNullable = false;
@@ -533,7 +552,7 @@ public class Keypad {
                         }
 
 //                        if (!contains){
-                        nullFieldNextItems.add(ki);
+                        nullFieldNextItems.add(i,ki);
 
 //                        }
                     }
