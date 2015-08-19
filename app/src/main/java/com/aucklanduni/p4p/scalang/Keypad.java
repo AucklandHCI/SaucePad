@@ -75,13 +75,11 @@ public class Keypad {
 
     private List<KeypadItem> nullFieldNextItems = new ArrayList<>();
 
-    private int count = 0;
-    private int listCount = 0;
     private boolean isList = false, isNullable = false;
     private int nullableCount = -1;
     private KeypadFragment kpFrag;
     private Field field;
-    private ScalaElement temporaryElement, listClass;
+    private ScalaElement listClass;
 
     private Scope globalScope = new GlobalScope();
     private Scope currentScope = globalScope;
@@ -160,13 +158,13 @@ public class Keypad {
      * Gets the next items that are to be displayed to the user.
      * This is called every time the user has pressed a key on the
      * keypad.
-     * @param value
-     * @return
+     * @param value The button that was pressed by the user
+     * @return The list of items to be displayed to the user
      * @throws RuntimeException
      */
     public List<KeypadItem> getNextItems(String value) throws RuntimeException {
 
-        if(value == "Back"){
+        if(value.equals("Back")){
             isNullable = false;
         }
 
@@ -246,9 +244,9 @@ public class Keypad {
                 if (listItem.contains(value)){
                     addToList(); //Adds the statement to the current method/classes statement list.
                 }
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException e){
                 e.printStackTrace();
-            } catch (InstantiationException e) {
+            }catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -330,21 +328,23 @@ public class Keypad {
                 typeStack.push(exception);
                 addToList();
 
-            } catch (InstantiationException e) {
+            } catch (InstantiationException e){
                 e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            }catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
-        if (value.equals("Variables")){
-            return setType(value);
-        }else if (value.equals("abc...")){
-            return null;
-        }else if (value.equals("123...")){
-            List<KeypadItem> i = new ArrayList<>();
-            i.add(null);
-            i.add(null);
-            return i;
+
+        switch (value) {
+            case "Variables":
+                return setType(value);
+            case "abc...":
+                return null;
+            case "123...":
+                List<KeypadItem> i = new ArrayList<>();
+                i.add(null);
+                i.add(null);
+                return i;
         }
 
         ScalaElement type;
@@ -430,7 +430,7 @@ public class Keypad {
 
         List<KeypadItem> keyPad = new ArrayList<>(); // whats displayed on the keyboard
         String className = type.getClassName(); //which ScalaElement we're looking at
-        count = type.getCount(); // index for which field we're at
+        int count = type.getCount();
 
         try {
 
@@ -528,15 +528,13 @@ public class Keypad {
 
                     isNullable = true;
 //                    nullFieldNextItems.clear();
-                    boolean contains = false;
 
                     for(int j = 0; j < nextItems.size(); j++ ){
 
                         KeypadItem ki = nextItems.get(j);
-                        contains = false;
                         String val = ki.getValue();
 
-                        int i = 0;
+                        int i;
                         for (i = 0; i < nullFieldNextItems.size(); i++){
                             KeypadItem ki1 = nullFieldNextItems.get(i);
                             String val1 = ki1.getValue();
@@ -594,9 +592,7 @@ public class Keypad {
                     KeypadItem first = keyPad.get(0);
                     KeypadItem second = keyPad.get(1);
                     if (first == null && second != null){
-                        String toPrint = second.getValue();
                         typeStack.peek().incrementCount();
-//                        kpFrag.printText(toPrint);
                         return new ArrayList<>();
                     }else if (first == null){
                         return keyPad;
@@ -608,7 +604,7 @@ public class Keypad {
                 type.resetCount();
 
                 type = (ScalaElement) cls.newInstance();
-                temporaryElement = typeStack.pop();
+                typeStack.pop();
 
                 field = null;
 
@@ -650,9 +646,9 @@ public class Keypad {
                 Log.d(TAG, "==========================");
             }
 
-        } catch (InstantiationException e) {
+        } catch (InstantiationException e){
             e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        }catch (IllegalAccessException e) {
             e.printStackTrace();
         }
 
@@ -737,8 +733,7 @@ public class Keypad {
                          */
 //                        for for
                         boolean nonNullPresent = false;
-                        int i = temp.size()-1;
-
+                        int i;
                         for (i = temp.size()-1; i >= 0 ; i--) {
                             Object x = temp.get(i);
 
@@ -952,7 +947,7 @@ public class Keypad {
 
     /**
      * Gets the current ScalaElement being processed.
-     * @return
+     * @return the top most element
      */
     public ScalaElement getType(){
         try {
@@ -986,10 +981,10 @@ public class Keypad {
 
                 ScalaElement se = typeStack.peek();
                 if (!sExpression.class.isAssignableFrom(se.getClass())) {
-                    if (!sControl.class.isAssignableFrom(se.getClass())) {
+//                    if (!sControl.class.isAssignableFrom(se.getClass())) {
                         ret.add(new KeypadItem("New Var", true, sVar.class));
                         ret.add(new KeypadItem("New Val", true, sVal.class));
-                    }
+//                    }
                 }
 
                 List<String> vars = currentScope.getByInstanceOf(VariableSymbol.class);
@@ -1085,7 +1080,7 @@ public class Keypad {
     /**
      * Sets the value of the field depending on what was
      * entered by the user.
-     * @param input
+     * @param input the value to be stored
      */
     public Object setField(String input){
 

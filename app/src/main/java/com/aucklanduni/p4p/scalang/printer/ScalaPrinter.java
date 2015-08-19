@@ -252,6 +252,8 @@ public class ScalaPrinter implements VoidVisitor{
 
         }
 
+       
+
         printer.printString(")");
         //TODO figure out how to do return
         printer.printString("{");
