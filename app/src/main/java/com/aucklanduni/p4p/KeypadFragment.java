@@ -531,7 +531,14 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
         ScalaElement se = keypad.getTypeStack().peek();
 
-        Field f = se.getClass().getFields()[se.getCount()];
+        int count;
+        if (keypad.isEditing()){
+            count = se.getEditingCount();
+        }else{
+            count = se.getCount();
+        }
+
+        Field f = se.getClass().getFields()[count];
         String name = f.getName();
         String[] words = name.split("_");
         StringBuilder sb = new StringBuilder();

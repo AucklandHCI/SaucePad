@@ -132,9 +132,9 @@ public class Keypad {
 
 
         //== Members ==
-        members.put("Var", sVar.class);
-        members.put("Val", sVal.class);
-        members.put("Method", sMethod.class);
+        members.put("var", sVar.class);
+        members.put("val", sVal.class);
+        members.put("def", sMethod.class);
 
         // == Exceptions ==
         items.put("Exception", sException.class);
@@ -178,7 +178,7 @@ public class Keypad {
                         setField("null");
                     }
 
-                    if (ki.getValue().equals("Val")|| ki.getValue().equals("Var")){
+                    if (ki.getValue().equals("val")|| ki.getValue().equals("var")){
                         typeStack.pop();
                         boolean toDefine = true;
                         Symbol symbol = symbolStack.peek();
@@ -251,7 +251,7 @@ public class Keypad {
             }
         }
 
-        if (newVariable || value.equals("New Val") || value.equals("New Var")){
+        if (newVariable || value.equals("New val") || value.equals("New var")){
 
             if (newVariable){
                 ScalaElement se = typeStack.pop();
@@ -982,8 +982,8 @@ public class Keypad {
                 ScalaElement se = typeStack.peek();
                 if (!sExpression.class.isAssignableFrom(se.getClass())) {
 //                    if (!sControl.class.isAssignableFrom(se.getClass())) {
-                        ret.add(new KeypadItem("New Var", true, sVar.class));
-                        ret.add(new KeypadItem("New Val", true, sVal.class));
+                        ret.add(new KeypadItem("New var", true, sVar.class));
+                        ret.add(new KeypadItem("New val", true, sVal.class));
 //                    }
                 }
 
@@ -1091,10 +1091,14 @@ public class Keypad {
 
         Class cls = top.getClass();
 
-        if(editing){
-            field = cls.getFields()[top.getEditingCount()];
-        }else {
-            field = cls.getFields()[top.getCount()];
+        try {
+            if (editing) {
+                field = cls.getFields()[top.getEditingCount()];
+            } else {
+                field = cls.getFields()[top.getCount()];
+            }
+        }catch (Exception e){
+            String s = "";
         }
 
         if(field == null){
