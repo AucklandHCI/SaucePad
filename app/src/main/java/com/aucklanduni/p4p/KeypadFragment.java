@@ -384,7 +384,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String selected = methods.get(position);
+                String selected = (String) parent.getAdapter().getItem(position);
 
                 dialog.dismiss();
 
