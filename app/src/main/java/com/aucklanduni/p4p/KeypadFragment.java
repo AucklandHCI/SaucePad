@@ -199,6 +199,12 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                     spans.setSpan(c,start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 }else if (!possibleWord.isEmpty()) {
+
+                    if(possibleWord.equals("\"")){
+                        String s = "";
+                   //     cIndex--;
+                    }
+
                     ClickableSpan cs = cTexts.get(cIndex);
                     if (cs instanceof ClickableText) {
                         ClickableText ct = (ClickableText) cs;
