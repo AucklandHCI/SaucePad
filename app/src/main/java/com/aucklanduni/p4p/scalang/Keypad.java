@@ -35,6 +35,7 @@ import com.aucklanduni.p4p.symtab.Symbol;
 import com.aucklanduni.p4p.symtab.Type;
 import com.aucklanduni.p4p.symtab.VariableSymbol;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -457,6 +458,7 @@ public class Keypad {
 
                 field = fields[count];
 
+                Annotation[] annotations = field.getDeclaredAnnotations();
                 NullableField nf = field.getAnnotation(NullableField.class);
                 isNullable = ( nf != null);
 
@@ -577,7 +579,7 @@ public class Keypad {
 
 
                 if (field.getDeclaringClass() != cls){
-                    type.setCount(numFields);
+                    type.incrementCount(); //setCount(numFields);
                     return new ArrayList<>();
                 }
 

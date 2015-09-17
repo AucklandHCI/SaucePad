@@ -232,11 +232,9 @@ public class ScalaPrinter implements VoidVisitor{
         printer.printScalaElement(mName, 0);
 
         printer.printString("(");
-        //TODO add in parameters
         List<sParameter> params = obj.get_parameters();
         List<sStatement> states = obj.get_statements();
 
-//        int pLength = params.size() - 1; //use this to help determine where the comma goes maybe...
 
         if(params.size() == 0 && states.size() == 0 && !obj.isDoneWithStatements()){
             printCursor();
@@ -252,10 +250,9 @@ public class ScalaPrinter implements VoidVisitor{
 
         }
 
-       
+
 
         printer.printString(")");
-        //TODO figure out how to do return
         printer.printString("{");
         printer.printLn();
 
@@ -281,30 +278,19 @@ public class ScalaPrinter implements VoidVisitor{
 
     public void visit(sParameter obj) {
         printer.setScalaElement(obj);
-
         String pName = obj.getName();
-
         if(pName == null){
             printCursor();
             return;
         }
-
         printer.printScalaElement(pName, 0);
-
         printer.printString(" : ");
-
         Type pType = obj.getType();
-
         if(pType == null){
             printCursor();
             return;
         }
-
         printer.printScalaElement(pType.toString(), 1);
-
-        //TODO figure out how to put the cursor after the param
-
-
     }
 
     public void visit(sIf obj) {
