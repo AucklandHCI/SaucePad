@@ -75,7 +75,6 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
     private String TAG = "testing";
     private sClass mainClass;
-//    private final ScalaPrinter printer = new ScalaPrinter();
 
     private GridView gv_keyPad;
     private EditText editor;
@@ -90,10 +89,11 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     private Stack<String> stk_prevKeyPadPresses = new Stack<>(); //Keeps track of all the values the user presses.
 
     static final List<KeypadItem> initalList = new ArrayList<KeypadItem>();
-    static final List<String> numbers = new ArrayList<String>();
+    /**
+     * Holds default values for string literal input
+     */
     static final List<String> defaultValues = new ArrayList<>();
 
-//    static final List<String>
 
     private OnFragmentInteractionListener mListener;
 
@@ -137,10 +137,12 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-
     }
 
+    /**
+     * Assigns the controls to a variable which
+     * can then be used to refer to them
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -161,19 +163,20 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         return view;
     }
 
-
-
-
+    /**
+     * Displays the code written by the user to the screen
+     * in a clickable form
+     */
     public void printText(){
         editor.setText("");
         ScalaPrinter printer = new ScalaPrinter(keypad);
-
 
         String source = printer.getSource(mainClass);
 
         editor.setText(source, TextView.BufferType.SPANNABLE);
         Spannable spans = (Spannable) editor.getText();
 
+        // used to identify the locations of word - non-word borders
         BreakIterator brIterator = BreakIterator.getWordInstance(Locale.US);
         brIterator.setText(source);
 
@@ -191,20 +194,15 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                     .next()) {
                 String possibleWord = source.substring(start, end);
                 possibleWord = possibleWord.trim();
+
                 if (possibleWord.equals(ScalaPrinter.cursor)){
-
+                    // prints the cursor blue
                     int royalBlue = getResources().getColor(R.color.royal_blue);
-
                     ClickableText c = new ClickableText(ScalaPrinter.cursor,null,0,null, royalBlue);
                     spans.setSpan(c,start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 }else if (!possibleWord.isEmpty()) {
-
-                    if(possibleWord.equals("\"")){
-                        String s = "";
-                   //     cIndex--;
-                    }
-
+                    // prints all other words to the screen in white
                     ClickableSpan cs = cTexts.get(cIndex);
                     if (cs instanceof ClickableText) {
                         ClickableText ct = (ClickableText) cs;
@@ -218,23 +216,22 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         }catch (IndexOutOfBoundsException e){
             e.printStackTrace();
         }
-        //TODO need to hide the keyboard
     }
 
     public void addToStack(String text){
         stk_bckSpc.push(text);
     }
 
+    /**
+     * Displays all the buttons on the keypad
+     * @param items the list to be displayed
+     */
     public void setItemAdapter(List<KeypadItem> items){
 
-//        if(items != null && items.size() != 0){
-//            stk_prevKeyPadItems.push(items);
-//        }
-
-        if (items == null){ // get input form user
+        if (items == null){ // get input from user
             getLiteralInput(String.class);
             return;
-        }else if (items.size() == 0) { // application has printed a mandatory character.
+        }else if (items.size() == 0) { // marker to show re-invocation of getNextItems(..) is required
             items = keypad.getNextItems(""); //get next item
             if(items == null){
                 getLiteralInput(String.class);
@@ -244,16 +241,17 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             try {
                 while (items.size() == 0) {
                     items = keypad.getNextItems("");
-
                 }
             }catch(NullPointerException e){
                 setItemAdapter(null);
                 return;
             }
-
-//            setItemAdapter(keypad.getNextItems());
         }
 
+        /*
+        marker where list size is one and the element is null to show
+        the list of methods which can be currently invoked.
+         */
         if(items.size() == 1) {
             KeypadItem first = items.get(0);
             if (first == null){
@@ -262,6 +260,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
         }
 
+        /*
+        marker for getting numerical input from the user.
+         */
         if(items.size() == 2){
             KeypadItem first = items.get(0);
             KeypadItem second = items.get(1);
@@ -271,18 +272,6 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 return;
             }
         }
-
-//        if(items.size() == 3){
-//            KeypadItem first = items.get(0);
-//            KeypadItem second = items.get(1);
-//            KeypadItem third = items.get(2);
-//
-//            if(first == null && second == null && third == null){
-//                items = keypad.getPrevItems(stk_prevKeyPadItems);
-//                stk_prevKeyPadItems.push(items);
-//            }
-//        }
-
 
 
         keypad_adapter = new KeypadItemAdapter(ctx, R.layout.keypad_items, items);
@@ -295,28 +284,28 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 break;
             }
         }
+        // display the back button on the keypad
         if(!hasBack){
             KeypadItem bckSpace = new KeypadItem("Back", true, null);
             col_adapter.add(bckSpace);
         }
 
+        // show the keypad and refresh the code
         gv_keyPad.setAdapter(keypad_adapter);
         gv_right_col.setAdapter(col_adapter);
         gv_keyPad.invalidateViews();
         gv_right_col.invalidateViews();
         printText();
 
-
     }
 
+    /**
+     * Shows a pop up with all methods within scope that can be invoked
+     */
     private void showAvailableMethods(){
-
-
 
         AlertDialog.Builder inputDialog = new AlertDialog.Builder(this.getActivity());
         LayoutInflater li = this.getActivity().getLayoutInflater();
-
-
 
         View v = li.inflate(R.layout.dialog_methods, null);
 
@@ -331,8 +320,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         title.setText("Method Lookup");
 
 
-
         Scope scope = keypad.getCurrentScope();
+
+        //get all methods within scope
         List<String> methodNames = scope.getByInstanceOf(MethodSymbol.class);
         Collections.sort(methodNames);
 
@@ -340,17 +330,18 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         sMethod sm = null;
         final List<String> methods = new ArrayList<>();
 
+        // display the method signature in the popup
         for(String m : methodNames){
             mSym = (MethodSymbol)scope.resolve(m);
             sm = mSym.getMethod();
             methods.add(ScalaPrinter.printMethodSignature(sm));
         }
 
-
         final ArrayAdapter<String> a = new ArrayAdapter<String>(ctx,android.R.layout.simple_list_item_1,methods);
         lv_methods.setAdapter(a);
 
 
+        // search method signatures with the text entered by the user
         text.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -386,6 +377,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
         });
 
+        /*
+        retrieves the selected method and inserts it into the AST and refreshes the code
+         */
         lv_methods.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -402,13 +396,12 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
                 setItemAdapter(keypad.getNextItems(selected));
             }
         });
-
-
-
-
-
     }
 
+    /**
+     * Asks the user for literal input depending on the type passed in
+     * @param type if numerical asks for numerical input otherwise string input
+     */
     private void getLiteralInput(Class type){
 
 
@@ -440,6 +433,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
         dlg.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
+        //sets the field to whatever was typed by the user when 'ok' pressed
         ok.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -469,43 +463,7 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
         dlg.show();
 
-//        final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
-//        builder.setTitle( getTitleName());
-
-        // Set up the input
-//        final EditText input = new EditText(this.getActivity());
-
-        // Specify the type of input expected;
-
-
-//        input.requestFocus();
-//        builder.setView(input);
-
-        // Set up the buttons
-//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                enteredText = input.getText().toString() + " ";
-////                printText(enteredText);
-//                addToStack(enteredText);
-//                keypad.setField(enteredText);
-//                printText();
-//                InputMethodManager imm = (InputMethodManager) ctx.getSystemService(
-//                        Context.INPUT_METHOD_SERVICE);
-//                //txtName is a reference of an EditText Field
-//                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-//                setItemAdapter(keypad.getNextItems(""));
-
-//            }
-//        });
-//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                setItemAdapter(keypad.getNextItems(""));
-//                dialog.cancel();
-//            }
-//        });
-
+        //sets the field to whatever was typed by the user when 'done' pressed
         etValue.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
             @Override
@@ -528,11 +486,13 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             }
         });
 
-//        InputMethodManager inputMethodManager = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
-//        // only will trigger it if no physical keyboard is open
-//        inputMethodManager.showSoftInput(etValue, InputMethodManager.SHOW_IMPLICIT);
     }
 
+    /**
+     * retrieves the name of the field and displays it in the popup asking for
+     * literal input
+     * @return
+     */
     private String getTitleName(){
 
         ScalaElement se = keypad.getTypeStack().peek();
@@ -544,10 +504,14 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             count = se.getCount();
         }
 
+        /*
+        replaces all underscores in the field name with spaces
+         */
         Field f = se.getClass().getFields()[count];
         String name = f.getName();
         String[] words = name.split("_");
         StringBuilder sb = new StringBuilder();
+
         for(int i = 1; i < words.length; i++){
             String x = words[i];
             sb.append(x.substring(0,1).toUpperCase());
@@ -587,7 +551,10 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
 
-
+    /**
+     * Called whenever a keypad button is clicked.
+     * Sets the field to whatever was clicked
+     */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         KeypadItem input = (KeypadItem) parent.getAdapter().getItem(position);
@@ -597,13 +564,9 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
 
         boolean inEditMode = keypad.isEditing();
 
-        if (!input.dontPrint()){ // if not dummy print it
-//            editor.setText(editor.getText() + " " + value);
-
+        if (!input.dontPrint()){
             keypad.setField(value);
         }
-
-
 
         Stack<ScalaElement> stack = keypad.getTypeStack();
         if (value.contains("Another")){
@@ -613,23 +576,19 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
             stack.peek().incrementCount();
             stack.peek().setDoneWithStatements(true);
             keypad.setIsList(false);
-//            stack.peek().incrementCount();
-//            ScalaElement prev = stack.get(stack.size() - 2);
-//            prev.incrementCount();
         }
 
 
-        if(input.getValue() == "Back"){
+        if(input.getValue().equals("Back")){
             /*
                 Decr count(somehow possibly pass this to Keypad.java) , set Value to default value (x = f.get(newInstance) then
                 MAKE SURE X is not a list, f.set(obj,x), IF IT IS A LIST, remove the last element?? <- Maybe.
              */
             List<KeypadItem> items = keypad.getPrevItems();
-//            stk_prevKeyPadItems.push(items);
             setItemAdapter(items);
-//            printText();
             return;
         }
+
 
         if (keypad.getType() == null) {
             List<KeypadItem> list = keypad.setType(input.getValue()); //set it to whatever is clicked from keypad
@@ -644,21 +603,8 @@ public class KeypadFragment extends Fragment implements AdapterView.OnItemClickL
         if (inEditMode){
             value = "";
         }
+
         setItemAdapter(keypad.getNextItems(value));
-
-
-//
-//        if (count > 8){
-//            count = 0;
-//        }else{
-//            count++;
-//        }
-//
-//        if((count % 2) == 0){
-//            setAdapter(letters);
-//        }else{
-//            setAdapter(numbers);
-//        }
 
     }
 

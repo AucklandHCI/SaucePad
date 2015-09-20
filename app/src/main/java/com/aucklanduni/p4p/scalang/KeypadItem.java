@@ -1,11 +1,12 @@
 package com.aucklanduni.p4p.scalang;
 
 /**
+ * Objects which are shown in the keypda
  * Created by Taz on 10/06/15.
  */
 public class KeypadItem {
 
-    private String value;
+    private String value; // what is displayed to the user
     private boolean dontPrint; //application uses to see if it needs to print to screen or not. If True Don't print
     private Class<? extends ScalaElement> element;
 

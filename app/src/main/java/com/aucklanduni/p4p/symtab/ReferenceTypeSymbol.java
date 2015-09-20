@@ -7,7 +7,6 @@ public class ReferenceTypeSymbol extends ClassSymbol {
 
 	public ReferenceTypeSymbol(String name, Scope enclosingScope) {
 		super(name, enclosingScope);
-		
 	}
 	
 	public void setAllowedType(BuiltInTypeSymbol bts){

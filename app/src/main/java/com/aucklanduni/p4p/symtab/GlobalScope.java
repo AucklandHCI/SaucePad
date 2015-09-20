@@ -18,7 +18,7 @@ public class GlobalScope extends BaseScope {
 
 	public GlobalScope() {
 		super(null);
-		
+
 		// ============BuiltInTypeSymbols===============
 
 		define(new BuiltInTypeSymbol("Boolean"));
@@ -30,14 +30,14 @@ public class GlobalScope extends BaseScope {
 		define(new BuiltInTypeSymbol("Float"));
 		define(new BuiltInTypeSymbol("Double"));
 
-		
+
 		// ===============ClassSymbols===================
 		define(new ClassSymbol("String", this));
-		
-		ClassSymbol objSym = new ClassSymbol("Object",this);
+
+		ClassSymbol objSym = new ClassSymbol("Object", this);
 		objSym.define(new MethodSymbol("toString", (Type) resolve("String"), this, null));
 		objSym.define(new MethodSymbol("equals", (Type) resolve("boolean"), this, null));
-		
+
 		define(objSym);
 
 
@@ -45,55 +45,49 @@ public class GlobalScope extends BaseScope {
 		method.setMethodName("sqrt");
 		sParameter parameter = new sParameter();
 		parameter.a_parameter_name = "value";
-		parameter.c_paramType = (Type)resolve("Double");
+		parameter.c_paramType = (Type) resolve("Double");
 		List<sParameter> parameters = new ArrayList<>();
 		parameters.add(parameter);
 		method.c_parameters = parameters;
 
 
-		MethodSymbol sqrt = new MethodSymbol("sqrt", (Type)resolve("Double"), this, method);
+		MethodSymbol sqrt = new MethodSymbol("sqrt", (Type) resolve("Double"), this, method);
 		define(sqrt);
-
-//		method = new sMethod();
-//		method.setMethodName("sqrt1");
-//		method.c_parameters = parameters;
-//		sqrt = new MethodSymbol("sqrt1", (Type)resolve("Double"), this, method);
-//		define(sqrt);
 
 		method = new sMethod();
 		method.setMethodName("velocity");
 		sParameter distance = new sParameter();
 		distance.a_parameter_name = "distance";
-		distance.c_paramType = (Type)resolve("Double");
+		distance.c_paramType = (Type) resolve("Double");
 		sParameter time = new sParameter();
 		time.a_parameter_name = "time";
-		time.c_paramType = (Type)resolve("Double");
+		time.c_paramType = (Type) resolve("Double");
 		parameters = new ArrayList<>();
 		parameters.add(distance);
 		parameters.add(time);
 		method.c_parameters = parameters;
 
-		sqrt = new MethodSymbol(method.getMethodName(), (Type)resolve("Double"), this, method);
+		sqrt = new MethodSymbol(method.getMethodName(), (Type) resolve("Double"), this, method);
 		define(sqrt);
 
 		method = new sMethod();
 		method.setMethodName("acceleration");
 		sParameter velocity = new sParameter();
 		velocity.a_parameter_name = "velocity";
-		velocity.c_paramType = (Type)resolve("Double");
+		velocity.c_paramType = (Type) resolve("Double");
 		time = new sParameter();
 		time.a_parameter_name = "time";
-		time.c_paramType = (Type)resolve("Double");
+		time.c_paramType = (Type) resolve("Double");
 		parameters = new ArrayList<>();
 		parameters.add(velocity);
 		parameters.add(time);
 		method.c_parameters = parameters;
 
-		sqrt = new MethodSymbol(method.getMethodName(), (Type)resolve("Double"), this, method);
+		sqrt = new MethodSymbol(method.getMethodName(), (Type) resolve("Double"), this, method);
 		define(sqrt);
-		
+
 	}
-	
+
 	public String getScopeName() {
 		return "GlobalScope";
 	}
@@ -101,11 +95,11 @@ public class GlobalScope extends BaseScope {
 	public void define(Symbol symbol) {
 		symbols.put(symbol.getName(), symbol);
 	}
-	
+
 	public Symbol resolve(String name) {
 		return symbols.get(name);
 	}
-	
+
 	public Symbol resolveMember(String name) {
 		return symbols.get(name);
 	}
@@ -113,28 +107,8 @@ public class GlobalScope extends BaseScope {
 	public Scope getEnclosingScope() {
 		return null;
 	}
-	
-	public boolean isNumericType(Type type){
+
+	public boolean isNumericType(Type type) {
 		return false;
 	}
-
-//	@Override
-//	public List<String> getAllTypeNames() {
-//		List<String > types = new ArrayList<>();
-//
-//		for (Map.Entry<String, Symbol> entry : symbols.entrySet()){
-////			Log.d("testing", "[Global] key: " + entry.getKey() + ", value: " + entry.getValue().name);
-//			if(entry.getValue() instanceof Type){
-//				String typeName = entry.getKey();
-//				if(!types.contains(typeName)) {
-//					types.add(typeName);
-//				}
-//			}
-//		}
-//
-//		if (enclosingScope != null){
-//			types.addAll(enclosingScope.getAllTypeNames());
-//		}
-//		return types;
-//	}
 }

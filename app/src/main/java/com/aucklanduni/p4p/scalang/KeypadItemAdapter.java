@@ -14,6 +14,7 @@ import com.aucklanduni.p4p.R;
 import java.util.List;
 
 /**
+ * The adapter used to populate the keypad
  * Created by Taz on 14/08/15.
  */
 public class KeypadItemAdapter extends ArrayAdapter<KeypadItem> {
@@ -34,8 +35,7 @@ public class KeypadItemAdapter extends ArrayAdapter<KeypadItem> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
+    public View getView(int position, View row, ViewGroup parent) {
         KeypadItem item = null;
 
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
@@ -45,11 +45,6 @@ public class KeypadItemAdapter extends ArrayAdapter<KeypadItem> {
         TextView tvVal = (TextView) row.findViewById(R.id.text1);
         String value = item.getValue();
         tvVal.setText(value);
-
-//        if (value.equals("Back")){
-//            tvVal.setBackgroundColor(context.getResources().getColor(R.color.dark_blue));
-////            tvVal.setTextColor(Color.BLACK);
-//        }
 
         return row;
     }

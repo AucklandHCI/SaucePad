@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Represents a class has a name and a list of members
  * Created by Taz on 13/05/15.
  */
 public class sClass extends ScalaElement {

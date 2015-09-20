@@ -14,7 +14,6 @@ public class sMethodCall extends sStatement implements sExpression {
 
 
     public String a_method = "g";
-//    public sExpression[] b_values = new sExpression[0];
     public List<sExpression> b_values = new ArrayList<>();
 
     private boolean completed = false;

@@ -5,6 +5,7 @@ import com.aucklanduni.p4p.scalang.sEnum;
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 /**
+ * All 'statements' of the language extend this class
  * Created by Taz on 17/06/15.
  */
 public class sStatement extends ScalaElement {
@@ -13,9 +14,6 @@ public class sStatement extends ScalaElement {
     protected String toPrintAfterDone() {
         return "";
     }
-
-
-//    public sEnum.en_sStatement aa_type = sEnum.en_sStatement.dp_Variables;
 
     @Override
     public void accept(VoidVisitor v) {

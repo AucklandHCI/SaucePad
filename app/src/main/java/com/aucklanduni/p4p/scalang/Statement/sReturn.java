@@ -1,10 +1,12 @@
-package com.aucklanduni.p4p.scalang;
+package com.aucklanduni.p4p.scalang.statement;
 
 import com.aucklanduni.p4p.scalang.expression.sExpression;
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
 
 /**
+ * Class representing the 'Return' statement
+ * it is followed by an expression
  * Created by Taz on 18/08/15.
  */
 public class sReturn extends sStatement {

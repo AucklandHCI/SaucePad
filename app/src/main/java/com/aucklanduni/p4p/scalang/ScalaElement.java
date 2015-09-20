@@ -27,9 +27,11 @@ import java.util.List;
  * Created by Taz on 13/05/15.
  * Anything from the Scala language that is to be supported
  * by reflection should extend this class.
+ * Is the root of the AST for the language
  */
 public abstract class ScalaElement {
 
+    // formats indents
     protected int numbTabs = 0;
     protected static String newLine;
 
@@ -48,6 +50,10 @@ public abstract class ScalaElement {
      * instance
      */
     private int count = 0;
+
+    /**
+     * similar to count but is specifically for editing mode
+     */
     private int editingCount = 0;
 
     public String getClassName(){
@@ -82,11 +88,6 @@ public abstract class ScalaElement {
     public void resetCount(){
         count = 0;
     }
-
-//    public String getItemAfterDone(){
-//        incrementCount();
-//        return toPrintAfterDone();
-//    }
 
     public void setDoneWithStatements(boolean val){
         doneWithStatements = val;
@@ -169,8 +170,6 @@ public abstract class ScalaElement {
         try {
             Class fieldType = field.getType();
 
-//            Log.e(TAG, "[DI] TYPES: " + fieldType.getSimpleName());
-
             if (fieldType == String.class) {
                 items = doStringInteraction((String) field.get(obj));
                 isList = false;
@@ -190,16 +189,12 @@ public abstract class ScalaElement {
                 items = doEnumInteraction((Enum) field.get(obj));
                 isList = false;
             }else if (sExpression.class.isAssignableFrom(fieldType)){
-                items = doExpressionInteraction((sExpression) field.get(obj));
+                items = doExpressionInteraction();
                 isList = false;
             }else if(fieldType == Object.class){
                 items = doObjectInteraction( field.get(obj));
                 isList = false;
             }
-
-
-
-//            items = doValueInteraction(fieldType.cast(field.get(obj)));//Cas
 
 
             this.field = null;
@@ -214,6 +209,11 @@ public abstract class ScalaElement {
         return items;
     }
 
+    /**
+     * asks for an expression for each element of the array
+     * @param obj
+     * @return
+     */
     private List<KeypadItem> doArrayInteraction(Object[] obj) {
         List<KeypadItem> items = new ArrayList<>();
 
@@ -221,7 +221,7 @@ public abstract class ScalaElement {
         sExpression[] args = (sExpression[])obj;
         for (sExpression a : args){
             if(a == null){
-                return doExpressionInteraction(null);
+                return doExpressionInteraction();
             }
         }
 
@@ -230,24 +230,16 @@ public abstract class ScalaElement {
     }
 
     private List<KeypadItem> doObjectInteraction(Object o) {
-
         return getKeyboardItemsFromList(keypad.getExpressionTypes(),true);
-
     }
 
-    private List<KeypadItem> doExpressionInteraction(sExpression expr) {
+    /**
+     * gets the list of all expressions from the keypad class
+     * @return
+     */
+    private List<KeypadItem> doExpressionInteraction() {
 
         return getKeyboardItemsFromList(keypad.getExpressionTypes(), true);
-    }
-
-    protected List<KeypadItem> doValueInteraction(Object o){
-        Log.e(TAG, "[DVI] DEFAULT DVI " + o.toString());
-//        Class cls = o.getClass();
-//
-//        Log.e(TAG, "[DVI] CLASS = " + cls.getSimpleName());
-//
-//        return doValueInteraction(cls.cast(o));
-        return null;
     }
 
     /**
@@ -257,21 +249,21 @@ public abstract class ScalaElement {
      * @return
      */
     protected List<KeypadItem> doStringInteraction(String str){
-//    protected List<KeypadItem> doValueInteraction(String str){
-
         List<KeypadItem> items = new ArrayList<>();
 
         if (str == null) { //symbolises the need for user input
             return null;
-//        }else if( field.getName().contains("mand")){ // field value should be printed to screen
-//            items.add(null);
         }
 
         items.add(new KeypadItem(str));
-
         return items;
     }
 
+    /**
+     * Indicates that numerical input is required
+     * @param num
+     * @return
+     */
     protected List<KeypadItem> doNumericalInteraction(Number num){
         List<KeypadItem> items = new ArrayList<>();
         if (num.intValue() == 0){
@@ -286,12 +278,11 @@ public abstract class ScalaElement {
 
     /**
      * Displays all 'Types' that are available within
-     * the current scope to the user.
+     * the current scope.
      * @param type
      * @return
      */
     protected List<KeypadItem> doTypeInteraction(Type type){
-//    protected List<KeypadItem> doValueInteraction(Type type){
 
         List<KeypadItem> items = new ArrayList<>();
 
@@ -329,11 +320,10 @@ public abstract class ScalaElement {
 
         if(sCls instanceof sMethodCall){
 
-            //TODO change this to the actual type
             List<sExpression> args = ((sMethodCall) sCls).getArguments();
             for (sExpression a : args){
                 if(a == null){
-                    return doExpressionInteraction(null);
+                    return doExpressionInteraction();
                 }
             }
             keypad.getTypeStack().pop();
@@ -444,9 +434,6 @@ public abstract class ScalaElement {
             }
             s = s.replace("_", " ");
 
-
-//            enumValue = Enum.valueOf(en.getClass(), enumValue).toString();
-
             items.add(new KeypadItem(s, dontPrint, null));
         }
 
@@ -457,12 +444,4 @@ public abstract class ScalaElement {
         return null;
 
     }
-    public void backSpace(){}
-
-//    protected List<KeypadItem> doInteraction(){
-//        List<KeypadItem> items = new ArrayList<>();
-//
-//        return items;
-//    }
-
 }

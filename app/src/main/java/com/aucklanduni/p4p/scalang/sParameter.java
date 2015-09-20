@@ -4,10 +4,10 @@ import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 import com.aucklanduni.p4p.symtab.Type;
 
 /**
+ * Represents the parameters of a method
  * Created by Taz on 13/05/15.
  */
-public class sParameter extends ScalaElement {//} extends sVariable{
-
+public class sParameter extends ScalaElement {
 
     public String a_parameter_name = null;
     public Type c_paramType = null;
