@@ -25,6 +25,7 @@ import com.aucklanduni.p4p.scalang.statement.control.sIf;
 import com.aucklanduni.p4p.scalang.statement.exception.sException;
 import com.aucklanduni.p4p.scalang.statement.exception.sIllegalArgumentException;
 import com.aucklanduni.p4p.scalang.statement.sMethodCall;
+import com.aucklanduni.p4p.scalang.statement.sReturn;
 import com.aucklanduni.p4p.symtab.ClassSymbol;
 import com.aucklanduni.p4p.symtab.GlobalScope;
 import com.aucklanduni.p4p.symtab.LocalScope;
@@ -74,9 +75,14 @@ public class Keypad {
     private static HashMap<String, Class<? extends ScalaElement>> options = new HashMap<>();
     private static List<String> listItem = new ArrayList<>();
 
+    /*
+    used if the current field is optional - holds options for the next field's items
+     */
     private List<KeypadItem> nullFieldNextItems = new ArrayList<>();
 
     private boolean isList = false, isNullable = false;
+
+    // represents the number of optional fields in a row
     private int nullableCount = -1;
     private KeypadFragment kpFrag;
     private Field field;
@@ -84,7 +90,6 @@ public class Keypad {
 
     private Scope globalScope = new GlobalScope();
     private Scope currentScope = globalScope;
-
 
     private String TAG = "testing";
     private boolean editing;
@@ -96,15 +101,10 @@ public class Keypad {
         this.kpFrag = keypadFragment;
         // == Scala basics ==
         items.put("sClass", sClass.class);
-//        items.put("New Class", new sClass());
         items.put("sMethod",  sMethod.class);
-//        items.put("New Method", new sMethod());
         items.put("sParameter", sParameter.class);
         items.put("Parameter", items.get("sParameter"));
-        items.put("sVariable", sVariable.class);
         items.put("Return", sReturn.class);
-//        items.put("sField", new sField());
-//        items.put("New Field", new sField());
 
         // == Statements ===
         statements.add("Variables");
@@ -115,8 +115,6 @@ public class Keypad {
         statements.add("Done");
         // ==== Control ====
         items.put("Control", sControl.class);
-//        items.put("If", sIf.class);
-
 
         // == Expressions ===
         expressions.put("+", sPlusExpr.class);
@@ -130,8 +128,6 @@ public class Keypad {
         expressions.put("Method Call", sMethodCall.class);
         expressions.put("Array", sArrayExpr.class);
 
-
-
         //== Members ==
         members.put("var", sVar.class);
         members.put("val", sVal.class);
@@ -143,16 +139,10 @@ public class Keypad {
 
         // Options
         options.put("If", sIf.class);
-//        options.put("For", sFor.class);
 
-        // Temp
         listItem.add("If");
-//        listItem.add("For");
-
-
 
         symbolStack.push(new NullSymbol());
-
     }
 
     /**
@@ -169,9 +159,16 @@ public class Keypad {
             isNullable = false;
         }
 
+        /*
+        checks if what was pressed belongs to the optional field or the next field
+         */
         if(isNullable && !value.isEmpty()){
             boolean found = false;
-//            for(KeypadItem ki : nullFieldNextItems) {
+
+            /*
+            matches against options for the next fields and if found sets the optional fields
+            to null
+             */
             for(int i = nullableCount+1; i < nullFieldNextItems.size(); i++){
                 KeypadItem ki = nullFieldNextItems.get(i);
                 if (ki.getValue().equals(value)) {
@@ -197,7 +194,6 @@ public class Keypad {
                         }
                     }
 
-                    //typeStack.peek().incrementCount();
                     found = true;
                     isNullable = false;
                     nullableCount = -1;
@@ -206,6 +202,9 @@ public class Keypad {
                 }
             }
 
+            /*
+            if what was pressed belongs to an optional field, sets it and continues algorithm
+             */
             if (!found){
                 for(int i = 0; i <= nullableCount; i++){
                     KeypadItem ki = nullFieldNextItems.get(i);
@@ -227,6 +226,7 @@ public class Keypad {
             }
         }
 
+
         if(value.equals("Exception")){
             return ScalaElement.getKeyboardItemsFromList(exceptions.keySet(), true);
         }
@@ -234,8 +234,6 @@ public class Keypad {
         if(items.containsKey(value)){
             setType(value);
         }
-
-
 
         if (options.containsKey(value)){
             try {
@@ -255,6 +253,10 @@ public class Keypad {
         if (newVariable || value.equals("New val") || value.equals("New var")){
 
             if (newVariable){
+                /*
+                if a variable is defined it doesn't have a type yet and so is created
+                with placeholde null values to ensure correct printing
+                 */
                 ScalaElement se = typeStack.pop();
                 if (se instanceof sVal){
                     sVal v = (sVal)se;
@@ -289,6 +291,7 @@ public class Keypad {
                 }
             }
         }else if (expressions.containsKey(value) || value.equals("End Array")){
+
             if(value.equals("Method Call")) {
                 List<KeypadItem> itemList = new ArrayList<>();
                 itemList.add(null);
