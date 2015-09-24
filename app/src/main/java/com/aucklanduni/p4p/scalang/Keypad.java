@@ -607,24 +607,30 @@ public class Keypad {
 
 
     /**
-     *
-     * @return
+     * Used to get the previous items to display on the keypad when the back button is pressed.
+     * The method gets the previous field on the typeStack and calls getNextItems on it to display the
+     * keypad items. This ensures the code for backSpace is dynamic and doesn't require a second stack
+     * to keep track of all the keypadItems ever displayed!.
+     * @return Returns the list of the previous items displayed on the keypad.
      */
     public List<KeypadItem> getPrevItems(){
 
+        //Get the element on top of the typeStack
         ScalaElement element = typeStack.peek();
 
+        //get the count of the current item
         int countOfCurrent = element.getCount();
 
-        Field[] currentFields = element.getClass().getDeclaredFields();
+        Field[] currentFields = element.getClass().getDeclaredFields(); //get all declared fields
         Field f = currentFields[countOfCurrent];
 
         try {
-
+            // if it is a list store the list, do checks on the list to determine the previous items
             if(f.getType() == List.class) {
 
                 List temp = (List) f.get(element); //list of statements
 
+                // if the list is empty get the previous item
                 if (temp.isEmpty()) {
 
                     countOfCurrent = countOfCurrent - 1;
@@ -651,7 +657,7 @@ public class Keypad {
                             f = currentFields[countOfCurrent];
 
                         }
-                    }else if(sExpression.class.isAssignableFrom(f.getType())){
+                    }else if(sExpression.class.isAssignableFrom(f.getType())){ // if the field is an expression
 
                         element = (ScalaElement) f.get(element);
                         typeStack.push(element);
@@ -757,20 +763,32 @@ public class Keypad {
             f.set(element, null);
 
             if(countOfCurrent == 0 && typeStack.size() > 1){
-                resetField();
+                resetField(); // if the count is zero and the typestack is  > 1 then call resetfield
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
 
-        return getNextItems("");
+        return getNextItems("");  //call get next Items to get the previous fields
 
     }
 
+    /**
+     * This method is called when the user presses backspace but the count of the element on the typeStack
+     * is 0, this means that the user has reached the beggining of an element, and needs to remove it from the
+     * stack, and get the next element.
+     *
+     * For Example :
+     *
+     *var x : boolean = True
+     *var y <--- "at this point if the user presses backSpace twice the application needs to pop off y and
+     * start removing code from x, i.e Remove True."
+     *
+     */
     private void resetField() {
         ScalaElement popped = typeStack.pop();
         if((popped instanceof sMethod)){
-            this.currentScope = this.currentScope.getEnclosingScope();
+            this.currentScope = this.currentScope.getEnclosingScope(); //manages scoping if backspaced passed a scope i.e exited method scope back to class scope
         }
         ScalaElement prev = typeStack.peek();
         int previousCount = prev.getCount();
@@ -789,13 +807,13 @@ public class Keypad {
         }else{
 
             try {
-                field.set(prev,null);
+                field.set(prev,null);  // set the field to null using reflection
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
     }
-    
+
     /**
      * adds a member to the AST based on what the user has
      * selected.
