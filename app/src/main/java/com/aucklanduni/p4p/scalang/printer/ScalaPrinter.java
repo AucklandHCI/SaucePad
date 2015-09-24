@@ -36,6 +36,14 @@ import java.util.List;
 
 /**
  * Created by Taz on 7/07/15.
+ *
+ * This class defines the printer for the application. Each method is used to print a construct in Scala.
+ * The methods "visit" each node in the AST, printing each one.
+ *
+ * The main reason for a printing class is to abstract the brackets and basic formatting (such as indenting) away
+ * from the AST. Hence the nodes don't define brackets and newline feeds. The scala printer takes care of this.
+ *
+ *
  */
 public class ScalaPrinter implements VoidVisitor{
 
@@ -103,6 +111,7 @@ public class ScalaPrinter implements VoidVisitor{
         throw new IllegalStateException(obj.getClassName());
     }
 
+    //In charge of printing the Scala Class Node
     public void visit(sClass obj){
         printer.setScalaElement(obj);
 
@@ -120,14 +129,14 @@ public class ScalaPrinter implements VoidVisitor{
         List<sMember> members = obj.get_members();
 
         if(members.size() == 0) {
-            printCursor();
+            printCursor();  //prints the cursor on the screen at a given point in code.
         }
 
         for (sMember m : members){
             if(cursorPrinted){
                 cursorPrinted = false;
             }
-            m.accept(this);
+            m.accept(this); //members accepts the class and the members node is visited.
             printer.printLn();
         }
 
@@ -143,7 +152,7 @@ public class ScalaPrinter implements VoidVisitor{
     }
 
 
-
+    //In charge of printing the Scala value Node
     @Override
     public void visit(sVal obj) {
         printer.setScalaElement(obj);
@@ -179,6 +188,7 @@ public class ScalaPrinter implements VoidVisitor{
         }
     }
 
+    //In charge of printing the Scala Variable Node
     @Override
     public void visit(sVar obj) {
         printer.setScalaElement(obj);
@@ -218,6 +228,7 @@ public class ScalaPrinter implements VoidVisitor{
 
     }
 
+    //In charge of printing the Scala Method Node
     public void visit(sMethod obj) {
         printer.setScalaElement(obj);
 
@@ -261,7 +272,7 @@ public class ScalaPrinter implements VoidVisitor{
         Log.e(TAG, "states size: " + states.size());
         printer.indent();
         for(sStatement s : states){
-           s.accept(this);
+           s.accept(this); //accepts and visits the statement node
             printer.printLn();
         }
 
@@ -276,6 +287,7 @@ public class ScalaPrinter implements VoidVisitor{
 
     }
 
+    //In charge of printing the Scala parameter Node
     public void visit(sParameter obj) {
         printer.setScalaElement(obj);
         String pName = obj.getName();
@@ -293,6 +305,7 @@ public class ScalaPrinter implements VoidVisitor{
         printer.printScalaElement(pType.toString(), 1);
     }
 
+    //In charge of printing the Scala if control Node
     public void visit(sIf obj) {
         printer.setScalaElement(obj);
         printer.printString("if");
@@ -330,6 +343,7 @@ public class ScalaPrinter implements VoidVisitor{
 
     }
 
+    //In charge of printing the Scala for control Node
     public void visit(sFor obj) {
 
         printer.setScalaElement(obj);

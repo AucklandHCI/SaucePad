@@ -5,6 +5,9 @@ import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 /**
  * Created by Taz on 14/07/15.
+ *
+ * a node in the AST which provides users the ability to create an "multiply symbol" in an equation and
+ * have expressions on the left and right hand side.
  */
 public class sProductExpr extends ScalaElement implements sExpression{
 

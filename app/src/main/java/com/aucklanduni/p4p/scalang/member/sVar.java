@@ -8,6 +8,12 @@ import com.aucklanduni.p4p.symtab.Type;
 
 /**
  * Created by Taz on 13/05/15.
+ *
+ * Defines the structure for a variable in the Scala Language. a few fields (node elements) have been declared with
+ * @NullableField this allows the application to continue past without throwing an exception  (during inspection).
+ *
+ * Methods have been declared to get the name, Type and Value of the node.
+ *
  */
 public class sVar extends sStatement implements sMember, sExpression {
 
