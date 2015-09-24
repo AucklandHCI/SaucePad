@@ -5,6 +5,8 @@ import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 /**
  * Created by Taz on 2/08/15.
+ *
+ * Defines the node for a Null expression within the AST.
  */
 public class NullExpr extends ScalaElement implements sExpression   {
 

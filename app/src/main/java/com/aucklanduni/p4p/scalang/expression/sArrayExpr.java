@@ -10,6 +10,9 @@ import java.util.List;
 
 /**
  * Created by Taz on 13/05/15.
+ *
+ * Provides the application with a node providing the strucure of a scala Array expression
+ * all the elements within the array are sExpession.
  */
 public class sArrayExpr extends ScalaElement implements sExpression {//} extends sVariable{
 

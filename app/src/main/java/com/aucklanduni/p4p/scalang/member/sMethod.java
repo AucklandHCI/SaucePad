@@ -11,6 +11,11 @@ import java.util.List;
 
 /**
  * Created by Taz on 13/05/15.
+ *
+ * This class is the "scala method" node in the AST, the application will inspect this code
+ * to get the structure. A scala method consists of a name (a_method_name) a list of parameters
+ * (c_parameters) and a list of statements (f_statemements).
+ *
  */
 public class sMethod extends ScalaElement implements sMember {
 

@@ -6,6 +6,11 @@ import com.aucklanduni.p4p.scalang.statement.sStatement;
 
 /**
  * Created by Taz on 9/08/15.
+ *
+ *Node which allows an assign expression to occur (e.g == ) it has two Expressions a_lhs and b_rhs. These
+ * correspond to the left and right hand side of the expression and provides the user with the flexibility og having any
+ * sort of expression on the left and right side.
+ *
  */
 public class sAssignExpr extends sStatement implements sExpression{
 

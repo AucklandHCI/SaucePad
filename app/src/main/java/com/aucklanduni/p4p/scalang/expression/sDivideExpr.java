@@ -5,6 +5,10 @@ import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 /**
  * Created by Taz on 14/07/15.
+ *
+ * a node in the AST which provides users the ability to create a "divide symbol" in an equation and
+ * have expressions on the left and right hand side.
+ *
  */
 public class sDivideExpr extends ScalaElement implements sExpression{
 
