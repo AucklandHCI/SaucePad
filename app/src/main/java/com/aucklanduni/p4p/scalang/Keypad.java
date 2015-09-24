@@ -663,15 +663,11 @@ public class Keypad {
         return keyPad;
     }
 
-    //    public List<KeypadItem> getPrevItems(Stack<String> prevItems){
+    /**/
+
     public List<KeypadItem> getPrevItems(){
 
-        ScalaElement element = typeStack.peek(); //( + )
-
-//        if(sExpression.class.isAssignableFrom(element.){
-//            typeStack.pop();
-//            return getNextItems("");
-//        }
+        ScalaElement element = typeStack.peek();
 
         int countOfCurrent = element.getCount();
 
@@ -687,11 +683,7 @@ public class Keypad {
                 if (temp.isEmpty()) {
 
                     countOfCurrent = countOfCurrent - 1;
-//                   if (countOfCurrent < 0){
-//                        countOfCurrent = 0;
-//                        resetField();
-//                        return getNextItems("");
-//                    }
+
                     element.setCount(countOfCurrent);
                     f = currentFields[countOfCurrent];
 
@@ -731,12 +723,6 @@ public class Keypad {
 
                     if(element instanceof sMethodCall){
 
-                        /*
-                        sdf([n],[n],[n])
-                        sdf(x,[n],[n])
-                        sdf(x,y,[n])
-                         */
-//                        for for
                         boolean nonNullPresent = false;
                         int i;
                         for (i = temp.size()-1; i >= 0 ; i--) {
@@ -798,11 +784,6 @@ public class Keypad {
                     f.set(element,null);
                     return getNextItems("");
 
-
-//                    f = currentFields[countOfCurrent];
-
-
-
                 }else if (!(element instanceof sIf)) {
                     countOfCurrent = countOfCurrent - 1; //decrCount
                     f = currentFields[countOfCurrent];
@@ -810,7 +791,7 @@ public class Keypad {
 
             }
 
-            Object x = f.get(element);  //val taz = true  type: null val taz : boolean
+            Object x = f.get(element);
 
             if(x instanceof NullSymbol){
                 countOfCurrent = countOfCurrent - 1;
@@ -838,8 +819,6 @@ public class Keypad {
         }
 
         return getNextItems("");
-//        prevItems.pop(); //pop of marker  nullnullnull
-//        return getNextItems(prevItems.pop()); //pop last valid keypadItems
 
     }
 
@@ -871,10 +850,6 @@ public class Keypad {
             }
         }
     }
-//            typeStack.peek().setCount(countOfCurrent - 1);
-
-//            typeStack.peek().setCount(type.getClass().getFields().length);
-//            typeStack.pop();
 
 
 
