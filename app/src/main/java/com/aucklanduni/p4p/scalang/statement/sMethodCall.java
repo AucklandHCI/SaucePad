@@ -8,12 +8,14 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Represents a method invocation
  * Created by Taz on 8/08/15.
  */
 public class sMethodCall extends sStatement implements sExpression {
 
 
-    public String a_method = "g";
+    public String a_method = "m";
+    // the arguments of the method
     public List<sExpression> b_values = new ArrayList<>();
 
     private boolean completed = false;

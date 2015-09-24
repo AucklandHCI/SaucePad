@@ -14,6 +14,8 @@ import com.aucklanduni.p4p.scalang.ScalaElement;
 import com.aucklanduni.p4p.scalang.annotations.NullableField;
 
 /**
+ * The individual words which the user SHOULD be able to click on
+ * to then edit it.
  * Created by Taz on 8/07/15.
  */
 public class ClickableText extends ClickableSpan {
@@ -21,10 +23,15 @@ public class ClickableText extends ClickableSpan {
     private String TAG = "testing";
 
     private String word;
+    // the ScalaElement this word corresponds to
     private ScalaElement scalaElement;
     private Keypad keypad;
+
+    // the field in the scalaelement the word corresponds to
     private int seCount = 0;
     private boolean clicked = false;
+
+    // the listener which fires the onclick event
     private KeypadFragment listener;
     private int color;
     private TextPaint tp = null;
@@ -35,10 +42,6 @@ public class ClickableText extends ClickableSpan {
         scalaElement = element;
         this.keypad = keypad;
 
-//        int c = 0;
-//        if (keypad != null){
-//            c = keypad.getContext().getResources().getColor(R.color.analogous_orange);//color;
-//        }
         this.color = color;
     }
 
@@ -48,8 +51,6 @@ public class ClickableText extends ClickableSpan {
 
     @Override
     public void onClick(View widget) {
-//        Toast.makeText(widget.getContext(), "SE = " + scalaElement.getClassName() + ", count = " + seCount, Toast.LENGTH_SHORT)
-//                .show();
 
         if(word.equals(ScalaPrinter.cursor)){
             return;
@@ -59,6 +60,10 @@ public class ClickableText extends ClickableSpan {
         color =  keypad.getContext().getResources().getColor(R.color.dark_blue);
         widget.invalidate();
 
+        /*
+        updates the keypad to show the possible options based on the field
+        being edited
+        */
         listener.setItemAdapter(keypad.editItem(scalaElement,seCount));
 
 
@@ -71,11 +76,8 @@ public class ClickableText extends ClickableSpan {
 
     public void updateDrawState(TextPaint ds) {
 
-//        if(ds != null){
-//            tp = ds;
-//        }
-//
         if (clicked) {
+            // colours the selected text orange
             int colour = keypad.getContext().getResources().getColor(R.color.analogous_orange);
             ds.setColor(colour);
 

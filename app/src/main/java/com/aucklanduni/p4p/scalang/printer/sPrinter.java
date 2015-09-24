@@ -12,6 +12,9 @@ import java.util.EmptyStackException;
 import java.util.List;
 
 /**
+ * Responsible for printing to the screen with
+ * the words clickable if the user should be able to click
+ * on them
  * Created by Taz on 7/07/15.
  */
 public class sPrinter{
@@ -20,6 +23,10 @@ public class sPrinter{
     private boolean indented = false;
     private final StringBuilder buf;
     private List<ClickableSpan> clickables= new ArrayList<>();
+
+    /*
+    required for the editing capability
+     */
     private ScalaElement scalaElement;
     private Keypad keypad;
     private int color = Color.WHITE;
@@ -40,13 +47,8 @@ public class sPrinter{
             ScalaElement topElem = keypad.getTypeStack().peek();
             if (scalaElement.equals(topElem)) {
                 topElemCount = topElem.getCount();
-//                color = Color.RED;
-
-//            } else {
-//                color = Color.BLACK;
             }
         }catch (EmptyStackException e){
-//            color = Color.BLACK;
         }
     }
 
@@ -65,6 +67,12 @@ public class sPrinter{
         }
     }
 
+    /**
+     * Prints clickable words which are mapped to a
+     * ScalaElement. Used for any field which is editable.
+     * @param arg the word to be displayed
+     * @param count the field number the word corresponds to
+     */
     public void printScalaElement(String arg, int count) {
         if (!indented) {
             makeIndent();
@@ -73,13 +81,15 @@ public class sPrinter{
         buf.append(arg);
 
         if (Character.isLetterOrDigit(arg.charAt(0))) {
-
-//            Log.e(TAG, "SE = " + scalaElement.getClassName()+", topElemCount = " + topElemCount + ", count = " + count);
-
             clickables.add(new ClickableText(arg.trim(), scalaElement, count,keypad, color));
-
         }
     }
+
+    /**
+     * prints non clickable strings to the screen
+     * used mainly for mandatory characters.
+     * @param arg the string to print
+     */
     public void printString(String arg) {
         if (!indented) {
             makeIndent();
@@ -98,10 +108,19 @@ public class sPrinter{
         buf.append(" ");
     }
 
+    /**
+     * Returns the string representation of the code
+     * @return
+     */
     public String getSource() {
         return buf.toString();
     }
 
+    /**
+     * returns the code with both clickable and nonclickable
+     * objects
+     * @return
+     */
     public List<ClickableSpan> getClickables() {
         return clickables;
     }

@@ -11,6 +11,7 @@ import com.aucklanduni.p4p.scalang.Keypad;
 import com.aucklanduni.p4p.scalang.ScalaElement;
 
 /**
+ * Any word which should not be clicked on while displayed to the user
  * Created by Taz on 8/07/15.
  */
 public class NonClickableText extends ClickableSpan {

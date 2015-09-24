@@ -24,6 +24,7 @@ import com.aucklanduni.p4p.scalang.statement.control.sIf;
 import com.aucklanduni.p4p.scalang.statement.sMethodCall;
 
 /**
+ * Ensures that all AST nodes are accounted for while printing
  * Created by Taz on 13/07/15.
  */
 public interface VoidVisitor {

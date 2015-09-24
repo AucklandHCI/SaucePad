@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Represents an If statement
  * Created by Taz on 17/06/15.
  */
 public class sIf extends sControl{
 
+    //the condition
     public sExpression c_expr = null;
     public List<sStatement> i_statements = new ArrayList<>();
 

@@ -5,6 +5,7 @@ import com.aucklanduni.p4p.scalang.statement.sStatement;
 import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 
 /**
+ * All statements that control the flow of the execution extends this class
  * Created by Taz on 17/06/15.
  */
 public class sControl extends sStatement {

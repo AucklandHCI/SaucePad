@@ -9,12 +9,9 @@ public class sIllegalArgumentException extends sException {
 
     public String a_message = null;
 
-
-
     public String getMessage(){
         return  a_message;
     }
-
 
     @Override
     public void accept(VoidVisitor v) {

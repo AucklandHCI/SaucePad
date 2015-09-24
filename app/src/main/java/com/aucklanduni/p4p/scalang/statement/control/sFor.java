@@ -9,24 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Represents a For loop
  * Created by Taz on 3/07/15.
  */
 public class sFor extends sControl{
 
-    /*
-    for( var x <- Range ){
-        statement(s);
-    }
-     */
-
-    //TODO add Collections,filters and yield
-
     public sExpression c_expr = null;
     public List<sStatement>i_statements = new ArrayList<>();
-
-    public sFor(){
-
-    }
 
     @Override
     public void accept(VoidVisitor v) {

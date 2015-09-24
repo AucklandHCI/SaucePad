@@ -5,6 +5,7 @@ import com.aucklanduni.p4p.scalang.printer.VoidVisitor;
 import com.aucklanduni.p4p.scalang.statement.sStatement;
 
 /**
+ * all exceptions should extend this class
  * Created by Taz on 1/08/15.
  */
 public abstract class sException extends sStatement {
